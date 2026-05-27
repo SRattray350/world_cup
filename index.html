@@ -439,8 +439,9 @@
     /**********************************************************************
      * EDIT THIS BIT
      **********************************************************************/
-    const SHEET_ID = "1mXNPRmCqN9-Ml1CZxEitWlcjFvjRZHWNEkIzzicNeAQ";
-    const COMPETITION_TAB = "Competition";
+    // This is your published Google Sheets CSV link for the Competition tab.
+    // It comes from: File → Share → Publish to web → Competition tab.
+    const DATA_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUAkR7JxLEFFPqKGBrxL20-0LPdef-_UkqN3CDkk3oqJMDTbVGXz6rfvXr4pTR8ftcP5tI1hNtiJhm/pub?gid=1496784945&single=true&output=csv";
 
     /**********************************************************************
      * DO NOT NEED TO EDIT BELOW THIS LINE
@@ -466,22 +467,18 @@
     };
 
     function csvUrl() {
-      const params = new URLSearchParams({
-        tqx: "out:csv",
-        sheet: COMPETITION_TAB,
-        cache: Date.now().toString()
-      });
-      return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?${params}`;
+      const separator = DATA_URL.includes("?") ? "&" : "?";
+      return `${DATA_URL}${separator}cache=${Date.now()}`;
     }
 
     async function loadSheet() {
       const notice = $("notice");
       notice.style.display = "none";
 
-      if (!SHEET_ID || SHEET_ID === "PASTE_YOUR_GOOGLE_SHEET_ID_HERE") {
-        notice.innerHTML = `Paste your Google Sheet ID into <code>SHEET_ID</code> in this file first.`;
+      if (!DATA_URL || DATA_URL.includes("PASTE")) {
+        notice.innerHTML = `Paste your published Google Sheets CSV link into <code>DATA_URL</code> in this file first.`;
         notice.style.display = "block";
-        $("status").textContent = "Waiting for your Google Sheet ID.";
+        $("status").textContent = "Waiting for your Google Sheets CSV link.";
         return;
       }
 
