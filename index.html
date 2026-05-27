@@ -279,50 +279,148 @@
     }
 
 
-    .knockout-board {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(220px, 1fr));
-      gap: 14px;
+    .bracket-help {
+      color: var(--muted);
+      margin: -4px 0 16px;
+      line-height: 1.45;
+    }
+
+    .bracket-scroll {
       overflow-x: auto;
-      padding-bottom: 8px;
+      padding: 6px 2px 18px;
+    }
+
+    .bracket-stage {
+      position: relative;
+      min-width: 1900px;
+    }
+
+    .bracket-lines {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: visible;
+      z-index: 1;
+    }
+
+    .bracket-lines path {
+      fill: none;
+      stroke: rgba(255,255,255,0.38);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .bracket-lines path.dashed {
+      stroke: rgba(56,189,248,0.34);
+      stroke-dasharray: 5 6;
+    }
+
+    .bracket-grid {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns:
+        minmax(205px, 1fr)
+        minmax(205px, 1fr)
+        minmax(205px, 1fr)
+        minmax(205px, 1fr)
+        minmax(280px, 1.15fr)
+        minmax(205px, 1fr)
+        minmax(205px, 1fr)
+        minmax(205px, 1fr)
+        minmax(205px, 1fr);
+      gap: 36px;
+      align-items: stretch;
     }
 
     .round-column {
-      min-width: 220px;
-      display: grid;
-      gap: 10px;
-      align-content: start;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      gap: 18px;
+      min-height: 1260px;
+      position: relative;
     }
 
-    .round-column h3 {
+    .round-column.compact {
+      min-height: 880px;
+    }
+
+    .round-column.tight {
+      min-height: 560px;
+    }
+
+    .round-column.semi {
+      min-height: 340px;
+    }
+
+    .round-column.center {
+      min-height: 340px;
+      justify-content: center;
+      gap: 22px;
+    }
+
+    .round-title {
+      position: sticky;
+      top: 0;
+      z-index: 4;
       margin: 0 0 4px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
       color: #bae6fd;
-      font-size: 0.95rem;
+      background: rgba(2,6,23,0.92);
+      font-size: 0.72rem;
       text-transform: uppercase;
       letter-spacing: 0.06em;
+      text-align: center;
+    }
+
+    .match-slot {
+      position: relative;
     }
 
     .match-card {
+      position: relative;
+      z-index: 3;
       border: 1px solid var(--line);
       border-radius: 14px;
-      background: rgba(255,255,255,0.05);
-      padding: 10px;
+      background: rgba(17,24,39,0.98);
+      padding: 9px;
+      min-height: 92px;
+    }
+
+    .match-card.final-card {
+      border-color: rgba(250,204,21,0.5);
+      background: rgba(65,55,20,0.98);
+    }
+
+    .match-card.third-card {
+      border-color: rgba(56,189,248,0.38);
+      background: rgba(12,43,58,0.98);
     }
 
     .match-label {
-      color: var(--muted);
-      font-size: 0.78rem;
-      margin-bottom: 8px;
-    }
-
-    .team-line {
       display: flex;
       justify-content: space-between;
       gap: 8px;
+      color: var(--muted);
+      font-size: 0.74rem;
+      margin-bottom: 7px;
+    }
+
+    .team-line {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2px;
       padding: 7px 8px;
       border-radius: 10px;
       background: rgba(255,255,255,0.045);
       margin-top: 5px;
+      min-height: 39px;
     }
 
     .team-line.winner {
@@ -331,9 +429,31 @@
       border: 1px solid rgba(52,211,153,0.35);
     }
 
-    .third-place-box {
-      margin-top: 16px;
-      max-width: 440px;
+    .team-country {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: bold;
+      line-height: 1.15;
+    }
+
+    .team-player {
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.15;
+    }
+
+    .team-line.winner .team-player {
+      color: #d1fae5;
+    }
+
+    .center-title {
+      margin: 0 0 6px;
+      color: #fef3c7;
+      font-size: 0.9rem;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
     }
 
     @media (max-width: 900px) {
@@ -1024,58 +1144,212 @@
 
       if (!knockoutRows.length) {
         target.innerHTML =
-          '<div class="empty">The Knockout tab is empty. Add rows such as: Round of 32 | 1 | Mexico | Brazil | Mexico.</div>';
+          '<div class="empty">The Knockout tab is empty. Add the Round and Match rows first, then fill Team 1, Team 2 and Winner as the tournament progresses.</div>';
         return;
       }
 
-      const bracketRounds = ["Round of 32", "Round of 16", "Quarter-final", "Semi-final", "Final"];
-      const groupedRounds = {};
+      const round32 = getRoundMatches("Round of 32", 16);
+      const round16 = getRoundMatches("Round of 16", 8);
+      const quarters = getRoundMatches("Quarter-final", 4);
+      const semis = getRoundMatches("Semi-final", 2);
+      const finalRows = getRoundMatches("Final", 1);
+      const thirdRows = getRoundMatches("Third-place", 1);
 
-      knockoutRows.forEach(function(row) {
-        const round = normaliseRound(row.round);
-        if (!groupedRounds[round]) groupedRounds[round] = [];
-        groupedRounds[round].push(row);
-      });
+      const html =
+        '<p class="bracket-help">Country boxes include the sweepstake participant from the Competition tab. Lines are drawn between the actual match boxes, so each route feeds into the next round.</p>' +
+        '<div class="bracket-scroll">' +
+          '<div id="bracketStage" class="bracket-stage">' +
+            '<svg id="bracketLines" class="bracket-lines" aria-hidden="true"></svg>' +
+            '<div class="bracket-grid">' +
+              renderBracketColumn("Round of 32", round32.slice(0, 8), "left", "") +
+              renderBracketColumn("Round of 16", round16.slice(0, 4), "left", "compact") +
+              renderBracketColumn("Quarter-finals", quarters.slice(0, 2), "left", "tight") +
+              renderBracketColumn("Semi-finals", semis.slice(0, 1), "left", "semi") +
+              renderCentreColumn(finalRows[0], thirdRows[0]) +
+              renderBracketColumn("Semi-finals", semis.slice(1, 2), "right", "semi") +
+              renderBracketColumn("Quarter-finals", quarters.slice(2, 4), "right", "tight") +
+              renderBracketColumn("Round of 16", round16.slice(4, 8), "right", "compact") +
+              renderBracketColumn("Round of 32", round32.slice(8, 16), "right", "") +
+            '</div>' +
+          '</div>' +
+        '</div>';
 
-      Object.keys(groupedRounds).forEach(function(round) {
-        groupedRounds[round].sort(function(a, b) {
-          return Number(a.match || 0) - Number(b.match || 0);
-        });
-      });
-
-      const board = '<div class="knockout-board">' +
-        bracketRounds.map(function(round) {
-          const matches = groupedRounds[round] || [];
-          return '<section class="round-column"><h3>' + escapeHtml(round) + '</h3>' +
-            (matches.length ? matches.map(renderMatchCard).join("") : '<div class="empty">No matches yet</div>') +
-          '</section>';
-        }).join("") +
-      '</div>';
-
-      const thirdPlaceRows = groupedRounds["Third-place"] || [];
-      const thirdPlace = thirdPlaceRows.length
-        ? '<div class="third-place-box"><h3>Third-place match</h3>' + thirdPlaceRows.map(renderMatchCard).join("") + '</div>'
-        : '';
-
-      target.innerHTML = board + thirdPlace;
+      target.innerHTML = html;
+      requestAnimationFrame(drawKnockoutLines);
     }
 
-    function renderMatchCard(match) {
-      return '<article class="match-card">' +
-        '<div class="match-label">Match ' + escapeHtml(match.match || '-') + '</div>' +
+    function getRoundMatches(roundName, expectedCount) {
+      const matches = knockoutRows
+        .filter(function(row) {
+          return normaliseRound(row.round) === roundName;
+        })
+        .sort(function(a, b) {
+          return Number(a.match || 0) - Number(b.match || 0);
+        });
+
+      const byMatch = {};
+
+      matches.forEach(function(row, index) {
+        const number = Number(row.match);
+        const key = Number.isFinite(number) && number > 0 ? String(number) : String(index + 1);
+        byMatch[key] = row;
+      });
+
+      const output = [];
+
+      for (let i = 1; i <= expectedCount; i++) {
+        output.push(byMatch[String(i)] || {
+          round: roundName,
+          match: String(i),
+          team1: "",
+          team2: "",
+          winner: ""
+        });
+      }
+
+      return output;
+    }
+
+    function bracketId(round, match) {
+      const normalised = normaliseRound(round);
+      let prefix = "other";
+
+      if (normalised === "Round of 32") prefix = "r32";
+      if (normalised === "Round of 16") prefix = "r16";
+      if (normalised === "Quarter-final") prefix = "qf";
+      if (normalised === "Semi-final") prefix = "sf";
+      if (normalised === "Final") prefix = "final";
+      if (normalised === "Third-place") prefix = "third";
+
+      return prefix + "-" + String(match || "1").replace(/[^0-9a-zA-Z_-]/g, "");
+    }
+
+    function renderBracketColumn(title, matches, side, sizeClass) {
+      return '<section class="round-column ' + side + ' ' + sizeClass + '">' +
+        '<h3 class="round-title">' + escapeHtml(title) + '</h3>' +
+        matches.map(function(match) {
+          return '<div class="match-slot">' + renderMatchCard(match, "") + '</div>';
+        }).join("") +
+      '</section>';
+    }
+
+    function renderCentreColumn(finalMatchRow, thirdPlaceRow) {
+      return '<section class="round-column center">' +
+        '<div>' +
+          '<h3 class="center-title">Final</h3>' +
+          '<div class="match-slot">' + renderMatchCard(finalMatchRow, "final-card") + '</div>' +
+        '</div>' +
+        '<div>' +
+          '<h3 class="center-title">Third-place</h3>' +
+          '<div class="match-slot">' + renderMatchCard(thirdPlaceRow, "third-card") + '</div>' +
+        '</div>' +
+      '</section>';
+    }
+
+    function renderMatchCard(match, extraClass) {
+      return '<article class="match-card ' + (extraClass || "") + '" data-bracket-id="' + escapeHtml(bracketId(match.round, match.match)) + '">' +
+        '<div class="match-label"><span>Match ' + escapeHtml(match.match || '-') + '</span><span>' + escapeHtml(normaliseRound(match.round)) + '</span></div>' +
         renderTeamLine(match.team1, match.winner) +
         renderTeamLine(match.team2, match.winner) +
       '</article>';
     }
 
+    function drawKnockoutLines() {
+      const stage = byId("bracketStage");
+      const svg = byId("bracketLines");
+
+      if (!stage || !svg || byId("knockoutView").classList.contains("active") === false) {
+        return;
+      }
+
+      const stageRect = stage.getBoundingClientRect();
+      svg.setAttribute("viewBox", "0 0 " + stageRect.width + " " + stageRect.height);
+      svg.setAttribute("width", stageRect.width);
+      svg.setAttribute("height", stageRect.height);
+      svg.innerHTML = "";
+
+      const connections = knockoutConnections();
+
+      connections.forEach(function(connection) {
+        const from = findBracketCard(connection.from);
+        const to = findBracketCard(connection.to);
+
+        if (!from || !to) return;
+
+        const fromRect = from.getBoundingClientRect();
+        const toRect = to.getBoundingClientRect();
+        const side = connection.side;
+
+        const startX = side === "left"
+          ? fromRect.right - stageRect.left
+          : fromRect.left - stageRect.left;
+        const startY = fromRect.top + fromRect.height / 2 - stageRect.top;
+        const endX = side === "left"
+          ? toRect.left - stageRect.left
+          : toRect.right - stageRect.left;
+        const endY = toRect.top + toRect.height / 2 - stageRect.top;
+        const middleX = side === "left"
+          ? startX + Math.max(18, (endX - startX) / 2)
+          : startX - Math.max(18, (startX - endX) / 2);
+
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", "M " + startX + " " + startY + " H " + middleX + " V " + endY + " H " + endX);
+        if (connection.dashed) path.setAttribute("class", "dashed");
+        svg.appendChild(path);
+      });
+    }
+
+    function findBracketCard(id) {
+      return document.querySelector('[data-bracket-id="' + id + '"]');
+    }
+
+    function knockoutConnections() {
+      const connections = [];
+
+      function add(from, to, side, dashed) {
+        connections.push({ from: from, to: to, side: side, dashed: !!dashed });
+      }
+
+      for (let i = 1; i <= 16; i += 2) {
+        const target = "r16-" + Math.ceil(i / 2);
+        const side = i <= 7 ? "left" : "right";
+        add("r32-" + i, target, side, false);
+        add("r32-" + (i + 1), target, side, false);
+      }
+
+      add("r16-1", "qf-1", "left", false);
+      add("r16-2", "qf-1", "left", false);
+      add("r16-3", "qf-2", "left", false);
+      add("r16-4", "qf-2", "left", false);
+      add("qf-1", "sf-1", "left", false);
+      add("qf-2", "sf-1", "left", false);
+      add("sf-1", "final-1", "left", false);
+      add("sf-1", "third-1", "left", true);
+
+      add("r16-5", "qf-3", "right", false);
+      add("r16-6", "qf-3", "right", false);
+      add("r16-7", "qf-4", "right", false);
+      add("r16-8", "qf-4", "right", false);
+      add("qf-3", "sf-2", "right", false);
+      add("qf-4", "sf-2", "right", false);
+      add("sf-2", "final-1", "right", false);
+      add("sf-2", "third-1", "right", true);
+
+      return connections;
+    }
+
     function renderTeamLine(team, winner) {
       const isWinner = team && winner && lower(team) === lower(winner);
       const entry = team ? entryForCountry(team) : null;
-      const participant = entry && entry.participant ? escapeHtml(entry.participant) : '';
+      const participant = entry && entry.participant ? escapeHtml(entry.participant) : "";
+      const countryText = team ? countryWithFlag(team) : '<span class="muted">TBC</span>';
+      const playerText = team
+        ? (participant ? participant : '<span class="muted">No player yet</span>')
+        : '<span class="muted">Awaiting fixture</span>';
 
       return '<div class="team-line ' + (isWinner ? 'winner' : '') + '">' +
-        '<span>' + (team ? countryWithFlag(team) : '<span class="muted">TBC</span>') + '</span>' +
-        '<span class="muted">' + participant + '</span>' +
+        '<span class="team-country">' + countryText + '</span>' +
+        '<span class="team-player">' + playerText + '</span>' +
       '</div>';
     }
 
@@ -1155,7 +1429,15 @@
 
           button.classList.add("active");
           byId(button.dataset.target).classList.add("active");
+
+          if (button.dataset.target === "knockoutView") {
+            requestAnimationFrame(drawKnockoutLines);
+          }
         });
+      });
+
+      window.addEventListener("resize", function() {
+        requestAnimationFrame(drawKnockoutLines);
       });
     }
 
