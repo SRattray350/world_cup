@@ -105,22 +105,7 @@
     }
 
     .intro::before {
-      content: "";
-      position: absolute;
-      inset: auto 24px 18px 24px;
-      height: 84px;
-      border-radius: 22px;
-      background:
-        repeating-linear-gradient(
-          90deg,
-          rgba(32,212,137,0.18) 0px,
-          rgba(32,212,137,0.18) 42px,
-          rgba(255,255,255,0.045) 42px,
-          rgba(255,255,255,0.045) 84px
-        );
-      border: 1px solid rgba(255,255,255,0.08);
-      opacity: 0.45;
-      pointer-events: none;
+      display: none;
     }
 
     .intro::after {
@@ -531,6 +516,57 @@
       font-size: 1rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
+    }
+
+
+    .group-card {
+      height: 100%;
+    }
+
+    .group-card table {
+      table-layout: fixed;
+      width: 100%;
+    }
+
+    .group-card th:nth-child(1),
+    .group-card td:nth-child(1) {
+      width: 42px;
+    }
+
+    .group-card th:nth-child(2),
+    .group-card td:nth-child(2) {
+      width: 42%;
+    }
+
+    .group-card th:nth-child(3),
+    .group-card td:nth-child(3) {
+      width: 38%;
+    }
+
+    .group-card th:nth-child(4),
+    .group-card td:nth-child(4) {
+      width: 58px;
+      text-align: right;
+    }
+
+    .group-card tbody tr {
+      height: 64px;
+    }
+
+    .group-card td {
+      vertical-align: middle;
+    }
+
+    .group-card .country {
+      display: block;
+      line-height: 1.2;
+    }
+
+    .group-card .participant,
+    .group-card .muted {
+      display: inline-block;
+      max-width: 100%;
+      line-height: 1.2;
     }
 
     .empty {
