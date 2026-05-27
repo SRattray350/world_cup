@@ -662,9 +662,20 @@
 
     .round-column.center {
       display: flex;
-      min-height: 300px;
+      min-height: 760px;
       justify-content: center;
-      gap: 22px;
+      align-items: stretch;
+      gap: 26px;
+      padding-top: 180px;
+    }
+
+    .centre-finals-stack {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 28px;
+      width: 100%;
+      margin-top: 120px;
     }
 
     .round-title {
@@ -819,6 +830,26 @@
         padding: 18px;
       }
     }
+  
+    /* Centre the Final and Third-place matches lower in the bracket */
+    .round-column.center {
+      display: flex !important;
+      min-height: 760px !important;
+      justify-content: center !important;
+      align-items: stretch !important;
+      gap: 26px !important;
+      padding-top: 180px !important;
+    }
+
+    .centre-finals-stack {
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      gap: 28px !important;
+      width: 100% !important;
+      margin-top: 120px !important;
+    }
+
   </style>
 </head>
 
@@ -1627,13 +1658,15 @@
 
     function renderCentreColumn(finalMatchRow, thirdPlaceRow) {
       return '<section class="round-column center">' +
-        '<div>' +
-          '<h3 class="center-title">Final</h3>' +
-          '<div class="match-slot">' + renderMatchCard(finalMatchRow, "final-card") + '</div>' +
-        '</div>' +
-        '<div>' +
-          '<h3 class="center-title">Third-place</h3>' +
-          '<div class="match-slot">' + renderMatchCard(thirdPlaceRow, "third-card") + '</div>' +
+        '<div class="centre-finals-stack">' +
+          '<div>' +
+            '<h3 class="center-title">Final</h3>' +
+            '<div class="match-slot">' + renderMatchCard(finalMatchRow, "final-card") + '</div>' +
+          '</div>' +
+          '<div>' +
+            '<h3 class="center-title">Third-place</h3>' +
+            '<div class="match-slot">' + renderMatchCard(thirdPlaceRow, "third-card") + '</div>' +
+          '</div>' +
         '</div>' +
       '</section>';
     }
@@ -1794,6 +1827,12 @@
             }).join("") +
           '</tbody>' +
         '</table>';
+    }
+
+    function redrawKnockoutLinesSoon() {
+      setTimeout(drawKnockoutLines, 50);
+      setTimeout(drawKnockoutLines, 250);
+      setTimeout(drawKnockoutLines, 600);
     }
 
     function bindEvents() {
