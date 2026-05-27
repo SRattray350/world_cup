@@ -201,6 +201,15 @@
     .rank.bronze { color: #ffedd5; background: rgba(251,146,60,0.18); }
 
     .country { font-weight: bold; }
+
+    .flag-img {
+      width: 1.35em;
+      height: 1em;
+      margin-left: 0.35em;
+      vertical-align: -0.12em;
+      border-radius: 2px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.18);
+    }
     .participant { color: #e0f2fe; font-weight: bold; }
     .muted { color: var(--muted); }
     .score { font-weight: bold; }
@@ -376,6 +385,96 @@
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+    }
+
+    const countryCodes = {
+      "mexico": "mx",
+      "south africa": "za",
+      "korea": "kr",
+      "czechia": "cz",
+      "canada": "ca",
+      "bosnia": "ba",
+      "qatar": "qa",
+      "switzerland": "ch",
+      "brazil": "br",
+      "morocco": "ma",
+      "haiti": "ht",
+      "scotland": "gb-sct",
+      "usa": "us",
+      "paraguay": "py",
+      "australia": "au",
+      "türkiye": "tr",
+      "turkiye": "tr",
+      "turkey": "tr",
+      "germany": "de",
+      "curaçao": "cw",
+      "curacao": "cw",
+      "ivory coast": "ci",
+      "ecuador": "ec",
+      "netherlands": "nl",
+      "japan": "jp",
+      "sweden": "se",
+      "tunisia": "tn",
+      "belgium": "be",
+      "egypt": "eg",
+      "iran": "ir",
+      "new zealand": "nz",
+      "spain": "es",
+      "cape verde": "cv",
+      "saudi arabia": "sa",
+      "uruguay": "uy",
+      "france": "fr",
+      "senegal": "sn",
+      "iraq": "iq",
+      "norway": "no",
+      "argentina": "ar",
+      "algeria": "dz",
+      "austria": "at",
+      "jordan": "jo",
+      "portugal": "pt",
+      "dr congo": "cd",
+      "uzbekistan": "uz",
+      "colombia": "co",
+      "england": "gb-eng",
+      "croatia": "hr",
+      "ghana": "gh",
+      "panama": "pa"
+    };
+
+    function twemojiSlugForCode(code) {
+      if (code === "gb-eng") {
+        return "1f3f4-e0067-e0062-e0065-e006e-e0067-e007f";
+      }
+
+      if (code === "gb-sct") {
+        return "1f3f4-e0067-e0062-e0073-e0063-e0074-e007f";
+      }
+
+      const letters = code.toUpperCase().split("");
+      const base = 0x1f1e6;
+
+      return letters
+        .map(function(letter) {
+          return (base + letter.charCodeAt(0) - 65).toString(16);
+        })
+        .join("-");
+    }
+
+    function flagImageForCountry(country) {
+      const code = countryCodes[lower(country)];
+
+      if (!code) {
+        return "";
+      }
+
+      const slug = twemojiSlugForCode(code);
+      const url = "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/" + slug + ".svg";
+
+      return '<img class="flag-img" src="' + url + '" alt="">';
+    }
+
+    function countryWithFlag(country) {
+      return escapeHtml(country) + flagImageForCountry(country);
     }
 
     function loadData() {
@@ -642,10 +741,10 @@
 
       byId("stats").innerHTML =
         '<div class="stat"><span>Current leader</span><strong>' +
-        (leader ? escapeHtml(leader.country) : "-") +
+        (leader ? countryWithFlag(leader.country) : "-") +
         "</strong></div>" +
         '<div class="stat"><span>Current lowest</span><strong>' +
-        (loser ? escapeHtml(loser.country) : "-") +
+        (loser ? countryWithFlag(loser.country) : "-") +
         "</strong></div>";
     }
 
@@ -673,7 +772,7 @@
             list.map(function(row, index) {
               return '<tr>' +
                 '<td><span class="rank ' + rankClass(index) + '">' + (index + 1) + '</span></td>' +
-                '<td><span class="country">' + escapeHtml(row.country) + '</span><br><span class="muted">' + escapeHtml(row.group) + '</span></td>' +
+                '<td><span class="country">' + countryWithFlag(row.country) + '</span><br><span class="muted">' + escapeHtml(row.group) + '</span></td>' +
                 '<td class="participant">' + escapeHtml(row.participant) + '</td>' +
                 '<td class="score">' + escapeHtml(row.score) + '</td>' +
                 '<td class="hide-mobile">' + rowBadges(row) + '</td>' +
@@ -713,7 +812,7 @@
               list.map(function(row, index) {
                 return '<tr>' +
                   '<td><span class="rank ' + (index === 0 && row.participant ? "gold" : "") + '">' + (index + 1) + '</span></td>' +
-                  '<td class="country">' + escapeHtml(row.country) + '</td>' +
+                  '<td class="country">' + countryWithFlag(row.country) + '</td>' +
                   '<td>' +
                     (row.participant
                       ? '<span class="participant">' + escapeHtml(row.participant) + '</span>'
@@ -738,7 +837,7 @@
           return '<span class="badge ' + (row.prizeGroup ? "green" : "gold") + '">' +
             escapeHtml(row.participant) +
             " - " +
-            escapeHtml(row.country) +
+            countryWithFlag(row.country) +
             (row.prizeGroup ? " (" + escapeHtml(row.prizeGroup) + ")" : "") +
             " - " +
             escapeHtml(row.score) +
