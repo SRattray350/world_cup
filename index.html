@@ -105,7 +105,7 @@
 
     .stats {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 12px;
       margin: 16px 0;
     }
@@ -268,11 +268,6 @@
       text-align: center;
     }
 
-    footer {
-      padding: 24px 0 38px;
-      color: #94a3b8;
-      font-size: 0.9rem;
-    }
 
     code {
       background: rgba(0,0,0,0.35);
@@ -298,7 +293,6 @@
     <div class="hero">
       <section class="card intro">
         <h1>World Cup Sweepstake</h1>
-        <p>Live standings from the office Google Sheet. Add participants and scores in the sheet, then refresh this page.</p>
       </section>
       <aside class="card prize-card">
         <h2>Prize pot</h2>
@@ -327,7 +321,6 @@
     <nav class="tabs">
       <button class="tab active" type="button" data-target="overallView">Overall standings</button>
       <button class="tab" type="button" data-target="groupsView">Groups</button>
-      <button class="tab" type="button" data-target="drawView">Who has who?</button>
       <button class="tab" type="button" data-target="prizesView">Prizes</button>
     </nav>
 
@@ -341,20 +334,12 @@
       <div id="groupsGrid" class="group-grid"></div>
     </section>
 
-    <section id="drawView" class="card panel view">
-      <h2>Who has who?</h2>
-      <div id="drawTable"></div>
-    </section>
 
     <section id="prizesView" class="card panel view">
       <h2>Current prize positions</h2>
       <div id="prizeTable"></div>
     </section>
   </main>
-
-  <footer class="wrap">
-    Expected Google Sheet columns: <code>Group</code>, <code>Country</code>, <code>Participant</code>, <code>Score</code>.
-  </footer>
 
   <script>
     const DATA_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUAkR7JxLEFFPqKGBrxL20-0LPdef-_UkqN3CDkk3oqJMDTbVGXz6rfvXr4pTR8ftcP5tI1hNtiJhm/pub?gid=1496784945&single=true&output=csv";
@@ -415,8 +400,12 @@
         } else if (char === ',' && !quoted) {
           row.push(cell);
           cell = "";
-        } else if ((char === '\n' || char === '\r') && !quoted) {
-          if (char === '\r' && next === '\n') i++;
+        } else if ((char === '
+' || char === '
+') && !quoted) {
+          if (char === '
+' && next === '
+') i++;
           row.push(cell);
           output.push(row);
           row = [];
@@ -464,7 +453,7 @@
         rows = parseRows(csvRows);
         renderAll();
         const assigned = rows.filter(r => r.participant).length;
-        setStatus("Loaded " + rows.length + " countries. " + assigned + " currently assigned. Last updated: " + new Date().toLocaleTimeString(), false);
+        setStatus("Last updated: " + new Date().toLocaleTimeString(), false);
       } catch (error) {
         console.error(error);
         setStatus("Error: " + error.message, true);
@@ -555,7 +544,6 @@
       renderStats();
       renderOverall();
       renderGroups();
-      renderDraw();
       renderPrizes();
     }
 
@@ -569,13 +557,10 @@
     }
 
     function renderStats() {
-      const assigned = assignedRows();
       const prizes = getPrizes();
       const leader = prizes.first[0];
       const loser = prizes.loser[0];
       byId("stats").innerHTML =
-        '<div class="stat"><span>Countries</span><strong>' + rows.length + '</strong></div>' +
-        '<div class="stat"><span>Assigned</span><strong>' + assigned.length + '</strong></div>' +
         '<div class="stat"><span>Current leader</span><strong>' + (leader ? escapeHtml(leader.country) : '—') + '</strong></div>' +
         '<div class="stat"><span>Current lowest</span><strong>' + (loser ? escapeHtml(loser.country) : '—') + '</strong></div>';
     }
@@ -623,26 +608,6 @@
           ).join('') +
           '</tbody></table></article>';
       }).join('');
-    }
-
-    function renderDraw() {
-      const list = [...visibleRows()].sort((a, b) => a.country.localeCompare(b.country));
-      if (!list.length) {
-        byId("drawTable").innerHTML = '<div class="empty">No countries match this search/filter.</div>';
-        return;
-      }
-
-      byId("drawTable").innerHTML =
-        '<table><thead><tr><th>Group</th><th>Country</th><th>Participant</th><th>Score</th></tr></thead><tbody>' +
-        list.map(r =>
-          '<tr>' +
-            '<td>' + escapeHtml(r.group) + '</td>' +
-            '<td class="country">' + escapeHtml(r.country) + '</td>' +
-            '<td>' + (r.participant ? '<span class="participant">' + escapeHtml(r.participant) + '</span>' : '<span class="muted">Unassigned</span>') + '</td>' +
-            '<td class="score">' + escapeHtml(r.score) + '</td>' +
-          '</tr>'
-        ).join('') +
-        '</tbody></table>';
     }
 
     function prizeEntryHtml(entries) {
