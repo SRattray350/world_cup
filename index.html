@@ -278,6 +278,64 @@
       text-align: center;
     }
 
+
+    .knockout-board {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(220px, 1fr));
+      gap: 14px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .round-column {
+      min-width: 220px;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .round-column h3 {
+      margin: 0 0 4px;
+      color: #bae6fd;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .match-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.05);
+      padding: 10px;
+    }
+
+    .match-label {
+      color: var(--muted);
+      font-size: 0.78rem;
+      margin-bottom: 8px;
+    }
+
+    .team-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 7px 8px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.045);
+      margin-top: 5px;
+    }
+
+    .team-line.winner {
+      color: #bbf7d0;
+      background: rgba(52,211,153,0.13);
+      border: 1px solid rgba(52,211,153,0.35);
+    }
+
+    .third-place-box {
+      margin-top: 16px;
+      max-width: 440px;
+    }
+
     @media (max-width: 900px) {
       .hero, .controls { grid-template-columns: 1fr; }
       .group-grid { grid-template-columns: 1fr; }
@@ -325,19 +383,25 @@
     </section>
 
     <nav class="tabs">
-      <button class="tab active" type="button" data-target="overallView">Overall standings</button>
+      <button class="tab active" type="button" data-target="overallView">Group-stage standings</button>
       <button class="tab" type="button" data-target="groupsView">Groups</button>
+      <button class="tab" type="button" data-target="knockoutView">Knockout bracket</button>
       <button class="tab" type="button" data-target="prizesView">Prizes</button>
     </nav>
 
     <section id="overallView" class="card panel view active">
-      <h2>Overall standings</h2>
+      <h2>Group-stage standings</h2>
       <div id="overallTable"></div>
     </section>
 
     <section id="groupsView" class="card panel view">
       <h2>Group standings</h2>
       <div id="groupsGrid" class="group-grid"></div>
+    </section>
+
+    <section id="knockoutView" class="card panel view">
+      <h2>Knockout bracket</h2>
+      <div id="knockoutTable"></div>
     </section>
 
     <section id="prizesView" class="card panel view">
@@ -347,9 +411,13 @@
   </main>
 
   <script>
-    const GVIZ_URL = "https://docs.google.com/spreadsheets/d/1mXNPRmCqN9-Ml1CZxEitWlcjFvjRZHWNEkIzzicNeAQ/gviz/tq?gid=1496784945&headers=1";
+    const SHEET_ID = "1mXNPRmCqN9-Ml1CZxEitWlcjFvjRZHWNEkIzzicNeAQ";
+    const COMPETITION_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?gid=1496784945&headers=1";
+    const KNOCKOUT_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?sheet=Knockout&headers=1";
 
     let rows = [];
+    let knockoutRows = [];
+    let knockoutError = "";
     let searchText = "";
     let selectedGroup = "all";
 
@@ -477,37 +545,53 @@
       return escapeHtml(country) + flagImageForCountry(country);
     }
 
-    function loadData() {
-      setStatus("Loading sheet data...", false);
+    function loadGviz(url) {
+      return new Promise(function(resolve, reject) {
+        const callbackName = "handleSheetData_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+        const script = document.createElement("script");
 
-      const callbackName = "handleSheetData_" + Date.now();
-      const script = document.createElement("script");
-
-      window[callbackName] = function(response) {
-        try {
-          rows = parseGvizResponse(response);
-          renderAll();
-          setStatus("Last updated: " + new Date().toLocaleTimeString(), false);
-        } catch (error) {
-          console.error(error);
-          setStatus("Error: " + error.message, true);
-        } finally {
+        window[callbackName] = function(response) {
           delete window[callbackName];
           script.remove();
+          resolve(response);
+        };
+
+        script.onerror = function() {
+          delete window[callbackName];
+          script.remove();
+          reject(new Error("The Google Sheet could not be loaded."));
+        };
+
+        script.src = url +
+          "&tqx=" + encodeURIComponent("out:json;responseHandler:" + callbackName) +
+          "&cache=" + Date.now();
+
+        document.body.appendChild(script);
+      });
+    }
+
+    async function loadData() {
+      try {
+        setStatus("Loading sheet data...", false);
+
+        const competitionResponse = await loadGviz(COMPETITION_URL);
+        rows = parseGvizResponse(competitionResponse);
+
+        knockoutError = "";
+        try {
+          const knockoutResponse = await loadGviz(KNOCKOUT_URL);
+          knockoutRows = parseKnockoutResponse(knockoutResponse);
+        } catch (error) {
+          knockoutRows = [];
+          knockoutError = error.message;
         }
-      };
 
-      script.onerror = function() {
-        delete window[callbackName];
-        script.remove();
-        setStatus("Error: The Google Sheet could not be loaded.", true);
-      };
-
-      script.src = GVIZ_URL +
-        "&tqx=" + encodeURIComponent("out:json;responseHandler:" + callbackName) +
-        "&cache=" + Date.now();
-
-      document.body.appendChild(script);
+        renderAll();
+        setStatus("Last updated: " + new Date().toLocaleTimeString(), false);
+      } catch (error) {
+        console.error(error);
+        setStatus("Error: " + error.message, true);
+      }
     }
 
     function parseGvizResponse(response) {
@@ -552,6 +636,118 @@
         .filter(function(row) {
           return row.group && row.country;
         });
+    }
+
+    function parseKnockoutResponse(response) {
+      if (!response || response.status === "error") {
+        let message = "Google returned an error.";
+        if (response && response.errors && response.errors[0]) {
+          message = response.errors[0].detailed_message || response.errors[0].message || message;
+        }
+        throw new Error(message);
+      }
+
+      const table = response.table;
+
+      if (!table || !table.cols || !table.rows) {
+        throw new Error("Google returned an unexpected knockout table format.");
+      }
+
+      const headers = table.cols.map(function(col) {
+        return lower(col.label || col.id).replace(/\s+/g, " ");
+      });
+
+      const roundIndex = findHeaderIndex(headers, ["round", "stage"]);
+      const matchIndex = findHeaderIndex(headers, ["match", "match no", "match number"]);
+      const team1Index = findHeaderIndex(headers, ["team 1", "team1", "country 1", "country1", "home"]);
+      const team2Index = findHeaderIndex(headers, ["team 2", "team2", "country 2", "country2", "away"]);
+      const winnerIndex = findHeaderIndex(headers, ["winner", "winning team"]);
+
+      if (roundIndex === -1 || team1Index === -1 || team2Index === -1 || winnerIndex === -1) {
+        throw new Error("The Knockout tab must have these headers: Round, Match, Team 1, Team 2, Winner");
+      }
+
+      return table.rows
+        .map(function(row, index) {
+          const cells = row.c || [];
+          return {
+            id: index,
+            round: getCell(cells[roundIndex]),
+            match: matchIndex === -1 ? String(index + 1) : getCell(cells[matchIndex]),
+            team1: getCell(cells[team1Index]),
+            team2: getCell(cells[team2Index]),
+            winner: getCell(cells[winnerIndex])
+          };
+        })
+        .filter(function(row) {
+          return row.round || row.team1 || row.team2 || row.winner;
+        });
+    }
+
+    function findHeaderIndex(headers, options) {
+      for (let i = 0; i < options.length; i++) {
+        const found = headers.indexOf(options[i]);
+        if (found !== -1) return found;
+      }
+      return -1;
+    }
+
+    function normaliseRound(round) {
+      const value = lower(round).replace(/[-_]/g, " ").replace(/\s+/g, " ");
+
+      if (value.includes("32")) return "Round of 32";
+      if (value.includes("16")) return "Round of 16";
+      if (value.includes("quarter")) return "Quarter-final";
+      if (value.includes("semi")) return "Semi-final";
+      if (value.includes("third") || value.includes("3rd")) return "Third-place";
+      if (value === "final" || value.includes(" final")) return "Final";
+
+      return clean(round) || "Other";
+    }
+
+    function roundSortValue(round) {
+      const normalised = normaliseRound(round);
+      const order = ["Round of 32", "Round of 16", "Quarter-final", "Semi-final", "Final", "Third-place"];
+      const index = order.indexOf(normalised);
+      return index === -1 ? 99 : index;
+    }
+
+    function finalMatch() {
+      return knockoutRows.find(function(row) {
+        return normaliseRound(row.round) === "Final";
+      });
+    }
+
+    function thirdPlaceMatch() {
+      return knockoutRows.find(function(row) {
+        return normaliseRound(row.round) === "Third-place";
+      });
+    }
+
+    function entryForCountry(country) {
+      const wanted = lower(country);
+      const found = rows.find(function(row) {
+        return lower(row.country) === wanted;
+      });
+
+      if (found) return found;
+
+      return {
+        country: clean(country),
+        participant: "",
+        group: "",
+        score: ""
+      };
+    }
+
+    function finalRunnerUpCountry(match) {
+      if (!match || !match.winner) return "";
+      const winner = lower(match.winner);
+
+      if (match.team1 && lower(match.team1) !== winner) return match.team1;
+      if (match.team2 && lower(match.team2) !== winner) return match.team2;
+
+      return "";
     }
 
     function getCell(cell) {
@@ -611,23 +807,6 @@
 
     function getPrizes() {
       const assigned = assignedRows();
-      const scoreMap = {};
-      const scores = [];
-
-      assigned.forEach(function(row) {
-        if (!scoreMap[row.score]) {
-          scoreMap[row.score] = true;
-          scores.push(row.score);
-        }
-      });
-
-      scores.sort(function(a, b) {
-        return b - a;
-      });
-
-      const firstScore = scores[0];
-      const secondScore = scores[1];
-      const thirdScore = scores[2];
       const lowestScore = assigned.length
         ? Math.min.apply(null, assigned.map(function(row) { return row.score; }))
         : undefined;
@@ -650,10 +829,16 @@
           });
       });
 
+      const final = finalMatch();
+      const thirdPlace = thirdPlaceMatch();
+      const firstCountry = final && final.winner ? final.winner : "";
+      const secondCountry = finalRunnerUpCountry(final);
+      const thirdCountry = thirdPlace && thirdPlace.winner ? thirdPlace.winner : "";
+
       return {
-        first: assigned.filter(function(row) { return row.score === firstScore; }),
-        second: assigned.filter(function(row) { return row.score === secondScore; }),
-        third: assigned.filter(function(row) { return row.score === thirdScore; }),
+        first: firstCountry ? [entryForCountry(firstCountry)] : [],
+        second: secondCountry ? [entryForCountry(secondCountry)] : [],
+        third: thirdCountry ? [entryForCountry(thirdCountry)] : [],
         loser: assigned.filter(function(row) { return row.score === lowestScore; }),
         groupWinners: groupWinners
       };
@@ -704,6 +889,7 @@
       renderStats();
       renderOverall();
       renderGroups();
+      renderKnockout();
       renderPrizes();
     }
 
@@ -825,6 +1011,72 @@
           '</table>' +
         '</article>';
       }).join("");
+    }
+
+    function renderKnockout() {
+      const target = byId("knockoutTable");
+
+      if (knockoutError) {
+        target.innerHTML =
+          '<div class="empty">Create a sheet tab called <strong>Knockout</strong> with columns: <strong>Round</strong>, <strong>Match</strong>, <strong>Team 1</strong>, <strong>Team 2</strong>, <strong>Winner</strong>. The page will then draw the bracket here.</div>';
+        return;
+      }
+
+      if (!knockoutRows.length) {
+        target.innerHTML =
+          '<div class="empty">The Knockout tab is empty. Add rows such as: Round of 32 | 1 | Mexico | Brazil | Mexico.</div>';
+        return;
+      }
+
+      const bracketRounds = ["Round of 32", "Round of 16", "Quarter-final", "Semi-final", "Final"];
+      const groupedRounds = {};
+
+      knockoutRows.forEach(function(row) {
+        const round = normaliseRound(row.round);
+        if (!groupedRounds[round]) groupedRounds[round] = [];
+        groupedRounds[round].push(row);
+      });
+
+      Object.keys(groupedRounds).forEach(function(round) {
+        groupedRounds[round].sort(function(a, b) {
+          return Number(a.match || 0) - Number(b.match || 0);
+        });
+      });
+
+      const board = '<div class="knockout-board">' +
+        bracketRounds.map(function(round) {
+          const matches = groupedRounds[round] || [];
+          return '<section class="round-column"><h3>' + escapeHtml(round) + '</h3>' +
+            (matches.length ? matches.map(renderMatchCard).join("") : '<div class="empty">No matches yet</div>') +
+          '</section>';
+        }).join("") +
+      '</div>';
+
+      const thirdPlaceRows = groupedRounds["Third-place"] || [];
+      const thirdPlace = thirdPlaceRows.length
+        ? '<div class="third-place-box"><h3>Third-place match</h3>' + thirdPlaceRows.map(renderMatchCard).join("") + '</div>'
+        : '';
+
+      target.innerHTML = board + thirdPlace;
+    }
+
+    function renderMatchCard(match) {
+      return '<article class="match-card">' +
+        '<div class="match-label">Match ' + escapeHtml(match.match || '-') + '</div>' +
+        renderTeamLine(match.team1, match.winner) +
+        renderTeamLine(match.team2, match.winner) +
+      '</article>';
+    }
+
+    function renderTeamLine(team, winner) {
+      const isWinner = team && winner && lower(team) === lower(winner);
+      const entry = team ? entryForCountry(team) : null;
+      const participant = entry && entry.participant ? escapeHtml(entry.participant) : '';
+
+      return '<div class="team-line ' + (isWinner ? 'winner' : '') + '">' +
+        '<span>' + (team ? countryWithFlag(team) : '<span class="muted">TBC</span>') + '</span>' +
+        '<span class="muted">' + participant + '</span>' +
+      '</div>';
     }
 
     function prizeEntryHtml(entries) {
