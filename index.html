@@ -1,265 +1,222 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Office World Cup Sweepstake</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>World Cup Sweepstake</title>
   <style>
     :root {
-      --bg: #08111f;
-      --card: rgba(15, 23, 42, 0.88);
-      --soft: rgba(255, 255, 255, 0.065);
-      --line: rgba(255, 255, 255, 0.13);
+      --bg: #07111f;
+      --card: #111827;
+      --soft: #1f2937;
       --text: #f8fafc;
       --muted: #cbd5e1;
+      --line: rgba(255,255,255,0.14);
       --accent: #38bdf8;
       --gold: #facc15;
-      --silver: #e5e7eb;
-      --bronze: #fb923c;
       --green: #34d399;
       --red: #fb7185;
-      --radius: 20px;
-      --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
     }
 
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      min-height: 100vh;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.18), transparent 32rem), var(--bg);
       color: var(--text);
-      background:
-        radial-gradient(circle at top left, rgba(56, 189, 248, 0.22), transparent 32rem),
-        radial-gradient(circle at top right, rgba(250, 204, 21, 0.14), transparent 32rem),
-        linear-gradient(135deg, #08111f, #0f172a 48%, #111827);
     }
 
-    header, main, footer {
-      width: min(1200px, calc(100% - 32px));
+    .wrap {
+      width: min(1180px, calc(100% - 28px));
       margin: 0 auto;
     }
 
-    header { padding: 42px 0 22px; }
+    header {
+      padding: 34px 0 18px;
+    }
 
     .hero {
       display: grid;
       grid-template-columns: 1.6fr 1fr;
-      gap: 18px;
-      align-items: stretch;
+      gap: 16px;
     }
 
     .card {
-      background: var(--card);
+      background: rgba(17,24,39,0.92);
       border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(14px);
+      border-radius: 18px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.28);
     }
 
-    .intro { padding: 32px; }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 12px;
-      border-radius: 999px;
-      color: #bae6fd;
-      background: rgba(56, 189, 248, 0.13);
-      border: 1px solid rgba(56, 189, 248, 0.28);
-      font-size: 0.86rem;
-      font-weight: 800;
+    .intro, .prize-card, .panel {
+      padding: 22px;
     }
 
     h1 {
-      margin: 18px 0 10px;
-      font-size: clamp(2.2rem, 6vw, 4.5rem);
+      margin: 0 0 8px;
+      font-size: clamp(2.1rem, 6vw, 4rem);
+      letter-spacing: -0.05em;
       line-height: 0.95;
-      letter-spacing: -0.065em;
     }
 
-    .subtitle {
-      max-width: 68ch;
-      margin: 0;
+    h2, h3 { margin-top: 0; }
+
+    p {
       color: var(--muted);
-      font-size: 1.05rem;
-      line-height: 1.6;
+      line-height: 1.5;
     }
-
-    .prize-card { padding: 24px; }
-    .prize-card h2 { margin: 0 0 14px; font-size: 1.15rem; }
 
     .prizes {
-      display: grid;
-      gap: 10px;
-      padding: 0;
-      margin: 0;
       list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 9px;
     }
 
     .prizes li {
       display: flex;
       justify-content: space-between;
-      align-items: center;
       gap: 12px;
-      padding: 11px 12px;
-      border-radius: 14px;
-      background: var(--soft);
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.06);
       border: 1px solid var(--line);
       color: var(--muted);
     }
 
-    .prizes strong { color: var(--text); }
-    .amount { color: var(--green); font-weight: 950; }
-
-    main { padding-bottom: 34px; }
-
-    .notice {
-      display: none;
-      margin: 0 0 16px;
-      padding: 15px 17px;
-      border-radius: var(--radius);
-      background: rgba(250, 204, 21, 0.11);
-      border: 1px solid rgba(250, 204, 21, 0.35);
-      color: #fef3c7;
-      line-height: 1.55;
-    }
+    .amount { color: var(--green); font-weight: bold; }
 
     .status {
+      margin: 14px 0;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--line);
       color: var(--muted);
-      margin: 0 0 16px;
-      line-height: 1.5;
+    }
+
+    .error {
+      color: #fecdd3;
+      border-color: rgba(251,113,133,0.45);
+      background: rgba(251,113,133,0.12);
     }
 
     .stats {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 12px;
-      margin: 18px 0;
+      margin: 16px 0;
     }
 
     .stat {
-      padding: 18px;
-      background: var(--soft);
+      padding: 16px;
+      background: rgba(255,255,255,0.06);
       border: 1px solid var(--line);
-      border-radius: var(--radius);
+      border-radius: 14px;
     }
 
     .stat span {
       display: block;
       color: var(--muted);
-      font-size: 0.86rem;
+      font-size: 0.9rem;
     }
 
     .stat strong {
       display: block;
       margin-top: 4px;
-      font-size: 1.55rem;
-      line-height: 1.15;
+      font-size: 1.45rem;
     }
 
     .controls {
       display: grid;
       grid-template-columns: 1fr auto auto;
       gap: 10px;
-      margin: 18px 0;
+      margin: 16px 0;
     }
 
     input, select, button {
-      width: 100%;
       border: 1px solid var(--line);
-      border-radius: 14px;
-      background: rgba(2, 6, 23, 0.55);
-      color: var(--text);
-      padding: 12px 13px;
+      border-radius: 12px;
+      padding: 11px 12px;
       font: inherit;
-      outline: none;
+      color: var(--text);
+      background: #020617;
     }
 
-    input::placeholder { color: #94a3b8; }
-    button { cursor: pointer; font-weight: 900; }
-    button:hover { border-color: rgba(56, 189, 248, 0.65); }
+    button {
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      border-color: var(--accent);
+    }
 
     .tabs {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin: 20px 0 12px;
+      margin: 18px 0 12px;
     }
 
     .tab {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.06);
+      color: var(--muted);
       padding: 10px 14px;
       border-radius: 999px;
-      background: var(--soft);
-      border: 1px solid var(--line);
-      color: var(--muted);
       cursor: pointer;
-      user-select: none;
-      font-weight: 850;
+      font-weight: bold;
     }
 
     .tab.active {
-      color: #e0f2fe;
-      background: rgba(56, 189, 248, 0.16);
-      border-color: rgba(56, 189, 248, 0.45);
+      color: white;
+      background: rgba(56,189,248,0.22);
+      border-color: rgba(56,189,248,0.55);
     }
 
-    .view { display: none; padding: 18px; }
+    .view { display: none; }
     .view.active { display: block; }
-
-    .section-title {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 14px;
-      margin-bottom: 14px;
-    }
-
-    .section-title h2 { margin: 0; font-size: 1.25rem; }
-    .section-title span { color: var(--muted); font-size: 0.92rem; }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      overflow: hidden;
     }
 
     th, td {
-      padding: 13px 12px;
-      border-bottom: 1px solid var(--line);
+      padding: 12px 10px;
       text-align: left;
-      vertical-align: middle;
+      border-bottom: 1px solid var(--line);
     }
-
-    tr:last-child td { border-bottom: 0; }
 
     th {
       color: #bae6fd;
-      background: rgba(255, 255, 255, 0.035);
       font-size: 0.78rem;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.06em;
+      background: rgba(255,255,255,0.04);
     }
 
     .rank {
       display: inline-grid;
       place-items: center;
-      min-width: 32px;
-      height: 32px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.09);
-      font-weight: 950;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      font-weight: bold;
     }
 
-    .rank.gold { color: #fef3c7; background: rgba(250, 204, 21, 0.18); border: 1px solid rgba(250, 204, 21, 0.35); }
-    .rank.silver { color: white; background: rgba(229, 231, 235, 0.15); border: 1px solid rgba(229, 231, 235, 0.35); }
-    .rank.bronze { color: #ffedd5; background: rgba(251, 146, 60, 0.16); border: 1px solid rgba(251, 146, 60, 0.35); }
+    .rank.gold { color: #fef3c7; background: rgba(250,204,21,0.2); }
+    .rank.silver { color: white; background: rgba(229,231,235,0.18); }
+    .rank.bronze { color: #ffedd5; background: rgba(251,146,60,0.18); }
 
-    .country { font-weight: 950; }
+    .country { font-weight: bold; }
+    .participant { color: #e0f2fe; font-weight: bold; }
     .muted { color: var(--muted); }
-    .participant { color: #e0f2fe; font-weight: 850; }
-    .score { font-weight: 950; font-size: 1.08rem; }
+    .score { font-weight: bold; }
 
     .badges {
       display: flex;
@@ -269,22 +226,19 @@
 
     .badge {
       display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      width: fit-content;
-      padding: 5px 9px;
+      padding: 5px 8px;
       border-radius: 999px;
       border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255,255,255,0.08);
       color: var(--muted);
       font-size: 0.78rem;
-      font-weight: 850;
+      font-weight: bold;
       white-space: nowrap;
     }
 
-    .badge.gold { color: #fef3c7; border-color: rgba(250, 204, 21, 0.38); background: rgba(250, 204, 21, 0.12); }
-    .badge.green { color: #bbf7d0; border-color: rgba(52, 211, 153, 0.35); background: rgba(52, 211, 153, 0.12); }
-    .badge.red { color: #fecdd3; border-color: rgba(251, 113, 133, 0.36); background: rgba(251, 113, 133, 0.12); }
+    .badge.gold { color: #fef3c7; background: rgba(250,204,21,0.12); border-color: rgba(250,204,21,0.38); }
+    .badge.green { color: #bbf7d0; background: rgba(52,211,153,0.12); border-color: rgba(52,211,153,0.38); }
+    .badge.red { color: #fecdd3; background: rgba(251,113,133,0.12); border-color: rgba(251,113,133,0.38); }
 
     .group-grid {
       display: grid;
@@ -293,76 +247,59 @@
     }
 
     .group-card {
+      background: rgba(255,255,255,0.05);
       border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: rgba(255, 255, 255, 0.045);
-      padding: 15px;
+      border-radius: 14px;
+      padding: 14px;
     }
 
     .group-card h3 {
       display: flex;
       justify-content: space-between;
       gap: 10px;
-      margin: 0 0 12px;
-      font-size: 1.05rem;
+      margin-bottom: 10px;
     }
-
-    .group-card table th,
-    .group-card table td { padding: 9px 8px; }
-    .group-card table th { font-size: 0.68rem; }
 
     .empty {
-      padding: 28px;
+      padding: 24px;
       border: 1px dashed var(--line);
-      border-radius: var(--radius);
-      text-align: center;
+      border-radius: 14px;
       color: var(--muted);
-      background: rgba(255, 255, 255, 0.035);
-    }
-
-    code {
-      padding: 2px 6px;
-      border-radius: 8px;
-      background: rgba(0, 0, 0, 0.3);
-      color: white;
+      text-align: center;
     }
 
     footer {
-      padding: 0 0 40px;
+      padding: 24px 0 38px;
       color: #94a3b8;
       font-size: 0.9rem;
-      line-height: 1.55;
+    }
+
+    code {
+      background: rgba(0,0,0,0.35);
+      padding: 2px 6px;
+      border-radius: 6px;
     }
 
     @media (max-width: 900px) {
-      .hero { grid-template-columns: 1fr; }
+      .hero, .controls { grid-template-columns: 1fr; }
       .stats { grid-template-columns: repeat(2, 1fr); }
-      .controls { grid-template-columns: 1fr; }
       .group-grid { grid-template-columns: 1fr; }
     }
 
-    @media (max-width: 620px) {
-      header, main, footer { width: min(100% - 20px, 1200px); }
-      header { padding-top: 24px; }
-      .intro, .prize-card { padding: 22px; }
+    @media (max-width: 600px) {
       .stats { grid-template-columns: 1fr; }
-      th, td { padding: 10px 7px; font-size: 0.9rem; }
-      .hide-small { display: none; }
+      th, td { padding: 9px 7px; font-size: 0.9rem; }
+      .hide-mobile { display: none; }
     }
   </style>
 </head>
 <body>
-  <header>
+  <header class="wrap">
     <div class="hero">
       <section class="card intro">
-        <div class="eyebrow">⚽ Office sweepstake</div>
         <h1>World Cup Sweepstake</h1>
-        <p class="subtitle">
-          Live standings from the office Google Sheet. Update the participant names and scores in the
-          <strong>Competition</strong> tab, then refresh this page to update the draw, groups and prize positions.
-        </p>
+        <p>Live standings from the office Google Sheet. Add participants and scores in the sheet, then refresh this page.</p>
       </section>
-
       <aside class="card prize-card">
         <h2>Prize pot</h2>
         <ul class="prizes">
@@ -376,81 +313,57 @@
     </div>
   </header>
 
-  <main>
-    <div id="notice" class="notice"></div>
-    <p id="status" class="status">Loading sheet data…</p>
+  <main class="wrap">
+    <div id="status" class="status">Loading sheet data...</div>
 
     <section id="stats" class="stats"></section>
 
     <section class="controls">
-      <input id="search" type="search" placeholder="Search country, participant or group…" />
-      <select id="groupFilter">
-        <option value="all">All groups</option>
-      </select>
-      <button id="refresh" type="button">Refresh</button>
+      <input id="searchBox" type="search" placeholder="Search country, participant or group">
+      <select id="groupSelect"><option value="all">All groups</option></select>
+      <button id="refreshButton" type="button">Refresh data</button>
     </section>
 
-    <nav class="tabs" aria-label="Views">
-      <div class="tab active" data-view="overall">Overall standings</div>
-      <div class="tab" data-view="groups">Groups</div>
-      <div class="tab" data-view="draw">Who has who?</div>
-      <div class="tab" data-view="prizes">Prizes</div>
+    <nav class="tabs">
+      <button class="tab active" type="button" data-target="overallView">Overall standings</button>
+      <button class="tab" type="button" data-target="groupsView">Groups</button>
+      <button class="tab" type="button" data-target="drawView">Who has who?</button>
+      <button class="tab" type="button" data-target="prizesView">Prizes</button>
     </nav>
 
-    <section id="overall" class="card view active">
-      <div class="section-title">
-        <h2>Overall standings</h2>
-        <span id="overallCount"></span>
-      </div>
+    <section id="overallView" class="card panel view active">
+      <h2>Overall standings</h2>
       <div id="overallTable"></div>
     </section>
 
-    <section id="groups" class="card view">
-      <div class="section-title">
-        <h2>Group standings</h2>
-        <span>Top country in each group receives £5</span>
-      </div>
+    <section id="groupsView" class="card panel view">
+      <h2>Group standings</h2>
       <div id="groupsGrid" class="group-grid"></div>
     </section>
 
-    <section id="draw" class="card view">
-      <div class="section-title">
-        <h2>Who has who?</h2>
-        <span id="drawCount"></span>
-      </div>
+    <section id="drawView" class="card panel view">
+      <h2>Who has who?</h2>
       <div id="drawTable"></div>
     </section>
 
-    <section id="prizes" class="card view">
-      <div class="section-title">
-        <h2>Current prize positions</h2>
-        <span>Ties are shown together</span>
-      </div>
+    <section id="prizesView" class="card panel view">
+      <h2>Current prize positions</h2>
       <div id="prizeTable"></div>
     </section>
   </main>
 
-  <footer>
-    Sheet format expected: <code>Group</code>, <code>Country</code>, <code>Participant</code>, <code>Score</code>
-    in the <code>Competition</code> tab.
+  <footer class="wrap">
+    Expected Google Sheet columns: <code>Group</code>, <code>Country</code>, <code>Participant</code>, <code>Score</code>.
   </footer>
 
   <script>
-    /**********************************************************************
-     * EDIT THIS BIT
-     **********************************************************************/
-    // This is your published Google Sheets CSV link for the Competition tab.
-    // It comes from: File → Share → Publish to web → Competition tab.
     const DATA_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUAkR7JxLEFFPqKGBrxL20-0LPdef-_UkqN3CDkk3oqJMDTbVGXz6rfvXr4pTR8ftcP5tI1hNtiJhm/pub?gid=1496784945&single=true&output=csv";
 
-    /**********************************************************************
-     * DO NOT NEED TO EDIT BELOW THIS LINE
-     **********************************************************************/
-    let allRows = [];
-    let activeSearch = "";
-    let activeGroup = "all";
+    let rows = [];
+    let searchText = "";
+    let selectedGroup = "all";
 
-    const money = {
+    const prizeAmounts = {
       first: "£100",
       second: "£40",
       third: "£20",
@@ -458,335 +371,164 @@
       group: "£5"
     };
 
-    const $ = (id) => document.getElementById(id);
-    const clean = (value) => String(value ?? "").trim();
-    const key = (value) => clean(value).toLowerCase();
-    const scoreNumber = (value) => {
-      const parsed = Number(String(value ?? "").replace(/[^0-9.-]/g, ""));
-      return Number.isFinite(parsed) ? parsed : 0;
-    };
-
-    function csvUrl() {
-      const separator = DATA_URL.includes("?") ? "&" : "?";
-      return `${DATA_URL}${separator}cache=${Date.now()}`;
+    function byId(id) {
+      return document.getElementById(id);
     }
 
-    async function loadSheet() {
-      const notice = $("notice");
-      notice.style.display = "none";
+    function clean(value) {
+      return String(value ?? "").trim();
+    }
 
-      if (!DATA_URL || DATA_URL.includes("PASTE")) {
-        notice.innerHTML = `Paste your published Google Sheets CSV link into <code>DATA_URL</code> in this file first.`;
-        notice.style.display = "block";
-        $("status").textContent = "Waiting for your Google Sheets CSV link.";
-        return;
-      }
+    function lower(value) {
+      return clean(value).toLowerCase();
+    }
 
-      try {
-        $("status").textContent = "Loading sheet data…";
-        const response = await fetch(csvUrl());
-        if (!response.ok) throw new Error("The sheet could not be loaded.");
+    function toScore(value) {
+      const parsed = Number(String(value ?? "").replace(/[^0-9.-]/g, ""));
+      return Number.isFinite(parsed) ? parsed : 0;
+    }
 
-        const text = await response.text();
-        if (text.includes("<!DOCTYPE html") || text.includes("ServiceLogin")) {
-          throw new Error("Google returned a sign-in page. The sheet needs to be public or published to the web.");
-        }
-
-        const csv = parseCsv(text);
-        allRows = parseCompetition(csv);
-        render();
-
-        const assigned = allRows.filter(row => row.participant).length;
-        $("status").textContent = `Loaded ${allRows.length} countries. ${assigned} currently have participants assigned.`;
-      } catch (error) {
-        notice.innerHTML = `<strong>Could not load the sheet.</strong><br>${escapeHtml(error.message)}`;
-        notice.style.display = "block";
-        $("status").textContent = "Data could not be loaded.";
-      }
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#039;");
     }
 
     function parseCsv(text) {
-      const rows = [];
+      const output = [];
       let row = [];
-      let value = "";
-      let inQuotes = false;
+      let cell = "";
+      let quoted = false;
 
       for (let i = 0; i < text.length; i++) {
         const char = text[i];
         const next = text[i + 1];
 
-        if (char === '"' && inQuotes && next === '"') {
-          value += '"';
+        if (char === '"' && quoted && next === '"') {
+          cell += '"';
           i++;
         } else if (char === '"') {
-          inQuotes = !inQuotes;
-        } else if (char === "," && !inQuotes) {
-          row.push(value);
-          value = "";
-        } else if ((char === "
-" || char === "
-") && !inQuotes) {
-          if (char === "
-" && next === "
-") i++;
-          row.push(value);
-          rows.push(row);
+          quoted = !quoted;
+        } else if (char === ',' && !quoted) {
+          row.push(cell);
+          cell = "";
+        } else if ((char === '\n' || char === '\r') && !quoted) {
+          if (char === '\r' && next === '\n') i++;
+          row.push(cell);
+          output.push(row);
           row = [];
-          value = "";
+          cell = "";
         } else {
-          value += char;
+          cell += char;
         }
       }
 
-      row.push(value);
-      rows.push(row);
-      return rows.map(row => row.map(clean)).filter(row => row.some(Boolean));
+      row.push(cell);
+      output.push(row);
+      return output.map(r => r.map(clean)).filter(r => r.some(Boolean));
     }
 
-    function parseCompetition(rows) {
-      const headers = rows[0].map(key);
+    function parseRows(csvRows) {
+      const headers = csvRows[0].map(lower);
       const groupIndex = headers.indexOf("group");
       const countryIndex = headers.indexOf("country");
       const participantIndex = headers.indexOf("participant");
       const scoreIndex = headers.indexOf("score");
 
-      return rows.slice(1)
-        .map((row, index) => ({
-          index,
-          group: clean(row[groupIndex]),
-          country: clean(row[countryIndex]),
-          participant: clean(row[participantIndex]),
-          score: scoreNumber(row[scoreIndex])
+      if (groupIndex === -1 || countryIndex === -1 || participantIndex === -1 || scoreIndex === -1) {
+        throw new Error("The CSV must have these exact headers: Group, Country, Participant, Score");
+      }
+
+      return csvRows.slice(1)
+        .map((r, index) => ({
+          id: index,
+          group: clean(r[groupIndex]),
+          country: clean(r[countryIndex]),
+          participant: clean(r[participantIndex]),
+          score: toScore(r[scoreIndex])
         }))
-        .filter(row => row.group && row.country);
+        .filter(r => r.group && r.country);
+    }
+
+    async function loadData() {
+      try {
+        setStatus("Loading sheet data...", false);
+        const url = DATA_URL + "&cache=" + Date.now();
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Could not fetch the Google Sheet CSV.");
+        const text = await response.text();
+        const csvRows = parseCsv(text);
+        rows = parseRows(csvRows);
+        renderAll();
+        const assigned = rows.filter(r => r.participant).length;
+        setStatus("Loaded " + rows.length + " countries. " + assigned + " currently assigned. Last updated: " + new Date().toLocaleTimeString(), false);
+      } catch (error) {
+        console.error(error);
+        setStatus("Error: " + error.message, true);
+      }
+    }
+
+    function setStatus(message, isError) {
+      const status = byId("status");
+      status.textContent = message;
+      status.className = isError ? "status error" : "status";
     }
 
     function assignedRows() {
-      return allRows.filter(row => row.participant);
+      return rows.filter(r => r.participant);
     }
 
-    function filteredRows() {
-      const search = key(activeSearch);
-      return allRows.filter(row => {
-        const searchMatch = !search || [row.group, row.country, row.participant].some(value => key(value).includes(search));
-        const groupMatch = activeGroup === "all" || row.group === activeGroup;
-        return searchMatch && groupMatch;
+    function visibleRows() {
+      const q = lower(searchText);
+      return rows.filter(r => {
+        const matchesSearch = !q || lower(r.group).includes(q) || lower(r.country).includes(q) || lower(r.participant).includes(q);
+        const matchesGroup = selectedGroup === "all" || r.group === selectedGroup;
+        return matchesSearch && matchesGroup;
       });
     }
 
-    function rankedRows(rows, includeUnassigned = false) {
-      return [...rows]
-        .filter(row => includeUnassigned || row.participant)
+    function sortHighToLow(list, includeUnassigned) {
+      return [...list]
+        .filter(r => includeUnassigned || r.participant)
         .sort((a, b) => b.score - a.score || a.country.localeCompare(b.country));
     }
 
-    function lowestRows(rows) {
-      const assigned = rows.filter(row => row.participant);
-      if (!assigned.length) return [];
-      const min = Math.min(...assigned.map(row => row.score));
-      return assigned.filter(row => row.score === min);
+    function grouped(list) {
+      const out = {};
+      list.forEach(r => {
+        if (!out[r.group]) out[r.group] = [];
+        out[r.group].push(r);
+      });
+      return out;
     }
 
-    function topDistinctScores(rows) {
-      return [...new Set(rows.filter(row => row.participant).map(row => row.score))].sort((a, b) => b - a);
-    }
-
-    function groupMap(rows) {
-      return rows.reduce((map, row) => {
-        map[row.group] ||= [];
-        map[row.group].push(row);
-        return map;
-      }, {});
-    }
-
-    function prizeData() {
+    function getPrizes() {
       const assigned = assignedRows();
-      const scores = topDistinctScores(assigned);
+      const scores = [...new Set(assigned.map(r => r.score))].sort((a, b) => b - a);
       const firstScore = scores[0];
       const secondScore = scores[1];
       const thirdScore = scores[2];
+      const lowestScore = assigned.length ? Math.min(...assigned.map(r => r.score)) : undefined;
 
-      const groups = groupMap(assigned);
-      const groupWinners = Object.entries(groups).flatMap(([group, rows]) => {
-        const max = Math.max(...rows.map(row => row.score));
-        return rows.filter(row => row.score === max).map(row => ({ ...row, prizeGroup: group }));
+      const groupWinners = [];
+      Object.entries(grouped(assigned)).forEach(([groupName, groupRows]) => {
+        const topScore = Math.max(...groupRows.map(r => r.score));
+        groupRows.filter(r => r.score === topScore).forEach(r => groupWinners.push({ ...r, prizeGroup: groupName }));
       });
 
       return {
-        first: assigned.filter(row => row.score === firstScore),
-        second: assigned.filter(row => row.score === secondScore),
-        third: assigned.filter(row => row.score === thirdScore),
-        loser: lowestRows(assigned),
+        first: assigned.filter(r => r.score === firstScore),
+        second: assigned.filter(r => r.score === secondScore),
+        third: assigned.filter(r => r.score === thirdScore),
+        loser: assigned.filter(r => r.score === lowestScore),
         groupWinners
       };
     }
 
-    function render() {
-      renderGroupFilter();
-      renderStats();
-      renderOverall();
-      renderGroups();
-      renderDraw();
-      renderPrizes();
-    }
-
-    function renderGroupFilter() {
-      const select = $("groupFilter");
-      const groups = [...new Set(allRows.map(row => row.group))].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
-      const current = select.value || "all";
-      select.innerHTML = `<option value="all">All groups</option>` + groups.map(group => `<option value="${escapeHtml(group)}">${escapeHtml(group)}</option>`).join("");
-      select.value = groups.includes(current) ? current : "all";
-    }
-
-    function renderStats() {
-      const assigned = assignedRows();
-      const prizes = prizeData();
-      const leader = prizes.first[0];
-      const loser = prizes.loser[0];
-
-      $("stats").innerHTML = `
-        <div class="stat"><span>Countries</span><strong>${allRows.length}</strong></div>
-        <div class="stat"><span>Assigned</span><strong>${assigned.length}</strong></div>
-        <div class="stat"><span>Current leader</span><strong>${leader ? escapeHtml(leader.country) : "—"}</strong></div>
-        <div class="stat"><span>Current lowest</span><strong>${loser ? escapeHtml(loser.country) : "—"}</strong></div>
-      `;
-    }
-
-    function renderOverall() {
-      const rows = rankedRows(filteredRows());
-      $("overallCount").textContent = `${rows.length} assigned countries shown`;
-
-      if (!rows.length) {
-        $("overallTable").innerHTML = `<div class="empty">No assigned countries match this search/filter yet.</div>`;
-        return;
-      }
-
-      $("overallTable").innerHTML = `
-        <table>
-          <thead><tr><th>Rank</th><th>Country</th><th>Participant</th><th>Score</th><th class="hide-small">Status</th></tr></thead>
-          <tbody>
-            ${rows.map((row, index) => `
-              <tr>
-                <td><span class="rank ${rankClass(index)}">${index + 1}</span></td>
-                <td><div class="country">${escapeHtml(row.country)}</div><div class="muted">${escapeHtml(row.group)}</div></td>
-                <td class="participant">${escapeHtml(row.participant)}</td>
-                <td class="score">${escapeHtml(row.score)}</td>
-                <td class="hide-small">${badges(row)}</td>
-              </tr>
-            `).join("")}
-          </tbody>
-        </table>
-      `;
-    }
-
-    function renderGroups() {
-      const groups = groupMap(filteredRows());
-      const groupNames = Object.keys(groups).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
-
-      if (!groupNames.length) {
-        $("groupsGrid").innerHTML = `<div class="empty">No groups match this search/filter.</div>`;
-        return;
-      }
-
-      $("groupsGrid").innerHTML = groupNames.map(group => {
-        const rows = rankedRows(groups[group], true);
-        const assigned = rows.filter(row => row.participant);
-        const topScore = assigned.length ? Math.max(...assigned.map(row => row.score)) : null;
-
-        return `
-          <article class="group-card">
-            <h3><span>${escapeHtml(group)}</span><span class="badge green">Top: ${topScore ?? "—"}</span></h3>
-            <table>
-              <thead><tr><th>#</th><th>Country</th><th>Participant</th><th>Score</th></tr></thead>
-              <tbody>
-                ${rows.map((row, index) => `
-                  <tr>
-                    <td><span class="rank ${index === 0 && row.participant ? "gold" : ""}">${index + 1}</span></td>
-                    <td>${escapeHtml(row.country)}</td>
-                    <td>${row.participant ? escapeHtml(row.participant) : `<span class="muted">Unassigned</span>`}</td>
-                    <td class="score">${escapeHtml(row.score)}</td>
-                  </tr>
-                `).join("")}
-              </tbody>
-            </table>
-          </article>
-        `;
-      }).join("");
-    }
-
-    function renderDraw() {
-      const rows = [...filteredRows()].sort((a, b) => a.country.localeCompare(b.country));
-      $("drawCount").textContent = `${rows.length} countries shown`;
-
-      if (!rows.length) {
-        $("drawTable").innerHTML = `<div class="empty">No countries match this search/filter.</div>`;
-        return;
-      }
-
-      $("drawTable").innerHTML = `
-        <table>
-          <thead><tr><th>Group</th><th>Country</th><th>Participant</th><th>Score</th></tr></thead>
-          <tbody>
-            ${rows.map(row => `
-              <tr>
-                <td>${escapeHtml(row.group)}</td>
-                <td class="country">${escapeHtml(row.country)}</td>
-                <td>${row.participant ? `<span class="participant">${escapeHtml(row.participant)}</span>` : `<span class="muted">Unassigned</span>`}</td>
-                <td class="score">${escapeHtml(row.score)}</td>
-              </tr>
-            `).join("")}
-          </tbody>
-        </table>
-      `;
-    }
-
-    function renderPrizes() {
-      const prizes = prizeData();
-      const rows = [
-        ["1st Place", money.first, prizes.first],
-        ["2nd Place", money.second, prizes.second],
-        ["3rd Place", money.third, prizes.third],
-        ["Loser", money.loser, prizes.loser],
-        ["Top of the group", money.group, prizes.groupWinners]
-      ];
-
-      $("prizeTable").innerHTML = `
-        <table>
-          <thead><tr><th>Prize</th><th>Amount</th><th>Current winner(s)</th></tr></thead>
-          <tbody>
-            ${rows.map(([label, amount, entries]) => `
-              <tr>
-                <td><strong>${escapeHtml(label)}</strong></td>
-                <td class="score">${escapeHtml(amount)}</td>
-                <td>${entryBadges(entries)}</td>
-              </tr>
-            `).join("")}
-          </tbody>
-        </table>
-      `;
-    }
-
-    function badges(row) {
-      const prizes = prizeData();
-      const out = [];
-      if (prizes.first.some(entry => same(entry, row))) out.push(`<span class="badge gold">🥇 1st ${money.first}</span>`);
-      if (prizes.second.some(entry => same(entry, row))) out.push(`<span class="badge gold">🥈 2nd ${money.second}</span>`);
-      if (prizes.third.some(entry => same(entry, row))) out.push(`<span class="badge gold">🥉 3rd ${money.third}</span>`);
-      if (prizes.loser.some(entry => same(entry, row))) out.push(`<span class="badge red">Loser ${money.loser}</span>`);
-      if (prizes.groupWinners.some(entry => same(entry, row))) out.push(`<span class="badge green">Top of group ${money.group}</span>`);
-      return out.length ? `<div class="badges">${out.join("")}</div>` : `<span class="badge">—</span>`;
-    }
-
-    function entryBadges(entries) {
-      if (!entries || !entries.length) return `<span class="muted">—</span>`;
-      return `<div class="badges">${entries.map(row => `
-        <span class="badge ${row.prizeGroup ? "green" : "gold"}">
-          ${escapeHtml(row.participant)} — ${escapeHtml(row.country)}${row.prizeGroup ? ` (${escapeHtml(row.prizeGroup)})` : ""} — ${escapeHtml(row.score)}
-        </span>
-      `).join("")}</div>`;
-    }
-
-    function same(a, b) {
+    function sameEntry(a, b) {
       return a.country === b.country && a.participant === b.participant;
     }
 
@@ -797,37 +539,166 @@
       return "";
     }
 
-    function escapeHtml(value) {
-      return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+    function rowBadges(row) {
+      const prizes = getPrizes();
+      const html = [];
+      if (prizes.first.some(p => sameEntry(p, row))) html.push('<span class="badge gold">1st £100</span>');
+      if (prizes.second.some(p => sameEntry(p, row))) html.push('<span class="badge gold">2nd £40</span>');
+      if (prizes.third.some(p => sameEntry(p, row))) html.push('<span class="badge gold">3rd £20</span>');
+      if (prizes.loser.some(p => sameEntry(p, row))) html.push('<span class="badge red">Loser £20</span>');
+      if (prizes.groupWinners.some(p => sameEntry(p, row))) html.push('<span class="badge green">Top group £5</span>');
+      return html.length ? '<div class="badges">' + html.join('') + '</div>' : '<span class="badge">—</span>';
     }
 
-    $("search").addEventListener("input", event => {
-      activeSearch = event.target.value;
-      render();
-    });
+    function renderAll() {
+      renderGroupDropdown();
+      renderStats();
+      renderOverall();
+      renderGroups();
+      renderDraw();
+      renderPrizes();
+    }
 
-    $("groupFilter").addEventListener("change", event => {
-      activeGroup = event.target.value;
-      render();
-    });
+    function renderGroupDropdown() {
+      const select = byId("groupSelect");
+      const current = select.value || "all";
+      const groups = [...new Set(rows.map(r => r.group))].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+      select.innerHTML = '<option value="all">All groups</option>' + groups.map(g => '<option value="' + escapeHtml(g) + '">' + escapeHtml(g) + '</option>').join('');
+      select.value = groups.includes(current) ? current : "all";
+      selectedGroup = select.value;
+    }
 
-    $("refresh").addEventListener("click", loadSheet);
+    function renderStats() {
+      const assigned = assignedRows();
+      const prizes = getPrizes();
+      const leader = prizes.first[0];
+      const loser = prizes.loser[0];
+      byId("stats").innerHTML =
+        '<div class="stat"><span>Countries</span><strong>' + rows.length + '</strong></div>' +
+        '<div class="stat"><span>Assigned</span><strong>' + assigned.length + '</strong></div>' +
+        '<div class="stat"><span>Current leader</span><strong>' + (leader ? escapeHtml(leader.country) : '—') + '</strong></div>' +
+        '<div class="stat"><span>Current lowest</span><strong>' + (loser ? escapeHtml(loser.country) : '—') + '</strong></div>';
+    }
 
-    document.querySelectorAll(".tab").forEach(tab => {
-      tab.addEventListener("click", () => {
-        document.querySelectorAll(".tab").forEach(item => item.classList.remove("active"));
-        document.querySelectorAll(".view").forEach(view => view.classList.remove("active"));
-        tab.classList.add("active");
-        $(tab.dataset.view).classList.add("active");
+    function renderOverall() {
+      const list = sortHighToLow(visibleRows(), false);
+      if (!list.length) {
+        byId("overallTable").innerHTML = '<div class="empty">No assigned countries match this search/filter yet.</div>';
+        return;
+      }
+
+      byId("overallTable").innerHTML =
+        '<table><thead><tr><th>Rank</th><th>Country</th><th>Participant</th><th>Score</th><th class="hide-mobile">Status</th></tr></thead><tbody>' +
+        list.map((r, i) =>
+          '<tr>' +
+            '<td><span class="rank ' + rankClass(i) + '">' + (i + 1) + '</span></td>' +
+            '<td><span class="country">' + escapeHtml(r.country) + '</span><br><span class="muted">' + escapeHtml(r.group) + '</span></td>' +
+            '<td class="participant">' + escapeHtml(r.participant) + '</td>' +
+            '<td class="score">' + escapeHtml(r.score) + '</td>' +
+            '<td class="hide-mobile">' + rowBadges(r) + '</td>' +
+          '</tr>'
+        ).join('') +
+        '</tbody></table>';
+    }
+
+    function renderGroups() {
+      const groups = grouped(visibleRows());
+      const names = Object.keys(groups).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+      if (!names.length) {
+        byId("groupsGrid").innerHTML = '<div class="empty">No groups match this search/filter.</div>';
+        return;
+      }
+
+      byId("groupsGrid").innerHTML = names.map(groupName => {
+        const list = sortHighToLow(groups[groupName], true);
+        return '<article class="group-card"><h3><span>' + escapeHtml(groupName) + '</span></h3>' +
+          '<table><thead><tr><th>#</th><th>Country</th><th>Participant</th><th>Score</th></tr></thead><tbody>' +
+          list.map((r, i) =>
+            '<tr>' +
+              '<td><span class="rank ' + (i === 0 && r.participant ? 'gold' : '') + '">' + (i + 1) + '</span></td>' +
+              '<td class="country">' + escapeHtml(r.country) + '</td>' +
+              '<td>' + (r.participant ? '<span class="participant">' + escapeHtml(r.participant) + '</span>' : '<span class="muted">Unassigned</span>') + '</td>' +
+              '<td class="score">' + escapeHtml(r.score) + '</td>' +
+            '</tr>'
+          ).join('') +
+          '</tbody></table></article>';
+      }).join('');
+    }
+
+    function renderDraw() {
+      const list = [...visibleRows()].sort((a, b) => a.country.localeCompare(b.country));
+      if (!list.length) {
+        byId("drawTable").innerHTML = '<div class="empty">No countries match this search/filter.</div>';
+        return;
+      }
+
+      byId("drawTable").innerHTML =
+        '<table><thead><tr><th>Group</th><th>Country</th><th>Participant</th><th>Score</th></tr></thead><tbody>' +
+        list.map(r =>
+          '<tr>' +
+            '<td>' + escapeHtml(r.group) + '</td>' +
+            '<td class="country">' + escapeHtml(r.country) + '</td>' +
+            '<td>' + (r.participant ? '<span class="participant">' + escapeHtml(r.participant) + '</span>' : '<span class="muted">Unassigned</span>') + '</td>' +
+            '<td class="score">' + escapeHtml(r.score) + '</td>' +
+          '</tr>'
+        ).join('') +
+        '</tbody></table>';
+    }
+
+    function prizeEntryHtml(entries) {
+      if (!entries || !entries.length) return '<span class="muted">—</span>';
+      return '<div class="badges">' + entries.map(r =>
+        '<span class="badge ' + (r.prizeGroup ? 'green' : 'gold') + '">' +
+        escapeHtml(r.participant) + ' — ' + escapeHtml(r.country) +
+        (r.prizeGroup ? ' (' + escapeHtml(r.prizeGroup) + ')' : '') +
+        ' — ' + escapeHtml(r.score) +
+        '</span>'
+      ).join('') + '</div>';
+    }
+
+    function renderPrizes() {
+      const prizes = getPrizes();
+      const prizeRows = [
+        ['1st Place', prizeAmounts.first, prizes.first],
+        ['2nd Place', prizeAmounts.second, prizes.second],
+        ['3rd Place', prizeAmounts.third, prizes.third],
+        ['Loser', prizeAmounts.loser, prizes.loser],
+        ['Top of the group', prizeAmounts.group, prizes.groupWinners]
+      ];
+
+      byId("prizeTable").innerHTML =
+        '<table><thead><tr><th>Prize</th><th>Amount</th><th>Current winner(s)</th></tr></thead><tbody>' +
+        prizeRows.map(row =>
+          '<tr><td><strong>' + row[0] + '</strong></td><td class="score">' + row[1] + '</td><td>' + prizeEntryHtml(row[2]) + '</td></tr>'
+        ).join('') +
+        '</tbody></table>';
+    }
+
+    function bindEvents() {
+      byId("refreshButton").addEventListener("click", loadData);
+
+      byId("searchBox").addEventListener("input", function (event) {
+        searchText = event.target.value;
+        renderAll();
       });
-    });
 
-    loadSheet();
+      byId("groupSelect").addEventListener("change", function (event) {
+        selectedGroup = event.target.value;
+        renderAll();
+      });
+
+      document.querySelectorAll(".tab").forEach(button => {
+        button.addEventListener("click", function () {
+          document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
+          document.querySelectorAll(".view").forEach(view => view.classList.remove("active"));
+          button.classList.add("active");
+          byId(button.dataset.target).classList.add("active");
+        });
+      });
+    }
+
+    bindEvents();
+    loadData();
   </script>
 </body>
 </html>
