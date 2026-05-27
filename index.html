@@ -254,6 +254,15 @@
       letter-spacing: 0.05em;
     }
 
+
+    .loser-player {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
     .stat strong {
       display: block;
       margin-top: 5px;
@@ -783,7 +792,7 @@
       <section class="card intro">
         <div class="hero-kicker">Applied Sciences Sweepstake</div>
         <h1>World Cup Sweepstake</h1>
-        <p class="hero-sub">Presented by J&amp;J productions + Sam</p>
+        <p class="hero-sub">Presented by J&amp;J Productions + Sam</p>
       </section>
 
       <aside class="card prize-card">
@@ -1348,9 +1357,13 @@
       const prizes = getPrizes();
       const loser = prizes.loser[0];
 
+      const loserText = loser
+        ? countryWithFlag(loser.country) + '<span class="loser-player">' + escapeHtml(loser.participant || "Unassigned") + '</span>'
+        : "-";
+
       byId("stats").innerHTML =
         '<div class="stat"><span>Current loser</span><strong>' +
-        (loser ? countryWithFlag(loser.country) : "-") +
+        loserText +
         "</strong></div>";
     }
 
