@@ -6,116 +6,259 @@
   <title>World Cup Sweepstake</title>
   <style>
     :root {
-      --bg: #07111f;
-      --card: #111827;
-      --text: #f8fafc;
-      --muted: #cbd5e1;
+      --bg: #06152b;
+      --bg-2: #0d2242;
+      --pitch: #0f7a45;
+      --pitch-dark: #095b34;
+      --card: rgba(10, 24, 48, 0.90);
+      --card-2: rgba(15, 37, 73, 0.94);
+      --text: #f8fbff;
+      --muted: #c8d6ea;
       --line: rgba(255,255,255,0.14);
-      --accent: #38bdf8;
-      --green: #34d399;
-      --red: #fb7185;
+      --accent: #00c2ff;
+      --green: #20d489;
+      --green-soft: rgba(32, 212, 137, 0.16);
+      --red: #ff6b6b;
+      --gold: #ffd24a;
+      --gold-soft: rgba(255, 210, 74, 0.18);
+      --blue-soft: rgba(0, 194, 255, 0.14);
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
+      min-height: 100vh;
       font-family: Arial, Helvetica, sans-serif;
-      background: radial-gradient(circle at top left, rgba(56,189,248,0.18), transparent 32rem), var(--bg);
       color: var(--text);
+      background:
+        radial-gradient(circle at top center, rgba(255,255,255,0.10), transparent 18rem),
+        radial-gradient(circle at 18% 8%, rgba(0,194,255,0.16), transparent 25rem),
+        radial-gradient(circle at 82% 2%, rgba(32,212,137,0.13), transparent 23rem),
+        linear-gradient(180deg, var(--bg-2) 0%, var(--bg) 58%, #04101f 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.18;
+      background:
+        linear-gradient(90deg, transparent 0 48%, rgba(255,255,255,0.09) 48% 52%, transparent 52% 100%),
+        repeating-linear-gradient(
+          90deg,
+          rgba(255,255,255,0.035) 0px,
+          rgba(255,255,255,0.035) 1px,
+          transparent 1px,
+          transparent 72px
+        );
+      mask-image: linear-gradient(180deg, transparent, black 8rem, black 80%, transparent);
     }
 
     .wrap {
       width: min(1180px, calc(100% - 28px));
       margin: 0 auto;
+      position: relative;
+      z-index: 1;
     }
 
-    header { padding: 34px 0 18px; }
+    header {
+      padding: 36px 0 20px;
+    }
 
     .hero {
       display: grid;
       grid-template-columns: 1.6fr 1fr;
-      gap: 16px;
+      gap: 18px;
+      align-items: stretch;
     }
 
     .card {
-      background: rgba(17,24,39,0.92);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.28);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.012)),
+        var(--card);
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 22px;
+      box-shadow:
+        0 20px 50px rgba(0,0,0,0.36),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+      backdrop-filter: blur(8px);
     }
 
-    .intro, .prize-card, .panel { padding: 22px; }
+    .intro,
+    .prize-card,
+    .panel {
+      padding: 24px;
+    }
+
+    .intro {
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at top right, rgba(255,210,74,0.18), transparent 13rem),
+        radial-gradient(circle at bottom left, rgba(32,212,137,0.16), transparent 15rem),
+        linear-gradient(135deg, rgba(0,194,255,0.18), rgba(255,255,255,0.02)),
+        var(--card-2);
+    }
+
+    .intro::before {
+      content: "";
+      position: absolute;
+      inset: auto 24px 18px 24px;
+      height: 84px;
+      border-radius: 22px;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          rgba(32,212,137,0.18) 0px,
+          rgba(32,212,137,0.18) 42px,
+          rgba(255,255,255,0.045) 42px,
+          rgba(255,255,255,0.045) 84px
+        );
+      border: 1px solid rgba(255,255,255,0.08);
+      opacity: 0.45;
+      pointer-events: none;
+    }
+
+    .intro::after {
+      content: "";
+      position: absolute;
+      right: -44px;
+      bottom: -54px;
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.10), transparent 69%);
+      pointer-events: none;
+    }
+
+    .hero-kicker {
+      display: inline-block;
+      position: relative;
+      z-index: 2;
+      margin-bottom: 13px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.14);
+      color: #e9f4ff;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
 
     h1 {
+      position: relative;
+      z-index: 2;
       margin: 0;
-      font-size: clamp(2.1rem, 6vw, 4rem);
-      letter-spacing: -0.05em;
-      line-height: 0.95;
+      font-size: clamp(2.3rem, 6vw, 4.35rem);
+      letter-spacing: -0.055em;
+      line-height: 0.94;
+      text-transform: uppercase;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.36);
     }
 
-    h2, h3 { margin-top: 0; }
+    .hero-sub {
+      position: relative;
+      z-index: 2;
+      margin: 12px 0 0;
+      color: #dce9f8;
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    h2,
+    h3 {
+      margin-top: 0;
+    }
+
+    .panel h2,
+    .prize-card h2 {
+      margin-bottom: 16px;
+      font-size: 1.35rem;
+      text-transform: uppercase;
+      letter-spacing: 0.045em;
+    }
 
     .prizes {
       list-style: none;
       margin: 0;
       padding: 0;
       display: grid;
-      gap: 9px;
+      gap: 10px;
     }
 
     .prizes li {
       display: flex;
       justify-content: space-between;
       gap: 12px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid var(--line);
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.12);
       color: var(--muted);
+      transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
     }
 
-    .amount { color: var(--green); font-weight: bold; }
+    .prizes li:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255,210,74,0.45);
+      background: rgba(255,255,255,0.075);
+    }
+
+    .amount {
+      color: var(--gold);
+      font-weight: 800;
+    }
 
     .status {
       margin: 14px 0;
-      padding: 12px 14px;
-      border-radius: 12px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid var(--line);
+      padding: 13px 16px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.065);
+      border: 1px solid rgba(255,255,255,0.11);
       color: var(--muted);
     }
 
     .error {
       color: #fecdd3;
-      border-color: rgba(251,113,133,0.45);
-      background: rgba(251,113,133,0.12);
+      border-color: rgba(255,107,107,0.46);
+      background: rgba(255,107,107,0.13);
     }
 
     .stats {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 1fr;
       gap: 12px;
       margin: 16px 0;
     }
 
     .stat {
-      padding: 16px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid var(--line);
-      border-radius: 14px;
+      padding: 17px;
+      background:
+        linear-gradient(135deg, rgba(255,107,107,0.10), rgba(255,255,255,0.035)),
+        rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
     }
 
     .stat span {
       display: block;
       color: var(--muted);
-      font-size: 0.9rem;
+      font-size: 0.86rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
     .stat strong {
       display: block;
-      margin-top: 4px;
+      margin-top: 5px;
       font-size: 1.45rem;
+      line-height: 1.2;
     }
 
     .controls {
@@ -125,64 +268,94 @@
       margin: 16px 0;
     }
 
-    input, select, button {
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 11px 12px;
+    input,
+    select,
+    button {
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 11px 13px;
       font: inherit;
       color: var(--text);
-      background: #020617;
+      background: rgba(3,10,22,0.90);
+      outline: none;
+    }
+
+    input::placeholder {
+      color: #8fa4be;
     }
 
     button {
       cursor: pointer;
-      font-weight: bold;
+      font-weight: 800;
+      transition: all 0.18s ease;
     }
 
-    button:hover { border-color: var(--accent); }
+    button:hover {
+      border-color: rgba(0,194,255,0.48);
+      box-shadow: 0 8px 18px rgba(0,194,255,0.12);
+    }
 
     .tabs {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin: 18px 0 12px;
+      gap: 10px;
+      margin: 20px 0 14px;
     }
 
     .tab {
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.11);
+      background: rgba(255,255,255,0.055);
       color: var(--muted);
-      padding: 10px 14px;
+      padding: 11px 16px;
       border-radius: 999px;
       cursor: pointer;
-      font-weight: bold;
+      font-weight: 800;
+      transition: all 0.18s ease;
+    }
+
+    .tab:hover {
+      border-color: rgba(0,194,255,0.48);
+      color: white;
     }
 
     .tab.active {
-      color: white;
-      background: rgba(56,189,248,0.22);
-      border-color: rgba(56,189,248,0.55);
+      color: #07111f;
+      background: linear-gradient(135deg, var(--gold), #ffe48e);
+      border-color: rgba(255,210,74,0.66);
+      box-shadow: 0 8px 22px rgba(255,210,74,0.22);
     }
 
-    .view { display: none; }
-    .view.active { display: block; }
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
 
     table {
       width: 100%;
       border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 14px;
     }
 
-    th, td {
+    th,
+    td {
       padding: 12px 10px;
       text-align: left;
-      border-bottom: 1px solid var(--line);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
     }
 
     th {
-      color: #bae6fd;
-      font-size: 0.78rem;
+      color: #d9efff;
+      font-size: 0.74rem;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.08em;
+      background: rgba(255,255,255,0.065);
+    }
+
+    tbody tr:hover {
       background: rgba(255,255,255,0.04);
     }
 
@@ -192,15 +365,29 @@
       width: 30px;
       height: 30px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.1);
-      font-weight: bold;
+      background: rgba(255,255,255,0.10);
+      font-weight: 800;
     }
 
-    .rank.gold { color: #fef3c7; background: rgba(250,204,21,0.2); }
-    .rank.silver { color: white; background: rgba(229,231,235,0.18); }
-    .rank.bronze { color: #ffedd5; background: rgba(251,146,60,0.18); }
+    .rank.gold {
+      color: #09111f;
+      background: linear-gradient(135deg, var(--gold), #ffe48e);
+      box-shadow: 0 0 0 1px rgba(255,210,74,0.28);
+    }
 
-    .country { font-weight: bold; }
+    .rank.silver {
+      color: white;
+      background: rgba(229,231,235,0.18);
+    }
+
+    .rank.bronze {
+      color: #ffedd5;
+      background: rgba(251,146,60,0.18);
+    }
+
+    .country {
+      font-weight: 800;
+    }
 
     .flag-img {
       width: 1.35em;
@@ -210,9 +397,19 @@
       border-radius: 2px;
       box-shadow: 0 0 0 1px rgba(255,255,255,0.18);
     }
-    .participant { color: #e0f2fe; font-weight: bold; }
-    .muted { color: var(--muted); }
-    .score { font-weight: bold; }
+
+    .participant {
+      color: #e0f2fe;
+      font-weight: 800;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .score {
+      font-weight: 800;
+    }
 
     .badges {
       display: flex;
@@ -224,30 +421,75 @@
       display: inline-flex;
       padding: 5px 8px;
       border-radius: 999px;
-      border: 1px solid var(--line);
+      border: 1px solid rgba(255,255,255,0.12);
       background: rgba(255,255,255,0.08);
       color: var(--muted);
-      font-size: 0.78rem;
-      font-weight: bold;
+      font-size: 0.76rem;
+      font-weight: 800;
       white-space: nowrap;
     }
 
     .badge.gold {
-      color: #fef3c7;
-      background: rgba(250,204,21,0.12);
-      border-color: rgba(250,204,21,0.38);
+      color: #09111f;
+      background: linear-gradient(135deg, var(--gold), #ffe48e);
+      border-color: rgba(255,210,74,0.42);
     }
 
     .badge.green {
       color: #bbf7d0;
-      background: rgba(52,211,153,0.12);
-      border-color: rgba(52,211,153,0.38);
+      background: rgba(32,212,137,0.14);
+      border-color: rgba(32,212,137,0.38);
     }
 
     .badge.red {
       color: #fecdd3;
-      background: rgba(251,113,133,0.12);
-      border-color: rgba(251,113,133,0.38);
+      background: rgba(255,107,107,0.13);
+      border-color: rgba(255,107,107,0.40);
+    }
+
+    .qualification-note {
+      margin: 0 0 16px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(0,194,255,0.38);
+      background:
+        linear-gradient(135deg, rgba(0,194,255,0.10), rgba(32,212,137,0.07)),
+        rgba(255,255,255,0.035);
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .qualification-note strong {
+      color: #e0f2fe;
+    }
+
+    .qualify-row {
+      background: rgba(32,212,137,0.08);
+    }
+
+    .third-place-row {
+      background: rgba(0,194,255,0.07);
+    }
+
+    .qualify-badge {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      margin-top: 4px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      font-size: 0.70rem;
+      font-weight: 800;
+      color: #bbf7d0;
+      background: rgba(32,212,137,0.15);
+      border: 1px solid rgba(32,212,137,0.36);
+      white-space: nowrap;
+    }
+
+    .third-badge {
+      color: #bae6fd;
+      background: rgba(0,194,255,0.14);
+      border-color: rgba(0,194,255,0.36);
     }
 
     .group-grid {
@@ -257,9 +499,17 @@
     }
 
     .group-card {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--line);
-      border-radius: 14px;
+      background:
+        repeating-linear-gradient(
+          180deg,
+          rgba(32,212,137,0.055) 0px,
+          rgba(32,212,137,0.055) 24px,
+          rgba(255,255,255,0.020) 24px,
+          rgba(255,255,255,0.020) 48px
+        ),
+        rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
       padding: 14px;
     }
 
@@ -267,28 +517,28 @@
       display: flex;
       justify-content: space-between;
       gap: 10px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      color: #dff3ff;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
     .empty {
       padding: 24px;
-      border: 1px dashed var(--line);
-      border-radius: 14px;
+      border: 1px dashed rgba(255,255,255,0.18);
+      border-radius: 16px;
       color: var(--muted);
       text-align: center;
-    }
-
-
-    .bracket-help {
-      color: var(--muted);
-      margin: -4px 0 16px;
-      line-height: 1.45;
+      background: rgba(255,255,255,0.035);
     }
 
     .bracket-scroll {
       overflow-x: auto;
-      padding: 6px 2px 18px;
+      padding: 0 2px 18px;
+      position: relative;
     }
+
 
     .bracket-stage {
       position: relative;
@@ -307,20 +557,19 @@
 
     .bracket-lines path {
       fill: none;
-      stroke: rgba(255,255,255,0.38);
+      stroke: rgba(255,210,74,0.56);
       stroke-width: 2;
       stroke-linecap: round;
       stroke-linejoin: round;
     }
 
     .bracket-lines path.dashed {
-      stroke: rgba(56,189,248,0.34);
+      stroke: rgba(0,194,255,0.38);
       stroke-dasharray: 5 6;
     }
 
     .bracket-grid {
-      position: relative;
-      z-index: 2;
+      min-width: 1900px;
       display: grid;
       grid-template-columns:
         minmax(205px, 1fr)
@@ -334,31 +583,41 @@
         minmax(205px, 1fr);
       gap: 36px;
       align-items: stretch;
+      position: relative;
+      z-index: 2;
     }
 
     .round-column {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 12px;
+      min-height: 1120px;
+      position: relative;
+    }
+
+    .round-matches {
       display: flex;
       flex-direction: column;
       justify-content: space-around;
       gap: 18px;
-      min-height: 1260px;
-      position: relative;
+      height: 100%;
     }
 
     .round-column.compact {
-      min-height: 880px;
+      min-height: 760px;
     }
 
     .round-column.tight {
-      min-height: 560px;
+      min-height: 480px;
     }
 
     .round-column.semi {
-      min-height: 340px;
+      min-height: 300px;
     }
 
     .round-column.center {
-      min-height: 340px;
+      display: flex;
+      min-height: 300px;
       justify-content: center;
       gap: 22px;
     }
@@ -369,14 +628,39 @@
       z-index: 4;
       margin: 0 0 4px;
       padding: 8px 10px;
-      border: 1px solid var(--line);
+      border: 1px solid rgba(255,255,255,0.13);
       border-radius: 999px;
-      color: #bae6fd;
-      background: rgba(2,6,23,0.92);
+      color: #07111f;
+      background: linear-gradient(135deg, var(--gold), #ffe48e);
       font-size: 0.72rem;
       text-transform: uppercase;
       letter-spacing: 0.06em;
       text-align: center;
+    }
+
+    .bracket-pair,
+    .bracket-single {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .bracket-pair {
+      min-height: 212px;
+    }
+
+    .round-column.compact .bracket-pair {
+      min-height: 286px;
+    }
+
+    .round-column.tight .bracket-pair {
+      min-height: 360px;
+    }
+
+    .bracket-single {
+      min-height: 150px;
     }
 
     .match-slot {
@@ -385,22 +669,24 @@
 
     .match-card {
       position: relative;
-      z-index: 3;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: rgba(17,24,39,0.98);
-      padding: 9px;
+      z-index: 2;
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 16px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.040), rgba(255,255,255,0.015)),
+        rgba(255,255,255,0.055);
+      padding: 10px;
       min-height: 92px;
     }
 
     .match-card.final-card {
-      border-color: rgba(250,204,21,0.5);
-      background: rgba(65,55,20,0.98);
+      border-color: rgba(255,210,74,0.55);
+      background: rgba(255,210,74,0.10);
     }
 
     .match-card.third-card {
-      border-color: rgba(56,189,248,0.38);
-      background: rgba(12,43,58,0.98);
+      border-color: rgba(0,194,255,0.40);
+      background: rgba(0,194,255,0.08);
     }
 
     .match-label {
@@ -417,23 +703,23 @@
       grid-template-columns: 1fr;
       gap: 2px;
       padding: 7px 8px;
-      border-radius: 10px;
-      background: rgba(255,255,255,0.045);
+      border-radius: 11px;
+      background: rgba(255,255,255,0.052);
       margin-top: 5px;
       min-height: 39px;
     }
 
     .team-line.winner {
       color: #bbf7d0;
-      background: rgba(52,211,153,0.13);
-      border: 1px solid rgba(52,211,153,0.35);
+      background: rgba(32,212,137,0.15);
+      border: 1px solid rgba(32,212,137,0.36);
     }
 
     .team-country {
       display: flex;
       align-items: center;
       gap: 5px;
-      font-weight: bold;
+      font-weight: 800;
       line-height: 1.15;
     }
 
@@ -449,7 +735,7 @@
 
     .center-title {
       margin: 0 0 6px;
-      color: #fef3c7;
+      color: var(--gold);
       font-size: 0.9rem;
       text-align: center;
       text-transform: uppercase;
@@ -457,14 +743,36 @@
     }
 
     @media (max-width: 900px) {
-      .hero, .controls { grid-template-columns: 1fr; }
-      .group-grid { grid-template-columns: 1fr; }
+      .hero,
+      .controls {
+        grid-template-columns: 1fr;
+      }
+
+      .group-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     @media (max-width: 600px) {
-      .stats { grid-template-columns: 1fr; }
-      th, td { padding: 9px 7px; font-size: 0.9rem; }
-      .hide-mobile { display: none; }
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      th,
+      td {
+        padding: 9px 7px;
+        font-size: 0.9rem;
+      }
+
+      .hide-mobile {
+        display: none;
+      }
+
+      .intro,
+      .prize-card,
+      .panel {
+        padding: 18px;
+      }
     }
   </style>
 </head>
@@ -473,7 +781,9 @@
   <header class="wrap">
     <div class="hero">
       <section class="card intro">
+        <div class="hero-kicker">Applied Sciences Sweepstake</div>
         <h1>World Cup Sweepstake</h1>
+        <p class="hero-sub">Presented by J&amp;J productions + Sam</p>
       </section>
 
       <aside class="card prize-card">
@@ -503,19 +813,14 @@
     </section>
 
     <nav class="tabs">
-      <button class="tab active" type="button" data-target="overallView">Group-stage standings</button>
-      <button class="tab" type="button" data-target="groupsView">Groups</button>
+      <button class="tab active" type="button" data-target="groupsView">Groups</button>
       <button class="tab" type="button" data-target="knockoutView">Knockout bracket</button>
       <button class="tab" type="button" data-target="prizesView">Prizes</button>
     </nav>
-
-    <section id="overallView" class="card panel view active">
-      <h2>Group-stage standings</h2>
-      <div id="overallTable"></div>
-    </section>
-
-    <section id="groupsView" class="card panel view">
-      <h2>Group standings</h2>
+<section id="groupsView" class="card panel view active">
+      <h2>Groups</h2>
+      <div class="qualification-note">
+        <strong>Knockout qualification:</strong> the top two teams in each group qualify automatically for the knockout rounds. They are joined by the eight best third-placed teams across all groups. Below, the live results highlight the current qualifiers.</div>
       <div id="groupsGrid" class="group-grid"></div>
     </section>
 
@@ -1007,7 +1312,6 @@
     function renderAll() {
       renderGroupDropdown();
       renderStats();
-      renderOverall();
       renderGroups();
       renderKnockout();
       renderPrizes();
@@ -1042,54 +1346,92 @@
 
     function renderStats() {
       const prizes = getPrizes();
-      const leader = prizes.first[0];
       const loser = prizes.loser[0];
 
       byId("stats").innerHTML =
-        '<div class="stat"><span>Current leader</span><strong>' +
-        (leader ? countryWithFlag(leader.country) : "-") +
-        "</strong></div>" +
-        '<div class="stat"><span>Current lowest</span><strong>' +
+        '<div class="stat"><span>Current loser</span><strong>' +
         (loser ? countryWithFlag(loser.country) : "-") +
         "</strong></div>";
     }
 
-    function renderOverall() {
-      const list = sortHighToLow(visibleRows(), false);
+    function currentQualifiers() {
+      const allGroups = grouped(rows);
+      const topTwoKeys = {};
+      const thirdPlaced = [];
 
-      if (!list.length) {
-        byId("overallTable").innerHTML =
-          '<div class="empty">No assigned countries match this search/filter yet.</div>';
-        return;
+      Object.keys(allGroups).forEach(function(groupName) {
+        const groupRows = allGroups[groupName];
+
+        const groupHasStarted = groupRows.some(function(row) {
+          return row.score > 0;
+        });
+
+        if (!groupHasStarted) {
+          return;
+        }
+
+        const ranked = sortHighToLow(groupRows, true);
+
+        ranked.slice(0, 2).forEach(function(row) {
+          topTwoKeys[rowKey(row)] = true;
+        });
+
+        if (ranked[2]) {
+          thirdPlaced.push(ranked[2]);
+        }
+      });
+
+      thirdPlaced.sort(function(a, b) {
+        return b.score - a.score || a.country.localeCompare(b.country);
+      });
+
+      const bestThirdKeys = {};
+
+      thirdPlaced.slice(0, 8).forEach(function(row) {
+        bestThirdKeys[rowKey(row)] = true;
+      });
+
+      return {
+        topTwoKeys: topTwoKeys,
+        bestThirdKeys: bestThirdKeys
+      };
+    }
+
+    function rowKey(row) {
+      return row.group + "|" + row.country;
+    }
+
+    function qualificationBadge(row, qualifiers) {
+      const key = rowKey(row);
+
+      if (qualifiers.topTwoKeys[key]) {
+        return '<span class="qualify-badge">Qualifies</span>';
       }
 
-      byId("overallTable").innerHTML =
-        '<table>' +
-          '<thead>' +
-            '<tr>' +
-              '<th>Rank</th>' +
-              '<th>Country</th>' +
-              '<th>Participant</th>' +
-              '<th>Score</th>' +
-              '<th class="hide-mobile">Status</th>' +
-            '</tr>' +
-          '</thead>' +
-          '<tbody>' +
-            list.map(function(row, index) {
-              return '<tr>' +
-                '<td><span class="rank ' + rankClass(index) + '">' + (index + 1) + '</span></td>' +
-                '<td><span class="country">' + countryWithFlag(row.country) + '</span><br><span class="muted">' + escapeHtml(row.group) + '</span></td>' +
-                '<td class="participant">' + escapeHtml(row.participant) + '</td>' +
-                '<td class="score">' + escapeHtml(row.score) + '</td>' +
-                '<td class="hide-mobile">' + rowBadges(row) + '</td>' +
-              '</tr>';
-            }).join("") +
-          '</tbody>' +
-        '</table>';
+      if (qualifiers.bestThirdKeys[key]) {
+        return '<span class="qualify-badge third-badge">Best 3rd</span>';
+      }
+
+      return "";
+    }
+
+    function qualificationRowClass(row, qualifiers) {
+      const key = rowKey(row);
+
+      if (qualifiers.topTwoKeys[key]) {
+        return "qualify-row";
+      }
+
+      if (qualifiers.bestThirdKeys[key]) {
+        return "third-place-row";
+      }
+
+      return "";
     }
 
     function renderGroups() {
       const groups = grouped(visibleRows());
+      const qualifiers = currentQualifiers();
       const groupNames = Object.keys(groups).sort(function(a, b) {
         return a.localeCompare(b, undefined, { numeric: true });
       });
@@ -1116,9 +1458,9 @@
             '</thead>' +
             '<tbody>' +
               list.map(function(row, index) {
-                return '<tr>' +
+                return '<tr class="' + qualificationRowClass(row, qualifiers) + '">' +
                   '<td><span class="rank ' + (index === 0 && row.participant ? "gold" : "") + '">' + (index + 1) + '</span></td>' +
-                  '<td class="country">' + countryWithFlag(row.country) + '</td>' +
+                  '<td class="country">' + countryWithFlag(row.country) + qualificationBadge(row, qualifiers) + '</td>' +
                   '<td>' +
                     (row.participant
                       ? '<span class="participant">' + escapeHtml(row.participant) + '</span>'
@@ -1156,7 +1498,6 @@
       const thirdRows = getRoundMatches("Third-place", 1);
 
       const html =
-        '<p class="bracket-help">Country boxes include the sweepstake participant from the Competition tab. Lines are drawn between the actual match boxes, so each route feeds into the next round.</p>' +
         '<div class="bracket-scroll">' +
           '<div id="bracketStage" class="bracket-stage">' +
             '<svg id="bracketLines" class="bracket-lines" aria-hidden="true"></svg>' +
@@ -1227,9 +1568,11 @@
     function renderBracketColumn(title, matches, side, sizeClass) {
       return '<section class="round-column ' + side + ' ' + sizeClass + '">' +
         '<h3 class="round-title">' + escapeHtml(title) + '</h3>' +
-        matches.map(function(match) {
-          return '<div class="match-slot">' + renderMatchCard(match, "") + '</div>';
-        }).join("") +
+        '<div class="round-matches">' +
+          matches.map(function(match) {
+            return '<div class="match-slot">' + renderMatchCard(match, "") + '</div>';
+          }).join("") +
+        '</div>' +
       '</section>';
     }
 
