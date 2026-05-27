@@ -4,7 +4,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>World Cup Sweepstake</title>
-
   <style>
     :root {
       --bg: #07111f;
@@ -17,9 +16,7 @@
       --red: #fb7185;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -33,9 +30,7 @@
       margin: 0 auto;
     }
 
-    header {
-      padding: 34px 0 18px;
-    }
+    header { padding: 34px 0 18px; }
 
     .hero {
       display: grid;
@@ -50,11 +45,7 @@
       box-shadow: 0 20px 50px rgba(0,0,0,0.28);
     }
 
-    .intro,
-    .prize-card,
-    .panel {
-      padding: 22px;
-    }
+    .intro, .prize-card, .panel { padding: 22px; }
 
     h1 {
       margin: 0;
@@ -63,10 +54,7 @@
       line-height: 0.95;
     }
 
-    h2,
-    h3 {
-      margin-top: 0;
-    }
+    h2, h3 { margin-top: 0; }
 
     .prizes {
       list-style: none;
@@ -87,10 +75,7 @@
       color: var(--muted);
     }
 
-    .amount {
-      color: var(--green);
-      font-weight: bold;
-    }
+    .amount { color: var(--green); font-weight: bold; }
 
     .status {
       margin: 14px 0;
@@ -140,9 +125,7 @@
       margin: 16px 0;
     }
 
-    input,
-    select,
-    button {
+    input, select, button {
       border: 1px solid var(--line);
       border-radius: 12px;
       padding: 11px 12px;
@@ -156,9 +139,7 @@
       font-weight: bold;
     }
 
-    button:hover {
-      border-color: var(--accent);
-    }
+    button:hover { border-color: var(--accent); }
 
     .tabs {
       display: flex;
@@ -183,21 +164,15 @@
       border-color: rgba(56,189,248,0.55);
     }
 
-    .view {
-      display: none;
-    }
-
-    .view.active {
-      display: block;
-    }
+    .view { display: none; }
+    .view.active { display: block; }
 
     table {
       width: 100%;
       border-collapse: collapse;
     }
 
-    th,
-    td {
+    th, td {
       padding: 12px 10px;
       text-align: left;
       border-bottom: 1px solid var(--line);
@@ -221,37 +196,14 @@
       font-weight: bold;
     }
 
-    .rank.gold {
-      color: #fef3c7;
-      background: rgba(250,204,21,0.2);
-    }
+    .rank.gold { color: #fef3c7; background: rgba(250,204,21,0.2); }
+    .rank.silver { color: white; background: rgba(229,231,235,0.18); }
+    .rank.bronze { color: #ffedd5; background: rgba(251,146,60,0.18); }
 
-    .rank.silver {
-      color: white;
-      background: rgba(229,231,235,0.18);
-    }
-
-    .rank.bronze {
-      color: #ffedd5;
-      background: rgba(251,146,60,0.18);
-    }
-
-    .country {
-      font-weight: bold;
-    }
-
-    .participant {
-      color: #e0f2fe;
-      font-weight: bold;
-    }
-
-    .muted {
-      color: var(--muted);
-    }
-
-    .score {
-      font-weight: bold;
-    }
+    .country { font-weight: bold; }
+    .participant { color: #e0f2fe; font-weight: bold; }
+    .muted { color: var(--muted); }
+    .score { font-weight: bold; }
 
     .badges {
       display: flex;
@@ -318,30 +270,14 @@
     }
 
     @media (max-width: 900px) {
-      .hero,
-      .controls {
-        grid-template-columns: 1fr;
-      }
-
-      .group-grid {
-        grid-template-columns: 1fr;
-      }
+      .hero, .controls { grid-template-columns: 1fr; }
+      .group-grid { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 600px) {
-      .stats {
-        grid-template-columns: 1fr;
-      }
-
-      th,
-      td {
-        padding: 9px 7px;
-        font-size: 0.9rem;
-      }
-
-      .hide-mobile {
-        display: none;
-      }
+      .stats { grid-template-columns: 1fr; }
+      th, td { padding: 9px 7px; font-size: 0.9rem; }
+      .hide-mobile { display: none; }
     }
   </style>
 </head>
@@ -356,11 +292,11 @@
       <aside class="card prize-card">
         <h2>Prize pot</h2>
         <ul class="prizes">
-          <li><strong>1st Place</strong><span class="amount">£100</span></li>
-          <li><strong>2nd Place</strong><span class="amount">£40</span></li>
-          <li><strong>3rd Place</strong><span class="amount">£20</span></li>
-          <li><strong>Loser</strong><span class="amount">£20</span></li>
-          <li><strong>Top of the group</strong><span class="amount">£5</span></li>
+          <li><strong>1st Place</strong><span class="amount">&pound;100</span></li>
+          <li><strong>2nd Place</strong><span class="amount">&pound;40</span></li>
+          <li><strong>3rd Place</strong><span class="amount">&pound;20</span></li>
+          <li><strong>Loser</strong><span class="amount">&pound;20</span></li>
+          <li><strong>Top of the group</strong><span class="amount">&pound;5</span></li>
         </ul>
       </aside>
     </div>
@@ -402,18 +338,18 @@
   </main>
 
   <script>
-    const GVIZ_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUAkR7JxLEFFPqKGBrxL20-0LPdef-_UkqN3CDkk3oqJMDTbVGXz6rfvXr4pTR8ftcP5tI1hNtiJhm/gviz/tq?gid=1496784945&headers=1";
+    const GVIZ_URL = "https://docs.google.com/spreadsheets/d/1mXNPRmCqN9-Ml1CZxEitWlcjFvjRZHWNEkIzzicNeAQ/gviz/tq?gid=1496784945&headers=1";
 
     let rows = [];
     let searchText = "";
     let selectedGroup = "all";
 
     const prizeAmounts = {
-      first: "£100",
-      second: "£40",
-      third: "£20",
-      loser: "£20",
-      group: "£5"
+      first: "&pound;100",
+      second: "&pound;40",
+      third: "&pound;20",
+      loser: "&pound;20",
+      group: "&pound;5"
     };
 
     function byId(id) {
@@ -421,7 +357,7 @@
     }
 
     function clean(value) {
-      return String(value ?? "").trim();
+      return String(value == null ? "" : value).trim();
     }
 
     function lower(value) {
@@ -429,12 +365,12 @@
     }
 
     function toScore(value) {
-      const parsed = Number(String(value ?? "").replace(/[^0-9.-]/g, ""));
+      const parsed = Number(String(value == null ? "" : value).replace(/[^0-9.-]/g, ""));
       return Number.isFinite(parsed) ? parsed : 0;
     }
 
     function escapeHtml(value) {
-      return String(value ?? "")
+      return String(value == null ? "" : value)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
@@ -477,10 +413,10 @@
 
     function parseGvizResponse(response) {
       if (!response || response.status === "error") {
-        const message =
-          response?.errors?.[0]?.detailed_message ||
-          response?.errors?.[0]?.message ||
-          "Google returned an error.";
+        let message = "Google returned an error.";
+        if (response && response.errors && response.errors[0]) {
+          message = response.errors[0].detailed_message || response.errors[0].message || message;
+        }
         throw new Error(message);
       }
 
@@ -490,25 +426,22 @@
         throw new Error("Google returned an unexpected table format.");
       }
 
-      const headers = table.cols.map(col => lower(col.label || col.id));
+      const headers = table.cols.map(function(col) {
+        return lower(col.label || col.id);
+      });
+
       const groupIndex = headers.indexOf("group");
       const countryIndex = headers.indexOf("country");
       const participantIndex = headers.indexOf("participant");
       const scoreIndex = headers.indexOf("score");
 
-      if (
-        groupIndex === -1 ||
-        countryIndex === -1 ||
-        participantIndex === -1 ||
-        scoreIndex === -1
-      ) {
+      if (groupIndex === -1 || countryIndex === -1 || participantIndex === -1 || scoreIndex === -1) {
         throw new Error("The sheet must have these exact headers: Group, Country, Participant, Score");
       }
 
       return table.rows
-        .map((row, index) => {
+        .map(function(row, index) {
           const cells = row.c || [];
-
           return {
             id: index,
             group: getCell(cells[groupIndex]),
@@ -517,12 +450,14 @@
             score: toScore(getCell(cells[scoreIndex]))
           };
         })
-        .filter(row => row.group && row.country);
+        .filter(function(row) {
+          return row.group && row.country;
+        });
     }
 
     function getCell(cell) {
       if (!cell) return "";
-      return clean(cell.f ?? cell.v ?? "");
+      return clean(cell.f != null ? cell.f : cell.v);
     }
 
     function setStatus(message, isError) {
@@ -532,37 +467,42 @@
     }
 
     function assignedRows() {
-      return rows.filter(row => row.participant);
+      return rows.filter(function(row) {
+        return row.participant;
+      });
     }
 
     function visibleRows() {
       const query = lower(searchText);
 
-      return rows.filter(row => {
+      return rows.filter(function(row) {
         const matchesSearch =
           !query ||
           lower(row.group).includes(query) ||
           lower(row.country).includes(query) ||
           lower(row.participant).includes(query);
 
-        const matchesGroup =
-          selectedGroup === "all" ||
-          row.group === selectedGroup;
+        const matchesGroup = selectedGroup === "all" || row.group === selectedGroup;
 
         return matchesSearch && matchesGroup;
       });
     }
 
     function sortHighToLow(list, includeUnassigned) {
-      return [...list]
-        .filter(row => includeUnassigned || row.participant)
-        .sort((a, b) => b.score - a.score || a.country.localeCompare(b.country));
+      return list
+        .slice()
+        .filter(function(row) {
+          return includeUnassigned || row.participant;
+        })
+        .sort(function(a, b) {
+          return b.score - a.score || a.country.localeCompare(b.country);
+        });
     }
 
     function grouped(list) {
       const output = {};
 
-      list.forEach(row => {
+      list.forEach(function(row) {
         if (!output[row.group]) output[row.group] = [];
         output[row.group].push(row);
       });
@@ -572,31 +512,51 @@
 
     function getPrizes() {
       const assigned = assignedRows();
-      const scores = [...new Set(assigned.map(row => row.score))]
-        .sort((a, b) => b - a);
+      const scoreMap = {};
+      const scores = [];
+
+      assigned.forEach(function(row) {
+        if (!scoreMap[row.score]) {
+          scoreMap[row.score] = true;
+          scores.push(row.score);
+        }
+      });
+
+      scores.sort(function(a, b) {
+        return b - a;
+      });
 
       const firstScore = scores[0];
       const secondScore = scores[1];
       const thirdScore = scores[2];
       const lowestScore = assigned.length
-        ? Math.min(...assigned.map(row => row.score))
+        ? Math.min.apply(null, assigned.map(function(row) { return row.score; }))
         : undefined;
 
       const groupWinners = [];
 
-      Object.entries(grouped(assigned)).forEach(([groupName, groupRows]) => {
-        const topScore = Math.max(...groupRows.map(row => row.score));
+      Object.entries(grouped(assigned)).forEach(function(entry) {
+        const groupName = entry[0];
+        const groupRows = entry[1];
+        const topScore = Math.max.apply(null, groupRows.map(function(row) { return row.score; }));
+
         groupRows
-          .filter(row => row.score === topScore)
-          .forEach(row => groupWinners.push({ ...row, prizeGroup: groupName }));
+          .filter(function(row) {
+            return row.score === topScore;
+          })
+          .forEach(function(row) {
+            const copy = Object.assign({}, row);
+            copy.prizeGroup = groupName;
+            groupWinners.push(copy);
+          });
       });
 
       return {
-        first: assigned.filter(row => row.score === firstScore),
-        second: assigned.filter(row => row.score === secondScore),
-        third: assigned.filter(row => row.score === thirdScore),
-        loser: assigned.filter(row => row.score === lowestScore),
-        groupWinners
+        first: assigned.filter(function(row) { return row.score === firstScore; }),
+        second: assigned.filter(function(row) { return row.score === secondScore; }),
+        third: assigned.filter(function(row) { return row.score === thirdScore; }),
+        loser: assigned.filter(function(row) { return row.score === lowestScore; }),
+        groupWinners: groupWinners
       };
     }
 
@@ -615,29 +575,29 @@
       const prizes = getPrizes();
       const badges = [];
 
-      if (prizes.first.some(entry => sameEntry(entry, row))) {
-        badges.push('<span class="badge gold">1st £100</span>');
+      if (prizes.first.some(function(entry) { return sameEntry(entry, row); })) {
+        badges.push('<span class="badge gold">1st &pound;100</span>');
       }
 
-      if (prizes.second.some(entry => sameEntry(entry, row))) {
-        badges.push('<span class="badge gold">2nd £40</span>');
+      if (prizes.second.some(function(entry) { return sameEntry(entry, row); })) {
+        badges.push('<span class="badge gold">2nd &pound;40</span>');
       }
 
-      if (prizes.third.some(entry => sameEntry(entry, row))) {
-        badges.push('<span class="badge gold">3rd £20</span>');
+      if (prizes.third.some(function(entry) { return sameEntry(entry, row); })) {
+        badges.push('<span class="badge gold">3rd &pound;20</span>');
       }
 
-      if (prizes.loser.some(entry => sameEntry(entry, row))) {
-        badges.push('<span class="badge red">Loser £20</span>');
+      if (prizes.loser.some(function(entry) { return sameEntry(entry, row); })) {
+        badges.push('<span class="badge red">Loser &pound;20</span>');
       }
 
-      if (prizes.groupWinners.some(entry => sameEntry(entry, row))) {
-        badges.push('<span class="badge green">Top group £5</span>');
+      if (prizes.groupWinners.some(function(entry) { return sameEntry(entry, row); })) {
+        badges.push('<span class="badge green">Top group &pound;5</span>');
       }
 
       return badges.length
         ? '<div class="badges">' + badges.join("") + "</div>"
-        : '<span class="badge">—</span>';
+        : '<span class="badge">-</span>';
     }
 
     function renderAll() {
@@ -651,15 +611,25 @@
     function renderGroupDropdown() {
       const select = byId("groupSelect");
       const current = select.value || "all";
+      const groupMap = {};
+      const groups = [];
 
-      const groups = [...new Set(rows.map(row => row.group))]
-        .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+      rows.forEach(function(row) {
+        if (!groupMap[row.group]) {
+          groupMap[row.group] = true;
+          groups.push(row.group);
+        }
+      });
+
+      groups.sort(function(a, b) {
+        return a.localeCompare(b, undefined, { numeric: true });
+      });
 
       select.innerHTML =
         '<option value="all">All groups</option>' +
-        groups
-          .map(group => '<option value="' + escapeHtml(group) + '">' + escapeHtml(group) + "</option>")
-          .join("");
+        groups.map(function(group) {
+          return '<option value="' + escapeHtml(group) + '">' + escapeHtml(group) + "</option>";
+        }).join("");
 
       select.value = groups.includes(current) ? current : "all";
       selectedGroup = select.value;
@@ -672,10 +642,10 @@
 
       byId("stats").innerHTML =
         '<div class="stat"><span>Current leader</span><strong>' +
-        (leader ? escapeHtml(leader.country) : "—") +
+        (leader ? escapeHtml(leader.country) : "-") +
         "</strong></div>" +
         '<div class="stat"><span>Current lowest</span><strong>' +
-        (loser ? escapeHtml(loser.country) : "—") +
+        (loser ? escapeHtml(loser.country) : "-") +
         "</strong></div>";
     }
 
@@ -700,23 +670,24 @@
             '</tr>' +
           '</thead>' +
           '<tbody>' +
-            list.map((row, index) =>
-              '<tr>' +
+            list.map(function(row, index) {
+              return '<tr>' +
                 '<td><span class="rank ' + rankClass(index) + '">' + (index + 1) + '</span></td>' +
                 '<td><span class="country">' + escapeHtml(row.country) + '</span><br><span class="muted">' + escapeHtml(row.group) + '</span></td>' +
                 '<td class="participant">' + escapeHtml(row.participant) + '</td>' +
                 '<td class="score">' + escapeHtml(row.score) + '</td>' +
                 '<td class="hide-mobile">' + rowBadges(row) + '</td>' +
-              '</tr>'
-            ).join("") +
+              '</tr>';
+            }).join("") +
           '</tbody>' +
         '</table>';
     }
 
     function renderGroups() {
       const groups = grouped(visibleRows());
-      const groupNames = Object.keys(groups)
-        .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+      const groupNames = Object.keys(groups).sort(function(a, b) {
+        return a.localeCompare(b, undefined, { numeric: true });
+      });
 
       if (!groupNames.length) {
         byId("groupsGrid").innerHTML =
@@ -724,60 +695,56 @@
         return;
       }
 
-      byId("groupsGrid").innerHTML = groupNames.map(groupName => {
+      byId("groupsGrid").innerHTML = groupNames.map(function(groupName) {
         const list = sortHighToLow(groups[groupName], true);
 
-        return (
-          '<article class="group-card">' +
-            '<h3><span>' + escapeHtml(groupName) + '</span></h3>' +
-            '<table>' +
-              '<thead>' +
-                '<tr>' +
-                  '<th>#</th>' +
-                  '<th>Country</th>' +
-                  '<th>Participant</th>' +
-                  '<th>Score</th>' +
-                '</tr>' +
-              '</thead>' +
-              '<tbody>' +
-                list.map((row, index) =>
-                  '<tr>' +
-                    '<td><span class="rank ' + (index === 0 && row.participant ? "gold" : "") + '">' + (index + 1) + '</span></td>' +
-                    '<td class="country">' + escapeHtml(row.country) + '</td>' +
-                    '<td>' +
-                      (row.participant
-                        ? '<span class="participant">' + escapeHtml(row.participant) + '</span>'
-                        : '<span class="muted">Unassigned</span>') +
-                    '</td>' +
-                    '<td class="score">' + escapeHtml(row.score) + '</td>' +
-                  '</tr>'
-                ).join("") +
-              '</tbody>' +
-            '</table>' +
-          '</article>'
-        );
+        return '<article class="group-card">' +
+          '<h3><span>' + escapeHtml(groupName) + '</span></h3>' +
+          '<table>' +
+            '<thead>' +
+              '<tr>' +
+                '<th>#</th>' +
+                '<th>Country</th>' +
+                '<th>Participant</th>' +
+                '<th>Score</th>' +
+              '</tr>' +
+            '</thead>' +
+            '<tbody>' +
+              list.map(function(row, index) {
+                return '<tr>' +
+                  '<td><span class="rank ' + (index === 0 && row.participant ? "gold" : "") + '">' + (index + 1) + '</span></td>' +
+                  '<td class="country">' + escapeHtml(row.country) + '</td>' +
+                  '<td>' +
+                    (row.participant
+                      ? '<span class="participant">' + escapeHtml(row.participant) + '</span>'
+                      : '<span class="muted">Unassigned</span>') +
+                  '</td>' +
+                  '<td class="score">' + escapeHtml(row.score) + '</td>' +
+                '</tr>';
+              }).join("") +
+            '</tbody>' +
+          '</table>' +
+        '</article>';
       }).join("");
     }
 
     function prizeEntryHtml(entries) {
       if (!entries || !entries.length) {
-        return '<span class="muted">—</span>';
+        return '<span class="muted">-</span>';
       }
 
-      return (
-        '<div class="badges">' +
-          entries.map(row =>
-            '<span class="badge ' + (row.prizeGroup ? "green" : "gold") + '">' +
-              escapeHtml(row.participant) +
-              " — " +
-              escapeHtml(row.country) +
-              (row.prizeGroup ? " (" + escapeHtml(row.prizeGroup) + ")" : "") +
-              " — " +
-              escapeHtml(row.score) +
-            '</span>'
-          ).join("") +
-        '</div>'
-      );
+      return '<div class="badges">' +
+        entries.map(function(row) {
+          return '<span class="badge ' + (row.prizeGroup ? "green" : "gold") + '">' +
+            escapeHtml(row.participant) +
+            " - " +
+            escapeHtml(row.country) +
+            (row.prizeGroup ? " (" + escapeHtml(row.prizeGroup) + ")" : "") +
+            " - " +
+            escapeHtml(row.score) +
+          '</span>';
+        }).join("") +
+      '</div>';
     }
 
     function renderPrizes() {
@@ -801,13 +768,13 @@
             '</tr>' +
           '</thead>' +
           '<tbody>' +
-            prizeRows.map(row =>
-              '<tr>' +
+            prizeRows.map(function(row) {
+              return '<tr>' +
                 '<td><strong>' + row[0] + '</strong></td>' +
                 '<td class="score">' + row[1] + '</td>' +
                 '<td>' + prizeEntryHtml(row[2]) + '</td>' +
-              '</tr>'
-            ).join("") +
+              '</tr>';
+            }).join("") +
           '</tbody>' +
         '</table>';
     }
@@ -825,10 +792,15 @@
         renderAll();
       });
 
-      document.querySelectorAll(".tab").forEach(button => {
+      document.querySelectorAll(".tab").forEach(function(button) {
         button.addEventListener("click", function() {
-          document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
-          document.querySelectorAll(".view").forEach(view => view.classList.remove("active"));
+          document.querySelectorAll(".tab").forEach(function(tab) {
+            tab.classList.remove("active");
+          });
+
+          document.querySelectorAll(".view").forEach(function(view) {
+            view.classList.remove("active");
+          });
 
           button.classList.add("active");
           byId(button.dataset.target).classList.add("active");
