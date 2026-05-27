@@ -8,7 +8,6 @@
     :root {
       --bg: #07111f;
       --card: #111827;
-      --soft: #1f2937;
       --text: #f8fafc;
       --muted: #cbd5e1;
       --line: rgba(255,255,255,0.14);
@@ -32,9 +31,7 @@
       margin: 0 auto;
     }
 
-    header {
-      padding: 34px 0 18px;
-    }
+    header { padding: 34px 0 18px; }
 
     .hero {
       display: grid;
@@ -49,23 +46,16 @@
       box-shadow: 0 20px 50px rgba(0,0,0,0.28);
     }
 
-    .intro, .prize-card, .panel {
-      padding: 22px;
-    }
+    .intro, .prize-card, .panel { padding: 22px; }
 
     h1 {
-      margin: 0 0 8px;
+      margin: 0;
       font-size: clamp(2.1rem, 6vw, 4rem);
       letter-spacing: -0.05em;
       line-height: 0.95;
     }
 
     h2, h3 { margin-top: 0; }
-
-    p {
-      color: var(--muted);
-      line-height: 1.5;
-    }
 
     .prizes {
       list-style: none;
@@ -150,9 +140,7 @@
       font-weight: bold;
     }
 
-    button:hover {
-      border-color: var(--accent);
-    }
+    button:hover { border-color: var(--accent); }
 
     .tabs {
       display: flex;
@@ -268,16 +256,8 @@
       text-align: center;
     }
 
-
-    code {
-      background: rgba(0,0,0,0.35);
-      padding: 2px 6px;
-      border-radius: 6px;
-    }
-
     @media (max-width: 900px) {
       .hero, .controls { grid-template-columns: 1fr; }
-      .stats { grid-template-columns: repeat(2, 1fr); }
       .group-grid { grid-template-columns: 1fr; }
     }
 
@@ -333,7 +313,6 @@
       <h2>Group standings</h2>
       <div id="groupsGrid" class="group-grid"></div>
     </section>
-
 
     <section id="prizesView" class="card panel view">
       <h2>Current prize positions</h2>
@@ -452,7 +431,6 @@
         const csvRows = parseCsv(text);
         rows = parseRows(csvRows);
         renderAll();
-        const assigned = rows.filter(r => r.participant).length;
         setStatus("Last updated: " + new Date().toLocaleTimeString(), false);
       } catch (error) {
         console.error(error);
