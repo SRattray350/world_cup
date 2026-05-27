@@ -321,7 +321,8 @@
   </main>
 
   <script>
-    const DATA_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUAkR7JxLEFFPqKGBrxL20-0LPdef-_UkqN3CDkk3oqJMDTbVGXz6rfvXr4pTR8ftcP5tI1hNtiJhm/pub?gid=1496784945&single=true&output=csv";
+    // Uses Google's gviz JSONP-style endpoint. This avoids browser CORS issues from fetch().
+    const GVIZ_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUAkR7JxLEFFPqKGBrxL20-0LPdef-_UkqN3CDkk3oqJMDTbVGXz6rfvXr4pTR8ftcP5tI1hNtiJhm/gviz/tq?gid=1496784945&headers=1";
 
     let rows = [];
     let searchText = "";
@@ -361,81 +362,74 @@
         .replace(/'/g, "&#039;");
     }
 
-    function parseCsv(text) {
-      const output = [];
-      let row = [];
-      let cell = "";
-      let quoted = false;
+    function loadData() {
+      setStatus("Loading sheet data...", false);
 
-      for (let i = 0; i < text.length; i++) {
-        const char = text[i];
-        const next = text[i + 1];
+      const callbackName = "handleSheetData_" + Date.now();
+      const script = document.createElement("script");
 
-        if (char === '"' && quoted && next === '"') {
-          cell += '"';
-          i++;
-        } else if (char === '"') {
-          quoted = !quoted;
-        } else if (char === ',' && !quoted) {
-          row.push(cell);
-          cell = "";
-        } else if ((char === '
-' || char === '
-') && !quoted) {
-          if (char === '
-' && next === '
-') i++;
-          row.push(cell);
-          output.push(row);
-          row = [];
-          cell = "";
-        } else {
-          cell += char;
+      window[callbackName] = function(response) {
+        try {
+          rows = parseGvizResponse(response);
+          renderAll();
+          setStatus("Last updated: " + new Date().toLocaleTimeString(), false);
+        } catch (error) {
+          console.error(error);
+          setStatus("Error: " + error.message, true);
+        } finally {
+          delete window[callbackName];
+          script.remove();
         }
-      }
+      };
 
-      row.push(cell);
-      output.push(row);
-      return output.map(r => r.map(clean)).filter(r => r.some(Boolean));
+      script.onerror = function() {
+        delete window[callbackName];
+        script.remove();
+        setStatus("Error: The Google Sheet script could not be loaded.", true);
+      };
+
+      script.src = GVIZ_URL + "&tqx=" + encodeURIComponent("out:json;responseHandler:" + callbackName) + "&cache=" + Date.now();
+      document.body.appendChild(script);
     }
 
-    function parseRows(csvRows) {
-      const headers = csvRows[0].map(lower);
+    function parseGvizResponse(response) {
+      if (!response || response.status === "error") {
+        const message = response?.errors?.[0]?.detailed_message || response?.errors?.[0]?.message || "Google returned an error.";
+        throw new Error(message);
+      }
+
+      const table = response.table;
+      if (!table || !table.cols || !table.rows) {
+        throw new Error("Google returned an unexpected table format.");
+      }
+
+      const headers = table.cols.map(col => lower(col.label || col.id));
       const groupIndex = headers.indexOf("group");
       const countryIndex = headers.indexOf("country");
       const participantIndex = headers.indexOf("participant");
       const scoreIndex = headers.indexOf("score");
 
       if (groupIndex === -1 || countryIndex === -1 || participantIndex === -1 || scoreIndex === -1) {
-        throw new Error("The CSV must have these exact headers: Group, Country, Participant, Score");
+        throw new Error("The sheet must have these exact headers: Group, Country, Participant, Score");
       }
 
-      return csvRows.slice(1)
-        .map((r, index) => ({
-          id: index,
-          group: clean(r[groupIndex]),
-          country: clean(r[countryIndex]),
-          participant: clean(r[participantIndex]),
-          score: toScore(r[scoreIndex])
-        }))
-        .filter(r => r.group && r.country);
+      return table.rows
+        .map((row, index) => {
+          const cells = row.c || [];
+          return {
+            id: index,
+            group: getCell(cells[groupIndex]),
+            country: getCell(cells[countryIndex]),
+            participant: getCell(cells[participantIndex]),
+            score: toScore(getCell(cells[scoreIndex]))
+          };
+        })
+        .filter(row => row.group && row.country);
     }
 
-    async function loadData() {
-      try {
-        setStatus("Loading sheet data...", false);
-        const url = DATA_URL + "&cache=" + Date.now();
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("Could not fetch the Google Sheet CSV.");
-        const text = await response.text();
-        const csvRows = parseCsv(text);
-        rows = parseRows(csvRows);
-        renderAll();
-        setStatus("Last updated: " + new Date().toLocaleTimeString(), false);
-      } catch (error) {
-        console.error(error);
-        setStatus("Error: " + error.message, true);
-      }
+    function getCell(cell) {
+      if (!cell) return "";
+      return clean(cell.f ?? cell.v ?? "");
     }
 
     function setStatus(message, isError) {
