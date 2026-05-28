@@ -405,6 +405,12 @@
       font-weight: 800;
     }
 
+    .world-ranking {
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+
     .badges {
       display: flex;
       flex-wrap: wrap;
@@ -535,17 +541,23 @@
 
     .group-card th:nth-child(2),
     .group-card td:nth-child(2) {
-      width: 42%;
+      width: 32%;
     }
 
     .group-card th:nth-child(3),
     .group-card td:nth-child(3) {
-      width: 38%;
+      width: 30%;
     }
 
     .group-card th:nth-child(4),
     .group-card td:nth-child(4) {
       width: 58px;
+      text-align: right;
+    }
+
+    .group-card th:nth-child(5),
+    .group-card td:nth-child(5) {
+      width: 92px;
       text-align: right;
     }
 
@@ -885,7 +897,7 @@
 
       .group-card td {
         display: grid;
-        grid-template-columns: 90px minmax(0, 1fr);
+        grid-template-columns: 104px minmax(0, 1fr);
         gap: 8px;
         padding: 6px 0;
         border-bottom: 0;
@@ -925,16 +937,26 @@
         letter-spacing: 0.06em;
       }
 
+      .group-card td:nth-child(5)::before {
+        content: "World ranking";
+        color: var(--muted);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
       .group-card .country,
       .group-card .participant,
       .group-card .muted,
-      .group-card .score {
+      .group-card .score,
+      .group-card .world-ranking {
         min-width: 0;
         overflow-wrap: anywhere;
         word-break: normal;
       }
 
-      .group-card .score {
+      .group-card .score,
+      .group-card .world-ranking {
         text-align: left;
       }
 
@@ -1212,6 +1234,7 @@
       const countryIndex = headers.indexOf("country");
       const participantIndex = headers.indexOf("participant");
       const scoreIndex = headers.indexOf("score");
+      const worldRankingIndex = findHeaderIndex(headers, ["world ranking", "ranking", "world rank", "rank"]);
 
       if (groupIndex === -1 || countryIndex === -1 || participantIndex === -1 || scoreIndex === -1) {
         throw new Error("The sheet must have these exact headers: Group, Country, Participant, Score");
@@ -1225,7 +1248,8 @@
             group: getCell(cells[groupIndex]),
             country: getCell(cells[countryIndex]),
             participant: getCell(cells[participantIndex]),
-            score: toScore(getCell(cells[scoreIndex]))
+            score: toScore(getCell(cells[scoreIndex])),
+            worldRanking: worldRankingIndex === -1 ? "" : getCell(cells[worldRankingIndex])
           };
         })
         .filter(function(row) {
@@ -1628,6 +1652,7 @@
                 '<th>Country</th>' +
                 '<th>Participant</th>' +
                 '<th>Score</th>' +
+                '<th>World ranking</th>' +
               '</tr>' +
             '</thead>' +
             '<tbody>' +
@@ -1641,6 +1666,7 @@
                       : '<span class="muted">Unassigned</span>') +
                   '</td>' +
                   '<td class="score">' + escapeHtml(row.score) + '</td>' +
+                  '<td class="world-ranking">' + (row.worldRanking ? escapeHtml(row.worldRanking) : '<span class="muted">-</span>') + '</td>' +
                 '</tr>';
               }).join("") +
             '</tbody>' +
