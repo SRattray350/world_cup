@@ -405,12 +405,6 @@
       font-weight: 800;
     }
 
-    .world-ranking {
-      color: var(--muted);
-      font-weight: 800;
-    }
-
-
     .badges {
       display: flex;
       flex-wrap: wrap;
@@ -471,6 +465,22 @@
       background: rgba(0,194,255,0.07);
     }
 
+
+    .world-ranking-badge {
+      display: inline-flex;
+      width: fit-content;
+      margin-top: 5px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      color: #dbeafe;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.16);
+      font-size: 0.68rem;
+      font-weight: 800;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+
     .qualify-badge {
       display: inline-flex;
       align-items: center;
@@ -494,7 +504,7 @@
 
     .group-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 14px;
     }
 
@@ -534,46 +544,29 @@
       width: 100%;
     }
 
-    .group-card th,
-    .group-card td {
-      overflow-wrap: anywhere;
-      word-break: normal;
-    }
-
-    .group-card th {
-      font-size: 0.66rem;
-      line-height: 1.15;
-    }
-
     .group-card th:nth-child(1),
     .group-card td:nth-child(1) {
-      width: 38px;
+      width: 42px;
     }
 
     .group-card th:nth-child(2),
     .group-card td:nth-child(2) {
-      width: 31%;
+      width: 42%;
     }
 
     .group-card th:nth-child(3),
     .group-card td:nth-child(3) {
-      width: 29%;
+      width: 38%;
     }
 
     .group-card th:nth-child(4),
     .group-card td:nth-child(4) {
-      width: 52px;
-      text-align: right;
-    }
-
-    .group-card th:nth-child(5),
-    .group-card td:nth-child(5) {
-      width: 76px;
+      width: 58px;
       text-align: right;
     }
 
     .group-card tbody tr {
-      height: 78px;
+      height: 64px;
     }
 
     .group-card td {
@@ -583,21 +576,13 @@
     .group-card .country {
       display: block;
       line-height: 1.2;
-      max-width: 100%;
     }
 
     .group-card .participant,
-    .group-card .muted,
-    .group-card .world-ranking,
-    .group-card .score {
+    .group-card .muted {
       display: inline-block;
       max-width: 100%;
       line-height: 1.2;
-    }
-
-    .group-card .score,
-    .group-card .world-ranking {
-      white-space: nowrap;
     }
 
     .empty {
@@ -829,13 +814,6 @@
       letter-spacing: 0.06em;
     }
 
-
-    @media (max-width: 1100px) {
-      .group-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
     @media (max-width: 900px) {
       .hero,
       .controls {
@@ -923,7 +901,7 @@
 
       .group-card td {
         display: grid;
-        grid-template-columns: 110px minmax(0, 1fr);
+        grid-template-columns: 90px minmax(0, 1fr);
         gap: 8px;
         padding: 6px 0;
         border-bottom: 0;
@@ -963,26 +941,17 @@
         letter-spacing: 0.06em;
       }
 
-      .group-card td:nth-child(5)::before {
-        content: "World ranking";
-        color: var(--muted);
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-      }
-
       .group-card .country,
       .group-card .participant,
       .group-card .muted,
       .group-card .score,
-      .group-card .world-ranking {
+      .group-card .world-ranking-badge {
         min-width: 0;
         overflow-wrap: anywhere;
         word-break: normal;
       }
 
-      .group-card .score,
-      .group-card .world-ranking {
+      .group-card .score {
         text-align: left;
       }
 
@@ -1625,6 +1594,14 @@
       return row.group + "|" + row.country;
     }
 
+    function worldRankingBadge(row) {
+      if (!row.worldRanking) {
+        return "";
+      }
+
+      return '<span class="world-ranking-badge">World ranking: ' + escapeHtml(row.worldRanking) + '</span>';
+    }
+
     function qualificationBadge(row, qualifiers) {
       const key = rowKey(row);
 
@@ -1678,21 +1655,19 @@
                 '<th>Country</th>' +
                 '<th>Participant</th>' +
                 '<th>Score</th>' +
-                '<th>World ranking</th>' +
               '</tr>' +
             '</thead>' +
             '<tbody>' +
               list.map(function(row, index) {
                 return '<tr class="' + qualificationRowClass(row, qualifiers) + '">' +
                   '<td><span class="rank ' + (index === 0 && row.participant ? "gold" : "") + '">' + (index + 1) + '</span></td>' +
-                  '<td class="country">' + countryWithFlag(row.country) + qualificationBadge(row, qualifiers) + '</td>' +
+                  '<td class="country">' + countryWithFlag(row.country) + worldRankingBadge(row) + qualificationBadge(row, qualifiers) + '</td>' +
                   '<td>' +
                     (row.participant
                       ? '<span class="participant">' + escapeHtml(row.participant) + '</span>'
                       : '<span class="muted">Unassigned</span>') +
                   '</td>' +
                   '<td class="score">' + escapeHtml(row.score) + '</td>' +
-                  '<td class="world-ranking">' + (row.worldRanking ? escapeHtml(row.worldRanking) : '<span class="muted">-</span>') + '</td>' +
                 '</tr>';
               }).join("") +
             '</tbody>' +
