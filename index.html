@@ -467,18 +467,21 @@
 
 
     .world-ranking-badge {
-      display: inline-flex;
+      display: block;
       width: fit-content;
+      max-width: 100%;
       margin-top: 5px;
       padding: 3px 7px;
       border-radius: 999px;
       color: #dbeafe;
       background: rgba(255,255,255,0.08);
       border: 1px solid rgba(255,255,255,0.16);
-      font-size: 0.68rem;
+      font-size: 0.64rem;
       font-weight: 800;
       line-height: 1.1;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .qualify-badge {
@@ -551,12 +554,12 @@
 
     .group-card th:nth-child(2),
     .group-card td:nth-child(2) {
-      width: 42%;
+      width: 48%;
     }
 
     .group-card th:nth-child(3),
     .group-card td:nth-child(3) {
-      width: 38%;
+      width: 30%;
     }
 
 
@@ -568,7 +571,7 @@
     }
 
     .group-card tbody tr {
-      height: 64px;
+      height: 72px;
     }
 
     .group-card td {
@@ -967,6 +970,14 @@
       .qualify-badge {
         margin-left: 0;
         margin-top: 5px;
+      }
+
+
+      .world-ranking-badge {
+        max-width: 100%;
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
       }
     }
 
