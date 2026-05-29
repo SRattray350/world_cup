@@ -467,21 +467,18 @@
 
 
     .world-ranking-badge {
-      display: block;
+      display: inline-flex;
       width: fit-content;
-      max-width: 100%;
       margin-top: 5px;
       padding: 3px 7px;
       border-radius: 999px;
       color: #dbeafe;
       background: rgba(255,255,255,0.08);
       border: 1px solid rgba(255,255,255,0.16);
-      font-size: 0.64rem;
+      font-size: 0.68rem;
       font-weight: 800;
       line-height: 1.1;
       white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
     .qualify-badge {
@@ -554,12 +551,12 @@
 
     .group-card th:nth-child(2),
     .group-card td:nth-child(2) {
-      width: 48%;
+      width: 42%;
     }
 
     .group-card th:nth-child(3),
     .group-card td:nth-child(3) {
-      width: 30%;
+      width: 38%;
     }
 
 
@@ -571,7 +568,7 @@
     }
 
     .group-card tbody tr {
-      height: 72px;
+      height: 64px;
     }
 
     .group-card td {
@@ -971,14 +968,27 @@
         margin-left: 0;
         margin-top: 5px;
       }
+    }
 
+  
+  
+    /* Stronger spacing between country/ranking badge and participant column */
+    .group-card th:nth-child(2),
+    .group-card td:nth-child(2) {
+      padding-right: 32px;
+    }
 
-      .world-ranking-badge {
-        max-width: 100%;
-        white-space: normal;
-        overflow: visible;
-        text-overflow: clip;
-      }
+    .group-card th:nth-child(3),
+    .group-card td:nth-child(3) {
+      padding-left: 18px;
+    }
+
+    .world-ranking-badge {
+      display: block;
+      width: fit-content;
+      margin-top: 6px;
+      margin-right: 0;
+      white-space: nowrap;
     }
 
   </style>
