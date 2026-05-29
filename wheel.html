@@ -1,0 +1,888 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Applied Sciences Sweepstake Wheel</title>
+
+  <style>
+    :root {
+      --bg: #0b3d24;
+      --bg-2: #14532d;
+      --card: rgba(9, 55, 33, 0.92);
+      --text: #f8fbff;
+      --muted: #c8d6ea;
+      --line: rgba(255,255,255,0.14);
+      --accent: #00c2ff;
+      --green: #20d489;
+      --gold: #ffd24a;
+      --red: #ff6b6b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top center, rgba(255,255,255,0.08), transparent 18rem),
+        radial-gradient(circle at 18% 8%, rgba(255,210,74,0.10), transparent 24rem),
+        radial-gradient(circle at 82% 2%, rgba(255,255,255,0.08), transparent 20rem),
+        linear-gradient(180deg, #1b6b3a 0%, var(--bg-2) 22%, var(--bg) 58%, #072817 100%);
+      overflow-x: hidden;
+    }
+
+    .wrap {
+      width: min(1280px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 26px 0 34px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .title-card {
+      padding: 22px 24px;
+      border-radius: 24px;
+      border: 1px solid var(--line);
+      background:
+        radial-gradient(circle at top right, rgba(255,210,74,0.18), transparent 14rem),
+        radial-gradient(circle at bottom left, rgba(32,212,137,0.18), transparent 16rem),
+        linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
+        var(--card);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.34);
+    }
+
+    .kicker {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.14);
+      color: #e9f4ff;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.2rem, 5vw, 4.4rem);
+      letter-spacing: -0.055em;
+      line-height: 0.95;
+      text-transform: uppercase;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.36);
+    }
+
+    .subtitle {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.45;
+    }
+
+    .status {
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.08);
+      color: var(--muted);
+      min-width: 260px;
+      text-align: right;
+      line-height: 1.4;
+    }
+
+    .status strong {
+      display: block;
+      color: var(--text);
+      font-size: 1.15rem;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(520px, 1.2fr) minmax(320px, 0.8fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .panel {
+      border-radius: 24px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015)),
+        var(--card);
+      box-shadow:
+        0 20px 50px rgba(0,0,0,0.34),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+      padding: 20px;
+    }
+
+    .wheel-panel {
+      display: grid;
+      place-items: center;
+      min-height: 680px;
+      position: relative;
+      overflow: hidden;
+      background:
+        repeating-linear-gradient(
+          180deg,
+          rgba(32,212,137,0.07) 0px,
+          rgba(32,212,137,0.07) 32px,
+          rgba(255,255,255,0.015) 32px,
+          rgba(255,255,255,0.015) 64px
+        ),
+        linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.012)),
+        var(--card);
+    }
+
+    .wheel-area {
+      position: relative;
+      width: min(680px, 90vw);
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 22px 45px rgba(0,0,0,0.35));
+      transform: rotate(0deg);
+    }
+
+    .pointer {
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 24px solid transparent;
+      border-right: 24px solid transparent;
+      border-top: 48px solid var(--gold);
+      filter: drop-shadow(0 5px 8px rgba(0,0,0,0.4));
+      z-index: 5;
+    }
+
+    .centre-button {
+      position: absolute;
+      width: 128px;
+      height: 128px;
+      border-radius: 50%;
+      border: 5px solid rgba(255,255,255,0.28);
+      background: linear-gradient(135deg, var(--gold), #ffe48e);
+      color: #07111f;
+      font-size: 1.15rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow:
+        0 14px 30px rgba(0,0,0,0.35),
+        inset 0 1px 0 rgba(255,255,255,0.5);
+      z-index: 4;
+    }
+
+    .centre-button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .side-panel {
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .winner-card {
+      min-height: 180px;
+      display: grid;
+      align-content: center;
+      text-align: center;
+      border-radius: 22px;
+      border: 1px solid rgba(255,210,74,0.42);
+      background:
+        radial-gradient(circle at top, rgba(255,210,74,0.22), transparent 14rem),
+        linear-gradient(180deg, rgba(27,107,58,0.75), rgba(9,55,33,0.92));
+      padding: 22px;
+    }
+
+    .winner-label {
+      margin: 0 0 8px;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+    }
+
+    .winner-name {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: 1.04;
+      color: var(--gold);
+      text-shadow: 0 5px 20px rgba(0,0,0,0.35);
+      overflow-wrap: anywhere;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    button {
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 16px;
+      padding: 13px 14px;
+      font: inherit;
+      color: var(--text);
+      background: rgba(255,255,255,0.07);
+      cursor: pointer;
+      font-weight: 800;
+      transition: all 0.18s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(0,194,255,0.48);
+      box-shadow: 0 8px 18px rgba(0,194,255,0.12);
+    }
+
+    button.primary {
+      grid-column: span 2;
+      background: linear-gradient(135deg, var(--gold), #ffe48e);
+      color: #07111f;
+      border-color: rgba(255,210,74,0.66);
+      box-shadow: 0 8px 22px rgba(255,210,74,0.22);
+    }
+
+    button.danger {
+      color: #fecdd3;
+      border-color: rgba(255,107,107,0.35);
+      background: rgba(255,107,107,0.11);
+    }
+
+    .names-panel h2 {
+      margin: 0 0 12px;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .names-list {
+      display: grid;
+      gap: 7px;
+      max-height: 310px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .name-pill {
+      padding: 9px 11px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: #e0f2fe;
+      font-weight: 800;
+    }
+
+    .drawn {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    .error {
+      color: #fecdd3;
+    }
+
+    .drawn-list {
+      display: grid;
+      gap: 7px;
+      max-height: 260px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .drawn-pill {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 9px 8px 11px;
+      border-radius: 14px;
+      background: rgba(32,212,137,0.12);
+      border: 1px solid rgba(32,212,137,0.25);
+      color: #fef3c7;
+      font-weight: 800;
+    }
+
+    .add-back-button {
+      padding: 6px 9px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      color: #07111f;
+      background: linear-gradient(135deg, var(--gold), #ffe48e);
+      border-color: rgba(255,210,74,0.50);
+      white-space: nowrap;
+    }
+
+    .drawn-panel h2 {
+      margin: 0 0 12px;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+
+    @media (max-width: 980px) {
+      header,
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      .status {
+        text-align: left;
+      }
+
+      .wheel-panel {
+        min-height: 520px;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .wrap {
+        width: min(100% - 18px, 1280px);
+        padding-top: 14px;
+      }
+
+      .panel,
+      .title-card {
+        padding: 16px;
+      }
+
+      .centre-button {
+        width: 100px;
+        height: 100px;
+        font-size: 0.95rem;
+      }
+
+      .pointer {
+        border-left-width: 18px;
+        border-right-width: 18px;
+        border-top-width: 38px;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      body.presentation main {
+        grid-template-columns: 1fr;
+      }
+
+      body.presentation .side-panel {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      body.presentation .wheel-panel {
+        min-height: 720px;
+      }
+
+      body.presentation .wheel-area {
+        width: min(740px, 70vh);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <section class="title-card">
+        <div class="kicker">Applied Sciences Sweepstake</div>
+        <h1>Participant Wheel</h1>
+        <p class="subtitle">Randomly pick participants from the Google Sheet. Selected names are removed from the wheel automatically.</p>
+      </section>
+
+      <aside class="status" id="status">
+        Loading participants...
+      </aside>
+    </header>
+
+    <main>
+      <section class="panel wheel-panel">
+        <div class="wheel-area">
+          <div class="pointer" aria-hidden="true"></div>
+          <canvas id="wheelCanvas" width="1200" height="1200"></canvas>
+          <button id="spinButton" class="centre-button" type="button">Spin</button>
+        </div>
+      </section>
+
+      <aside class="side-panel">
+        <section class="winner-card">
+          <p class="winner-label">Selected participant</p>
+          <h2 id="winnerName" class="winner-name">Waiting...</h2>
+        </section>
+
+        <section class="panel">
+          <div class="controls">
+            <button id="reloadButton" type="button">Reload names</button>
+            <button id="presentationButton" type="button">Presentation mode</button>
+            <button id="addLastBackButton" type="button">Add last back</button>
+            <button id="resetButton" type="button">Reset wheel</button>
+            <button id="addAllBackButton" type="button">Add all back</button>
+            <button id="spinButtonSide" class="primary" type="button">Spin the wheel</button>
+          </div>
+          <p class="drawn" id="drawnInfo">No one has been drawn yet.</p>
+        </section>
+
+        <section class="panel names-panel">
+          <h2>Participants on wheel</h2>
+          <div id="namesList" class="names-list"></div>
+        </section>
+
+        <section class="panel drawn-panel">
+          <h2>Drawn participants</h2>
+          <div id="drawnList" class="drawn-list"></div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    const SHEET_ID = "1mXNPRmCqN9-Ml1CZxEitWlcjFvjRZHWNEkIzzicNeAQ";
+    const PARTICIPANTS_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?sheet=Participants&headers=0";
+
+    let originalParticipants = [];
+    let participants = [];
+    let drawnParticipants = [];
+    let currentRotation = 0;
+    let isSpinning = false;
+    let selectedName = "";
+
+    const canvas = document.getElementById("wheelCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const colours = [
+      "#0f7a45", "#ffffff", "#1f2937", "#20d489",
+      "#095b34", "#f8fafc", "#ffd24a", "#14532d",
+      "#16a34a", "#e5e7eb", "#0b3d24", "#bbf7d0"
+    ];
+
+    function clean(value) {
+      return String(value == null ? "" : value).trim();
+    }
+
+    function lower(value) {
+      return clean(value).toLowerCase();
+    }
+
+    function byId(id) {
+      return document.getElementById(id);
+    }
+
+    function escapeHtml(value) {
+      return String(value == null ? "" : value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function loadGviz(url) {
+      return new Promise(function(resolve, reject) {
+        const callbackName = "handleParticipants_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+        const script = document.createElement("script");
+
+        window[callbackName] = function(response) {
+          delete window[callbackName];
+          script.remove();
+          resolve(response);
+        };
+
+        script.onerror = function() {
+          delete window[callbackName];
+          script.remove();
+          reject(new Error("The Google Sheet could not be loaded."));
+        };
+
+        script.src = url +
+          "&tqx=" + encodeURIComponent("out:json;responseHandler:" + callbackName) +
+          "&cache=" + Date.now();
+
+        document.body.appendChild(script);
+      });
+    }
+
+    async function loadParticipants() {
+      try {
+        setStatus("Loading participants...", false);
+
+        const response = await loadGviz(PARTICIPANTS_URL);
+        originalParticipants = parseParticipants(response);
+        participants = originalParticipants.slice();
+        drawnParticipants = [];
+        selectedName = "";
+        currentRotation = 0;
+
+        drawWheel();
+        renderNames();
+        renderDrawnInfo();
+        renderDrawnList();
+        byId("winnerName").textContent = "Ready";
+        setStatus("Loaded " + participants.length + " participants.", false);
+      } catch (error) {
+        console.error(error);
+        setStatus("Error: " + error.message, true);
+      }
+    }
+
+    function parseParticipants(response) {
+      if (!response || response.status === "error") {
+        let message = "Google returned an error.";
+        if (response && response.errors && response.errors[0]) {
+          message = response.errors[0].detailed_message || response.errors[0].message || message;
+        }
+        throw new Error(message);
+      }
+
+      const table = response.table;
+
+      if (!table || !table.rows) {
+        throw new Error("Google returned an unexpected participant table format.");
+      }
+
+      const names = table.rows
+        .map(function(row) {
+          const cell = row.c && row.c[0] ? row.c[0] : null;
+          return clean(cell && (cell.f != null ? cell.f : cell.v));
+        })
+        .filter(function(name) {
+          const value = lower(name);
+          return name && value !== "participant" && value !== "participants";
+        });
+
+      const seen = {};
+      const unique = [];
+
+      names.forEach(function(name) {
+        const key = lower(name);
+        if (!seen[key]) {
+          seen[key] = true;
+          unique.push(name);
+        }
+      });
+
+      if (!unique.length) {
+        throw new Error("No participant names were found in the Participants tab.");
+      }
+
+      return unique;
+    }
+
+    function setStatus(message, isError) {
+      byId("status").innerHTML = isError
+        ? '<span class="error">' + escapeHtml(message) + '</span>'
+        : '<strong>' + escapeHtml(message) + '</strong>';
+    }
+
+    function textColourForSlice(colour) {
+      const lightColours = ["#ffffff", "#f8fafc", "#e5e7eb", "#ffd24a", "#bbf7d0"];
+      return lightColours.includes(colour.toLowerCase()) ? "#07111f" : "#f8fbff";
+    }
+
+    function drawWheel() {
+      const size = canvas.width;
+      const radius = size / 2;
+      const centre = size / 2;
+
+      ctx.clearRect(0, 0, size, size);
+
+      if (!participants.length) {
+        drawEmptyWheel();
+        return;
+      }
+
+      const slice = (Math.PI * 2) / participants.length;
+
+      ctx.save();
+      ctx.translate(centre, centre);
+      ctx.rotate(currentRotation);
+
+      participants.forEach(function(name, index) {
+        const start = index * slice - Math.PI / 2;
+        const end = start + slice;
+
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, radius - 24, start, end);
+        ctx.closePath();
+        ctx.fillStyle = colours[index % colours.length];
+        ctx.fill();
+
+        ctx.strokeStyle = "rgba(6,21,43,0.45)";
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+        ctx.save();
+        ctx.rotate(start + slice / 2);
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = textColourForSlice(colours[index % colours.length]);
+        ctx.font = participants.length > 36 ? "700 24px Arial" : "800 30px Arial";
+
+        const label = name.length > 18 ? name.slice(0, 17) + "..." : name;
+        ctx.fillText(label, radius - 64, 0);
+        ctx.restore();
+      });
+
+      ctx.beginPath();
+      ctx.arc(0, 0, 104, 0, Math.PI * 2);
+      ctx.fillStyle = "#06152b";
+      ctx.fill();
+      ctx.lineWidth = 8;
+      ctx.strokeStyle = "rgba(255,255,255,0.25)";
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function drawEmptyWheel() {
+      const size = canvas.width;
+      const radius = size / 2;
+      const centre = size / 2;
+
+      ctx.clearRect(0, 0, size, size);
+      ctx.beginPath();
+      ctx.arc(centre, centre, radius - 24, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(255,255,255,0.06)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,0.18)";
+      ctx.lineWidth = 6;
+      ctx.stroke();
+
+      ctx.fillStyle = "#c8d6ea";
+      ctx.font = "800 42px Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("No names left", centre, centre);
+    }
+
+    function spinWheel() {
+      if (isSpinning || participants.length === 0) return;
+
+      isSpinning = true;
+      byId("spinButton").disabled = true;
+      byId("spinButtonSide").disabled = true;
+      byId("winnerName").textContent = "Spinning...";
+
+      const winnerIndex = Math.floor(Math.random() * participants.length);
+      const slice = (Math.PI * 2) / participants.length;
+
+      // The pointer is at the top of the wheel.
+      // The previous version did not account for currentRotation, so later spins could
+      // visually land on one slice while selecting another. This calculates the extra
+      // rotation needed from the wheel's current position.
+      const pointerAngle = -Math.PI / 2;
+      const sliceCentre = winnerIndex * slice + slice / 2 - Math.PI / 2;
+      const fullSpins = 8 + Math.floor(Math.random() * 4);
+
+      const currentSliceCentreAtScreen = normaliseAngle(currentRotation + sliceCentre);
+      const pointerNormalised = normaliseAngle(pointerAngle);
+      const neededRotation = normaliseAngle(pointerNormalised - currentSliceCentreAtScreen);
+
+      const startRotation = currentRotation;
+      const change = (Math.PI * 2 * fullSpins) + neededRotation;
+      const duration = 5200;
+      const startTime = performance.now();
+
+      function animate(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = easeOutCubic(progress);
+
+        currentRotation = startRotation + change * eased;
+        drawWheel();
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          currentRotation = normaliseAngle(startRotation + change);
+          drawWheel();
+          selectedName = participants[winnerIndex];
+          byId("winnerName").textContent = selectedName;
+
+          participants.splice(winnerIndex, 1);
+
+          if (!drawnParticipants.includes(selectedName)) {
+            drawnParticipants.push(selectedName);
+          }
+
+          renderNames();
+          renderDrawnInfo();
+          renderDrawnList();
+          if (participants.length === 0) {
+            setStatus("All participants have been drawn.", false);
+          } else {
+            setStatus(participants.length + " participants remaining.", false);
+          }
+
+          setTimeout(function() {
+            drawWheel();
+          }, 700);
+
+          isSpinning = false;
+          byId("spinButton").disabled = false;
+          byId("spinButtonSide").disabled = false;
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function normaliseAngle(angle) {
+      const full = Math.PI * 2;
+      return ((angle % full) + full) % full;
+    }
+
+    function easeOutCubic(value) {
+      return 1 - Math.pow(1 - value, 3);
+    }
+
+    function addParticipantBack(name) {
+      if (!name) return;
+
+      drawnParticipants = drawnParticipants.filter(function(drawnName) {
+        return drawnName !== name;
+      });
+
+      if (!participants.includes(name)) {
+        participants.push(name);
+      }
+
+      selectedName = "";
+      byId("winnerName").textContent = "Ready";
+      drawWheel();
+      renderNames();
+      renderDrawnInfo();
+      renderDrawnList();
+      setStatus(participants.length + " participants on the wheel.", false);
+    }
+
+    function addLastBack() {
+      if (!drawnParticipants.length) return;
+      addParticipantBack(drawnParticipants[drawnParticipants.length - 1]);
+    }
+
+    function addAllBack() {
+      drawnParticipants.slice().forEach(function(name) {
+        if (!participants.includes(name)) {
+          participants.push(name);
+        }
+      });
+
+      drawnParticipants = [];
+      selectedName = "";
+      byId("winnerName").textContent = "Ready";
+      drawWheel();
+      renderNames();
+      renderDrawnInfo();
+      renderDrawnList();
+      setStatus(participants.length + " participants on the wheel.", false);
+    }
+
+    function resetWheel() {
+      participants = originalParticipants.slice();
+      drawnParticipants = [];
+      selectedName = "";
+      currentRotation = 0;
+      byId("winnerName").textContent = "Ready";
+      drawWheel();
+      renderNames();
+      renderDrawnInfo();
+      renderDrawnList();
+      setStatus("Reset to " + participants.length + " participants.", false);
+    }
+
+    function renderNames() {
+      byId("namesList").innerHTML = participants.map(function(name) {
+        return '<div class="name-pill">' + escapeHtml(name) + '</div>';
+      }).join("");
+    }
+
+    function renderDrawnInfo() {
+      if (!drawnParticipants.length) {
+        byId("drawnInfo").textContent = "No one has been drawn yet.";
+        return;
+      }
+
+      byId("drawnInfo").innerHTML =
+        "<strong>Drawn:</strong> " + drawnParticipants.map(escapeHtml).join(", ");
+    }
+
+    function renderDrawnList() {
+      const target = byId("drawnList");
+
+      if (!drawnParticipants.length) {
+        target.innerHTML = '<div class="name-pill">No one drawn yet</div>';
+        return;
+      }
+
+      target.innerHTML = drawnParticipants.map(function(name) {
+        return '<div class="drawn-pill">' +
+          '<span>' + escapeHtml(name) + '</span>' +
+          '<button class="add-back-button" type="button" data-add-back="' + escapeHtml(name) + '">Add back</button>' +
+        '</div>';
+      }).join("");
+
+      target.querySelectorAll("[data-add-back]").forEach(function(button) {
+        button.addEventListener("click", function() {
+          addParticipantBack(button.getAttribute("data-add-back"));
+        });
+      });
+    }
+
+    function togglePresentationMode() {
+      document.body.classList.toggle("presentation");
+    }
+
+    function bindEvents() {
+      byId("spinButton").addEventListener("click", spinWheel);
+      byId("spinButtonSide").addEventListener("click", spinWheel);
+      byId("addLastBackButton").addEventListener("click", addLastBack);
+      byId("addAllBackButton").addEventListener("click", addAllBack);
+      byId("resetButton").addEventListener("click", resetWheel);
+      byId("reloadButton").addEventListener("click", loadParticipants);
+      byId("presentationButton").addEventListener("click", togglePresentationMode);
+
+      window.addEventListener("resize", drawWheel);
+
+      document.addEventListener("keydown", function(event) {
+        if (event.code === "Space") {
+          event.preventDefault();
+          spinWheel();
+        }
+
+        if (event.key.toLowerCase() === "f") {
+          togglePresentationMode();
+        }
+      });
+    }
+
+    bindEvents();
+    loadParticipants();
+  </script>
+</body>
+</html>
