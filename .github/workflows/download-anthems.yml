@@ -1,0 +1,30 @@
+name: Download anthem files
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  download-anthems:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Create anthem folder
+        run: mkdir -p audio/anthems
+
+      - name: Download anthem MP3s
+        run: |
+          python scripts/download_anthems.py
+
+      - name: Commit downloaded files
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add audio/anthems
+          git diff --cached --quiet || git commit -m "Add anthem audio files"
+          git push
