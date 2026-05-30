@@ -339,6 +339,107 @@
       white-space: nowrap;
     }
 
+
+    .country-panel h2,
+    .assignments-panel h2 {
+      margin: 0 0 10px;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .country-help {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.4;
+    }
+
+    .country-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      max-height: 300px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .country-button {
+      display: grid;
+      gap: 2px;
+      padding: 9px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.07);
+      color: var(--text);
+      text-align: left;
+      font-weight: 800;
+      min-width: 0;
+    }
+
+    .country-button:hover {
+      border-color: rgba(255,210,74,0.52);
+      box-shadow: 0 8px 18px rgba(255,210,74,0.12);
+    }
+
+    .country-button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .country-group {
+      color: var(--muted);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .assignments-list {
+      display: grid;
+      gap: 8px;
+      max-height: 320px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .assignment-pill {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 9px 10px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .assignment-main {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .assignment-person {
+      color: #fef3c7;
+      font-weight: 900;
+      overflow-wrap: anywhere;
+    }
+
+    .assignment-country {
+      color: #bbf7d0;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .undo-assignment-button {
+      padding: 6px 9px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+
     .drawn-panel h2 {
       margin: 0 0 12px;
       font-size: 1.1rem;
@@ -403,6 +504,132 @@
         width: min(740px, 70vh);
       }
     }
+  
+    .projection-main {
+      grid-template-columns: minmax(620px, 1.55fr) minmax(330px, 0.7fr);
+      align-items: stretch;
+    }
+
+    .projection-panel {
+      align-content: start;
+    }
+
+    .projection-panel .assignments-panel {
+      min-height: 420px;
+    }
+
+    .projection-panel .assignments-list {
+      max-height: 520px;
+    }
+
+    .management-area {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(240px, 1fr));
+      gap: 18px;
+      margin-top: 18px;
+      align-items: start;
+    }
+
+    .management-area .panel h2,
+    .controls-panel h2 {
+      margin: 0 0 12px;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .management-area .country-grid,
+    .management-area .names-list,
+    .management-area .drawn-list {
+      max-height: 360px;
+    }
+
+    .wheel-panel {
+      min-height: 650px;
+    }
+
+    .wheel-area {
+      width: min(720px, 82vh);
+    }
+
+    body.spinning .management-area {
+      opacity: 0.22;
+      pointer-events: none;
+      filter: saturate(0.65);
+    }
+
+    @media (max-width: 1100px) {
+      .projection-main,
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      .management-area {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .management-area {
+        grid-template-columns: 1fr;
+      }
+
+      .wheel-panel {
+        min-height: 520px;
+      }
+    }
+
+  
+    .flag-img {
+      width: 1.35em;
+      height: 1em;
+      margin-left: 0.35em;
+      vertical-align: -0.12em;
+      border-radius: 2px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.18);
+    }
+
+    .country-name-with-flag,
+    .assignment-country-name {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      min-width: 0;
+    }
+
+  
+    .world-ranking-badge {
+      display: inline-flex;
+      width: fit-content;
+      margin-top: 4px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      color: #dbeafe;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.16);
+      font-size: 0.68rem;
+      font-weight: 800;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+
+    .country-button .world-ranking-badge {
+      margin-top: 4px;
+    }
+
+    .assignment-country .world-ranking-badge {
+      margin-left: 0;
+      margin-top: 4px;
+    }
+
+  
+    .anthem-note {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.35;
+    }
+
   </style>
 </head>
 
@@ -412,7 +639,6 @@
       <section class="title-card">
         <div class="kicker">Applied Sciences Sweepstake</div>
         <h1>Participant Wheel</h1>
-        <p class="subtitle">Randomly pick participants from the Google Sheet. Selected names are removed from the wheel automatically.</p>
       </section>
 
       <aside class="status" id="status">
@@ -420,7 +646,7 @@
       </aside>
     </header>
 
-    <main>
+    <main class="projection-main">
       <section class="panel wheel-panel">
         <div class="wheel-area">
           <div class="pointer" aria-hidden="true"></div>
@@ -429,44 +655,62 @@
         </div>
       </section>
 
-      <aside class="side-panel">
+      <aside class="side-panel projection-panel">
         <section class="winner-card">
           <p class="winner-label">Selected participant</p>
           <h2 id="winnerName" class="winner-name">Waiting...</h2>
         </section>
 
-        <section class="panel">
-          <div class="controls">
-            <button id="reloadButton" type="button">Reload names</button>
-            <button id="presentationButton" type="button">Presentation mode</button>
-            <button id="addLastBackButton" type="button">Add last back</button>
-            <button id="resetButton" type="button">Reset wheel</button>
-            <button id="addAllBackButton" type="button">Add all back</button>
-            <button id="spinButtonSide" class="primary" type="button">Spin the wheel</button>
-          </div>
-          <p class="drawn" id="drawnInfo">No one has been drawn yet.</p>
-        </section>
-
-        <section class="panel names-panel">
-          <h2>Participants on wheel</h2>
-          <div id="namesList" class="names-list"></div>
-        </section>
-
-        <section class="panel drawn-panel">
-          <h2>Drawn participants</h2>
-          <div id="drawnList" class="drawn-list"></div>
+        <section class="panel assignments-panel">
+          <h2>Current draw</h2>
+          <div id="assignmentsList" class="assignments-list"></div>
         </section>
       </aside>
     </main>
+
+    <section class="management-area">
+      <section class="panel controls-panel">
+        <h2>Draw controls</h2>
+        <div class="controls">
+          <button id="reloadButton" type="button">Reload names</button>
+          <button id="addLastBackButton" type="button">Add last back</button>
+          <button id="resetButton" type="button">Reset wheel</button>
+          <button id="addAllBackButton" type="button">Add all back</button>
+          <button id="spinButtonSide" class="primary" type="button">Spin the wheel</button>
+        </div>
+        <p class="drawn" id="drawnInfo">No one has been drawn yet.</p>
+      </section>
+
+      <section class="panel country-panel">
+        <h2>Pick their country</h2>
+        <p class="country-help">After the person picks a country from the box, click it here to record the draw. If an anthem file exists, it will play for 5 seconds.</p>
+        <div id="countryGrid" class="country-grid"></div>
+      </section>
+
+      <section class="panel names-panel">
+        <h2>Participants on wheel</h2>
+        <div id="namesList" class="names-list"></div>
+      </section>
+
+      <section class="panel drawn-panel">
+        <h2>Drawn participants</h2>
+        <div id="drawnList" class="drawn-list"></div>
+      </section>
+    </section>
   </div>
+
+  <audio id="anthemPlayer" preload="auto"></audio>
 
   <script>
     const SHEET_ID = "1mXNPRmCqN9-Ml1CZxEitWlcjFvjRZHWNEkIzzicNeAQ";
     const PARTICIPANTS_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?sheet=Participants&headers=0";
+    const COMPETITION_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?gid=1496784945&headers=1";
 
     let originalParticipants = [];
     let participants = [];
     let drawnParticipants = [];
+    let countries = [];
+    let assignments = [];
     let currentRotation = 0;
     let isSpinning = false;
     let selectedName = "";
@@ -501,6 +745,208 @@
         .replace(/'/g, "&#039;");
     }
 
+    const countryCodes = {
+      "mexico": "mx",
+      "south africa": "za",
+      "korea": "kr",
+      "czechia": "cz",
+      "canada": "ca",
+      "bosnia": "ba",
+      "qatar": "qa",
+      "switzerland": "ch",
+      "brazil": "br",
+      "morocco": "ma",
+      "haiti": "ht",
+      "scotland": "gb-sct",
+      "usa": "us",
+      "paraguay": "py",
+      "australia": "au",
+      "türkiye": "tr",
+      "turkiye": "tr",
+      "turkey": "tr",
+      "germany": "de",
+      "curaçao": "cw",
+      "curacao": "cw",
+      "ivory coast": "ci",
+      "ecuador": "ec",
+      "netherlands": "nl",
+      "japan": "jp",
+      "sweden": "se",
+      "tunisia": "tn",
+      "belgium": "be",
+      "egypt": "eg",
+      "iran": "ir",
+      "new zealand": "nz",
+      "spain": "es",
+      "cape verde": "cv",
+      "saudi arabia": "sa",
+      "uruguay": "uy",
+      "france": "fr",
+      "senegal": "sn",
+      "iraq": "iq",
+      "norway": "no",
+      "argentina": "ar",
+      "algeria": "dz",
+      "austria": "at",
+      "jordan": "jo",
+      "portugal": "pt",
+      "dr congo": "cd",
+      "uzbekistan": "uz",
+      "colombia": "co",
+      "england": "gb-eng",
+      "croatia": "hr",
+      "ghana": "gh",
+      "panama": "pa"
+    };
+
+    function twemojiSlugForCode(code) {
+      if (code === "gb-eng") {
+        return "1f3f4-e0067-e0062-e0065-e006e-e0067-e007f";
+      }
+
+      if (code === "gb-sct") {
+        return "1f3f4-e0067-e0062-e0073-e0063-e0074-e007f";
+      }
+
+      const letters = code.toUpperCase().split("");
+      const base = 0x1f1e6;
+
+      return letters
+        .map(function(letter) {
+          return (base + letter.charCodeAt(0) - 65).toString(16);
+        })
+        .join("-");
+    }
+
+    function flagImageForCountry(country) {
+      const code = countryCodes[lower(country)];
+
+      if (!code) {
+        return "";
+      }
+
+      const slug = twemojiSlugForCode(code);
+      const url = "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/" + slug + ".svg";
+
+      return '<img class="flag-img" src="' + url + '" alt="">';
+    }
+
+    function countryWithFlag(country) {
+      return '<span class="country-name-with-flag">' + escapeHtml(country) + flagImageForCountry(country) + '</span>';
+    }
+
+    function worldRankingBadge(value) {
+      if (!value) return "";
+      return '<span class="world-ranking-badge">World ranking: ' + escapeHtml(value) + '</span>';
+    }
+
+    function countryInfoFor(country) {
+      return countries.find(function(item) {
+        return lower(item.country) === lower(country);
+      }) || null;
+    }
+
+    const anthemStartTimes = {
+      // Optional: set a start time in seconds for each country if your MP3 is a full anthem.
+      // Example:
+      // "england": 12,
+      // "brazil": 8
+    };
+
+    let anthemStopTimer = null;
+
+    function countryAudioSlug(country) {
+      const manual = {
+        "south africa": "south-africa",
+        "new zealand": "new-zealand",
+        "saudi arabia": "saudi-arabia",
+        "cape verde": "cape-verde",
+        "ivory coast": "ivory-coast",
+        "dr congo": "dr-congo",
+        "czechia": "czechia",
+        "türkiye": "turkiye",
+        "turkiye": "turkiye",
+        "curaçao": "curacao",
+        "curacao": "curacao",
+        "usa": "usa"
+      };
+
+      const key = lower(country);
+
+      if (manual[key]) {
+        return manual[key];
+      }
+
+      return key
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+    }
+
+
+    function stopAnthem() {
+      const player = byId("anthemPlayer");
+      if (!player) return;
+
+      if (anthemStopTimer) {
+        clearTimeout(anthemStopTimer);
+        anthemStopTimer = null;
+      }
+
+      player.pause();
+      player.currentTime = 0;
+    }
+
+    function playAnthemForCountry(country) {
+      const player = byId("anthemPlayer");
+      if (!player || !country) return;
+
+      if (anthemStopTimer) {
+        clearTimeout(anthemStopTimer);
+        anthemStopTimer = null;
+      }
+
+      const slug = countryAudioSlug(country);
+      const startAt = anthemStartTimes[slug] || anthemStartTimes[lower(country)] || 0;
+
+      player.pause();
+      player.currentTime = 0;
+      player.src = "audio/anthems/" + slug + ".mp3";
+
+      const startPlayback = function() {
+        try {
+          player.currentTime = startAt;
+        } catch (error) {
+          // Some browsers only allow currentTime after metadata has loaded.
+        }
+
+        const playPromise = player.play();
+
+        if (playPromise && typeof playPromise.catch === "function") {
+          playPromise.catch(function(error) {
+            console.warn("Anthem could not play:", error);
+            setStatus("Country assigned. Anthem file not found or could not be played: " + country, false);
+          });
+        }
+
+        anthemStopTimer = setTimeout(function() {
+          player.pause();
+          player.currentTime = 0;
+          anthemStopTimer = null;
+        }, 5000);
+      };
+
+      if (player.readyState >= 1) {
+        startPlayback();
+      } else {
+        player.onloadedmetadata = startPlayback;
+      }
+    }
+
+
+
+
     function loadGviz(url) {
       return new Promise(function(resolve, reject) {
         const callbackName = "handleParticipants_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
@@ -528,11 +974,20 @@
 
     async function loadParticipants() {
       try {
-        setStatus("Loading participants...", false);
+        setStatus("Loading participants and countries...", false);
 
-        const response = await loadGviz(PARTICIPANTS_URL);
-        originalParticipants = parseParticipants(response);
-        participants = originalParticipants.slice();
+        const participantResponse = await loadGviz(PARTICIPANTS_URL);
+        const competitionResponse = await loadGviz(COMPETITION_URL);
+
+        originalParticipants = parseParticipants(participantResponse);
+        countries = parseCountries(competitionResponse);
+        assignments = loadSavedAssignments();
+
+        const assignedPeople = assignmentPeopleMap();
+        participants = originalParticipants.filter(function(name) {
+          return !assignedPeople[lower(name)];
+        });
+
         drawnParticipants = [];
         selectedName = "";
         currentRotation = 0;
@@ -541,8 +996,10 @@
         renderNames();
         renderDrawnInfo();
         renderDrawnList();
+        renderCountryGrid();
+        renderAssignments();
         byId("winnerName").textContent = "Ready";
-        setStatus("Loaded " + participants.length + " participants.", false);
+        setStatus("Loaded " + participants.length + " participants and " + availableCountries().length + " countries.", false);
       } catch (error) {
         console.error(error);
         setStatus("Error: " + error.message, true);
@@ -591,6 +1048,164 @@
 
       return unique;
     }
+
+    function parseCountries(response) {
+      if (!response || response.status === "error") {
+        let message = "Google returned an error.";
+        if (response && response.errors && response.errors[0]) {
+          message = response.errors[0].detailed_message || response.errors[0].message || message;
+        }
+        throw new Error(message);
+      }
+
+      const table = response.table;
+
+      if (!table || !table.cols || !table.rows) {
+        throw new Error("Google returned an unexpected country table format.");
+      }
+
+      const headers = table.cols.map(function(col) {
+        return lower(col.label || col.id).replace(/\s+/g, " ");
+      });
+
+      const groupIndex = headers.indexOf("group");
+      const countryIndex = headers.indexOf("country");
+      const worldRankingIndex = findHeaderIndex(headers, ["world ranking", "ranking", "world rank", "rank"]);
+
+      if (groupIndex === -1 || countryIndex === -1) {
+        throw new Error("The Competition tab must have Group and Country columns.");
+      }
+
+      return table.rows
+        .map(function(row, index) {
+          const cells = row.c || [];
+          return {
+            id: index,
+            group: clean(getCell(cells[groupIndex])),
+            country: clean(getCell(cells[countryIndex])),
+            worldRanking: worldRankingIndex === -1 ? "" : clean(getCell(cells[worldRankingIndex]))
+          };
+        })
+        .filter(function(row) {
+          return row.group && row.country;
+        });
+    }
+
+    function getCell(cell) {
+      if (!cell) return "";
+      return clean(cell.f != null ? cell.f : cell.v);
+    }
+
+    function findHeaderIndex(headers, options) {
+      for (let i = 0; i < options.length; i++) {
+        const found = headers.indexOf(options[i]);
+        if (found !== -1) return found;
+      }
+      return -1;
+    }
+
+
+    function loadSavedAssignments() {
+      try {
+        const saved = localStorage.getItem("applied-sciences-sweepstake-assignments");
+        const parsed = saved ? JSON.parse(saved) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function saveAssignments() {
+      localStorage.setItem("applied-sciences-sweepstake-assignments", JSON.stringify(assignments));
+    }
+
+    function assignmentPeopleMap() {
+      const out = {};
+      assignments.forEach(function(item) {
+        out[lower(item.participant)] = true;
+      });
+      return out;
+    }
+
+    function assignmentCountryMap() {
+      const out = {};
+      assignments.forEach(function(item) {
+        out[lower(item.country)] = true;
+      });
+      return out;
+    }
+
+    function availableCountries() {
+      const assignedCountries = assignmentCountryMap();
+      return countries.filter(function(item) {
+        return !assignedCountries[lower(item.country)];
+      });
+    }
+
+    function assignCountryToSelected(countryName) {
+      if (!selectedName) {
+        setStatus("Spin the wheel first, then choose a country.", true);
+        return;
+      }
+
+      const chosen = countries.find(function(item) {
+        return lower(item.country) === lower(countryName);
+      });
+
+      if (!chosen) return;
+
+      const assignedCountries = assignmentCountryMap();
+      if (assignedCountries[lower(chosen.country)]) {
+        setStatus(chosen.country + " has already been assigned.", true);
+        return;
+      }
+
+      assignments = assignments.filter(function(item) {
+        return lower(item.participant) !== lower(selectedName);
+      });
+
+      assignments.push({
+        participant: selectedName,
+        country: chosen.country,
+        group: chosen.group,
+        worldRanking: chosen.worldRanking || ""
+      });
+
+      saveAssignments();
+      renderCountryGrid();
+      renderAssignments();
+      setStatus(selectedName + " assigned " + chosen.country + ". Playing anthem clip.", false);
+      playAnthemForCountry(chosen.country);
+      selectedName = "";
+    }
+
+    function undoAssignment(index) {
+      const item = assignments[index];
+      if (!item) return;
+
+      assignments.splice(index, 1);
+
+      if (!participants.includes(item.participant)) {
+        participants.push(item.participant);
+      }
+
+      if (!drawnParticipants.includes(item.participant)) {
+        drawnParticipants.push(item.participant);
+      }
+
+      saveAssignments();
+      drawWheel();
+      renderNames();
+      renderDrawnInfo();
+      renderDrawnList();
+      renderCountryGrid();
+      renderAssignments();
+      byId("winnerName").textContent = "Ready";
+      selectedName = "";
+      setStatus(item.participant + " was added back.", false);
+    }
+
+
 
     function setStatus(message, isError) {
       byId("status").innerHTML = isError
@@ -684,6 +1299,7 @@
       if (isSpinning || participants.length === 0) return;
 
       isSpinning = true;
+      document.body.classList.add("spinning");
       byId("spinButton").disabled = true;
       byId("spinButtonSide").disabled = true;
       byId("winnerName").textContent = "Spinning...";
@@ -733,6 +1349,7 @@
           renderNames();
           renderDrawnInfo();
           renderDrawnList();
+          renderCountryGrid();
           if (participants.length === 0) {
             setStatus("All participants have been drawn.", false);
           } else {
@@ -744,6 +1361,7 @@
           }, 700);
 
           isSpinning = false;
+          document.body.classList.remove("spinning");
           byId("spinButton").disabled = false;
           byId("spinButtonSide").disabled = false;
         }
@@ -774,10 +1392,13 @@
 
       selectedName = "";
       byId("winnerName").textContent = "Ready";
+      stopAnthem();
       drawWheel();
       renderNames();
       renderDrawnInfo();
       renderDrawnList();
+      renderCountryGrid();
+      renderAssignments();
       setStatus(participants.length + " participants on the wheel.", false);
     }
 
@@ -794,12 +1415,16 @@
       });
 
       drawnParticipants = [];
+      assignments = [];
+      saveAssignments();
       selectedName = "";
       byId("winnerName").textContent = "Ready";
       drawWheel();
       renderNames();
       renderDrawnInfo();
       renderDrawnList();
+      renderCountryGrid();
+      renderAssignments();
       setStatus(participants.length + " participants on the wheel.", false);
     }
 
@@ -807,12 +1432,15 @@
       participants = originalParticipants.slice();
       drawnParticipants = [];
       selectedName = "";
+      stopAnthem();
       currentRotation = 0;
       byId("winnerName").textContent = "Ready";
       drawWheel();
       renderNames();
       renderDrawnInfo();
       renderDrawnList();
+      renderCountryGrid();
+      renderAssignments();
       setStatus("Reset to " + participants.length + " participants.", false);
     }
 
@@ -854,9 +1482,62 @@
       });
     }
 
-    function togglePresentationMode() {
-      document.body.classList.toggle("presentation");
+    function renderCountryGrid() {
+      const target = byId("countryGrid");
+      const available = availableCountries();
+
+      if (!countries.length) {
+        target.innerHTML = '<div class="name-pill">No countries loaded yet</div>';
+        return;
+      }
+
+      if (!available.length) {
+        target.innerHTML = '<div class="name-pill">All countries assigned</div>';
+        return;
+      }
+
+      target.innerHTML = available.map(function(item) {
+        return '<button class="country-button" type="button" data-country="' + escapeHtml(item.country) + '">' +
+          '<span>' + countryWithFlag(item.country) + '</span>' +
+          '<span>' + worldRankingBadge(item.worldRanking) + '</span>' +
+          '<span class="country-group">' + escapeHtml(item.group) + '</span>' +
+        '</button>';
+      }).join("");
+
+      target.querySelectorAll("[data-country]").forEach(function(button) {
+        button.addEventListener("click", function() {
+          assignCountryToSelected(button.getAttribute("data-country"));
+        });
+      });
     }
+
+    function renderAssignments() {
+      const target = byId("assignmentsList");
+
+      if (!assignments.length) {
+        target.innerHTML = '<div class="name-pill">No countries assigned yet</div>';
+        return;
+      }
+
+      target.innerHTML = assignments.map(function(item, index) {
+        return '<div class="assignment-pill">' +
+          '<div class="assignment-main">' +
+            '<span class="assignment-person">' + escapeHtml(item.participant) + '</span>' +
+            '<span class="assignment-country"><span class="assignment-country-name">' + countryWithFlag(item.country) + '</span> — ' + escapeHtml(item.group) + '</span>' +
+            worldRankingBadge(item.worldRanking || (countryInfoFor(item.country) && countryInfoFor(item.country).worldRanking) || "") +
+          '</div>' +
+          '<button class="undo-assignment-button" type="button" data-undo="' + index + '">Undo</button>' +
+        '</div>';
+      }).join("");
+
+      target.querySelectorAll("[data-undo]").forEach(function(button) {
+        button.addEventListener("click", function() {
+          undoAssignment(Number(button.getAttribute("data-undo")));
+        });
+      });
+    }
+
+
 
     function bindEvents() {
       byId("spinButton").addEventListener("click", spinWheel);
@@ -865,7 +1546,6 @@
       byId("addAllBackButton").addEventListener("click", addAllBack);
       byId("resetButton").addEventListener("click", resetWheel);
       byId("reloadButton").addEventListener("click", loadParticipants);
-      byId("presentationButton").addEventListener("click", togglePresentationMode);
 
       window.addEventListener("resize", drawWheel);
 
@@ -875,9 +1555,6 @@
           spinWheel();
         }
 
-        if (event.key.toLowerCase() === "f") {
-          togglePresentationMode();
-        }
       });
     }
 
