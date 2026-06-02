@@ -375,7 +375,6 @@
       text-align: left;
       font-weight: 800;
       min-width: 0;
-      overflow: hidden;
     }
 
     .country-button:hover {
@@ -999,392 +998,568 @@
         renderDrawnList();
         renderCountryGrid();
         renderAssignments();
-        setStatus("Ready!", true);
+        byId("winnerName").textContent = "Ready";
+        setStatus("Loaded " + participants.length + " participants and " + availableCountries().length + " countries.", false);
       } catch (error) {
-        setStatus("Error: " + (error.message || "Unknown error"), false);
         console.error(error);
+        setStatus("Error: " + error.message, true);
       }
     }
 
     function parseParticipants(response) {
-      if (!response.getDataTable) return [];
-      const table = response.getDataTable();
-      const result = [];
-      for (let i = 0; i < table.getNumberOfRows(); i++) {
-        const name = clean(table.getValue(i, 0));
-        if (name) {
-          result.push(name);
+      if (!response || response.status === "error") {
+        let message = "Google returned an error.";
+        if (response && response.errors && response.errors[0]) {
+          message = response.errors[0].detailed_message || response.errors[0].message || message;
         }
+        throw new Error(message);
       }
-      return result;
+
+      const table = response.table;
+
+      if (!table || !table.rows) {
+        throw new Error("Google returned an unexpected participant table format.");
+      }
+
+      const names = table.rows
+        .map(function(row) {
+          const cell = row.c && row.c[0] ? row.c[0] : null;
+          return clean(cell && (cell.f != null ? cell.f : cell.v));
+        })
+        .filter(function(name) {
+          const value = lower(name);
+          return name && value !== "participant" && value !== "participants";
+        });
+
+      const seen = {};
+      const unique = [];
+
+      names.forEach(function(name) {
+        const key = lower(name);
+        if (!seen[key]) {
+          seen[key] = true;
+          unique.push(name);
+        }
+      });
+
+      if (!unique.length) {
+        throw new Error("No participant names were found in the Participants tab.");
+      }
+
+      return unique;
     }
 
     function parseCountries(response) {
-      if (!response.getDataTable) return [];
-      const table = response.getDataTable();
-      const result = [];
-      for (let i = 0; i < table.getNumberOfRows(); i++) {
-        result.push({
-          country: clean(table.getValue(i, 0)),
-          ranking: clean(table.getValue(i, 1))
-        });
+      if (!response || response.status === "error") {
+        let message = "Google returned an error.";
+        if (response && response.errors && response.errors[0]) {
+          message = response.errors[0].detailed_message || response.errors[0].message || message;
+        }
+        throw new Error(message);
       }
-      return result;
+
+      const table = response.table;
+
+      if (!table || !table.cols || !table.rows) {
+        throw new Error("Google returned an unexpected country table format.");
+      }
+
+      const headers = table.cols.map(function(col) {
+        return lower(col.label || col.id).replace(/\s+/g, " ");
+      });
+
+      const groupIndex = headers.indexOf("group");
+      const countryIndex = headers.indexOf("country");
+      const worldRankingIndex = findHeaderIndex(headers, ["world ranking", "ranking", "world rank", "rank"]);
+
+      if (groupIndex === -1 || countryIndex === -1) {
+        throw new Error("The Competition tab must have Group and Country columns.");
+      }
+
+      return table.rows
+        .map(function(row, index) {
+          const cells = row.c || [];
+          return {
+            id: index,
+            group: clean(getCell(cells[groupIndex])),
+            country: clean(getCell(cells[countryIndex])),
+            worldRanking: worldRankingIndex === -1 ? "" : clean(getCell(cells[worldRankingIndex]))
+          };
+        })
+        .filter(function(row) {
+          return row.group && row.country;
+        });
     }
 
-    function assignmentPeopleMap() {
-      const map = {};
-      assignments.forEach(function(assignment) {
-        map[lower(assignment.name)] = true;
-      });
-      return map;
+    function getCell(cell) {
+      if (!cell) return "";
+      return clean(cell.f != null ? cell.f : cell.v);
     }
+
+    function findHeaderIndex(headers, options) {
+      for (let i = 0; i < options.length; i++) {
+        const found = headers.indexOf(options[i]);
+        if (found !== -1) return found;
+      }
+      return -1;
+    }
+
 
     function loadSavedAssignments() {
-      const saved = localStorage.getItem("assignments");
-      return saved ? JSON.parse(saved) : [];
+      try {
+        const saved = localStorage.getItem("applied-sciences-sweepstake-assignments");
+        const parsed = saved ? JSON.parse(saved) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        return [];
+      }
     }
 
     function saveAssignments() {
-      localStorage.setItem("assignments", JSON.stringify(assignments));
+      localStorage.setItem("applied-sciences-sweepstake-assignments", JSON.stringify(assignments));
     }
 
-    function drawWheel() {
-      const size = 1200;
-      const center = size / 2;
-      const radius = size / 2 - 20;
-
-      ctx.clearRect(0, 0, size, size);
-
-      const rotation = (currentRotation * Math.PI) / 180;
-      const sliceSize = (2 * Math.PI) / participants.length;
-
-      for (let i = 0; i < participants.length; i++) {
-        const startAngle = rotation + i * sliceSize;
-        const endAngle = rotation + (i + 1) * sliceSize;
-
-        ctx.fillStyle = colours[i % colours.length];
-        ctx.beginPath();
-        ctx.arc(center, center, radius, startAngle, endAngle);
-        ctx.lineTo(center, center);
-        ctx.fill();
-
-        ctx.strokeStyle = "rgba(0,0,0,0.2)";
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.arc(center, center, radius, startAngle, endAngle);
-        ctx.lineTo(center, center);
-        ctx.stroke();
-
-        const textAngle = startAngle + sliceSize / 2;
-        const textX = center + Math.cos(textAngle) * (radius * 0.65);
-        const textY = center + Math.sin(textAngle) * (radius * 0.65);
-
-        ctx.save();
-        ctx.translate(textX, textY);
-        ctx.rotate(textAngle + Math.PI / 2);
-
-        ctx.font = "bold 36px Arial";
-        ctx.fillStyle = "#0b3d24";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-
-        const maxWidth = radius * 0.35;
-        let fontSize = 36;
-        ctx.font = "bold " + fontSize + "px Arial";
-        while (ctx.measureText(participants[i]).width > maxWidth && fontSize > 12) {
-          fontSize -= 2;
-          ctx.font = "bold " + fontSize + "px Arial";
-        }
-
-        ctx.fillText(participants[i], 0, 0);
-
-        ctx.restore();
-      }
-    }
-
-    function spinWheel() {
-      if (isSpinning || participants.length === 0) return;
-      isSpinning = true;
-
-      byId("spinButton").disabled = true;
-      byId("spinButtonSide").disabled = true;
-      document.body.classList.add("spinning");
-
-      const spins = 5 + Math.random() * 5;
-      const randomDeg = Math.floor(Math.random() * 360);
-      const totalDeg = spins * 360 + randomDeg;
-
-      let currentDeg = 0;
-      const startTime = Date.now();
-      const duration = 3000;
-
-      function animate() {
-        const elapsed = Date.now() - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-
-        const easeOut = 1 - Math.pow(1 - progress, 3);
-        currentDeg = totalDeg * easeOut;
-
-        currentRotation = currentDeg % 360;
-
-        const canvas = document.getElementById("wheelCanvas");
-        canvas.style.transform = "rotate(" + currentDeg + "deg)";
-
-        drawWheel();
-
-        if (progress < 1) {
-          requestAnimationFrame(animate);
-        } else {
-          isSpinning = false;
-          selectWinner();
-          byId("spinButton").disabled = false;
-          byId("spinButtonSide").disabled = false;
-          document.body.classList.remove("spinning");
-        }
-      }
-
-      animate();
-    }
-
-    function selectWinner() {
-      const sliceSize = 360 / participants.length;
-      const normalizedRotation = (360 - currentRotation) % 360;
-      const selectedIndex = Math.floor(normalizedRotation / sliceSize) % participants.length;
-
-      selectedName = participants[selectedIndex];
-      byId("winnerName").textContent = selectedName;
-      setStatus("Selected: " + selectedName, true);
-    }
-
-    function assignCountry(country) {
-      if (!selectedName) return;
-
-      assignments.push({
-        name: selectedName,
-        country: country
+    function assignmentPeopleMap() {
+      const out = {};
+      assignments.forEach(function(item) {
+        out[lower(item.participant)] = true;
       });
-
-      saveAssignments();
-
-      const assignedPeople = assignmentPeopleMap();
-      participants = originalParticipants.filter(function(name) {
-        return !assignedPeople[lower(name)];
-      });
-
-      selectedName = "";
-      byId("winnerName").textContent = "Waiting...";
-
-      renderNames();
-      renderCountryGrid();
-      renderAssignments();
-      renderDrawnList();
-
-      drawWheel();
-
-      playAnthemForCountry(country);
-
-      setStatus("Country assigned! Ready for next draw.", true);
+      return out;
     }
 
-    function renderCountryGrid() {
-      const container = byId("countryGrid");
-      container.innerHTML = "";
+    function assignmentCountryMap() {
+      const out = {};
+      assignments.forEach(function(item) {
+        out[lower(item.country)] = true;
+      });
+      return out;
+    }
 
-      countries.forEach(function(countryData) {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "country-button";
-
-        const countryInfo = countryInfoFor(countryData.country);
-        const rankingText = countryInfo && countryInfo.ranking ? countryInfo.ranking : "";
-
-        button.innerHTML =
-          countryWithFlag(countryData.country) +
-          (rankingText ? worldRankingBadge(rankingText) : "");
-
-        button.addEventListener("click", function() {
-          assignCountry(countryData.country);
-        });
-
-        container.appendChild(button);
+    function availableCountries() {
+      const assignedCountries = assignmentCountryMap();
+      return countries.filter(function(item) {
+        return !assignedCountries[lower(item.country)];
       });
     }
 
-    function renderNames() {
-      const container = byId("namesList");
-      container.innerHTML = "";
-
-      participants.forEach(function(name) {
-        const pill = document.createElement("div");
-        pill.className = "name-pill";
-        pill.textContent = name;
-        container.appendChild(pill);
-      });
-    }
-
-    function renderDrawnInfo() {
-      const container = byId("drawnInfo");
-      const count = assignments.length;
-
-      if (count === 0) {
-        container.innerHTML = "No one has been drawn yet.";
-      } else {
-        container.innerHTML =
-          '<strong>' + count + '</strong> ' +
-          (count === 1 ? "person has" : "people have") +
-          " been drawn.";
-      }
-    }
-
-    function renderDrawnList() {
-      const container = byId("drawnList");
-      container.innerHTML = "";
-
-      assignments.forEach(function(assignment, index) {
-        const pill = document.createElement("div");
-        pill.className = "drawn-pill";
-
-        const mainDiv = document.createElement("div");
-        mainDiv.textContent = assignment.name + " → " + assignment.country;
-
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "add-back-button";
-        button.textContent = "Add back";
-
-        button.addEventListener("click", function() {
-          assignments.splice(index, 1);
-          saveAssignments();
-
-          const assignedPeople = assignmentPeopleMap();
-          participants = originalParticipants.filter(function(name) {
-            return !assignedPeople[lower(name)];
-          });
-
-          renderNames();
-          renderDrawnInfo();
-          renderDrawnList();
-          renderCountryGrid();
-          renderAssignments();
-          drawWheel();
-
-          setStatus(assignment.name + " added back to the wheel.", true);
-        });
-
-        pill.appendChild(mainDiv);
-        pill.appendChild(button);
-        container.appendChild(pill);
-      });
-    }
-
-    function renderAssignments() {
-      const container = byId("assignmentsList");
-      container.innerHTML = "";
-
-      assignments.forEach(function(assignment) {
-        const pill = document.createElement("div");
-        pill.className = "assignment-pill";
-
-        const mainDiv = document.createElement("div");
-        mainDiv.className = "assignment-main";
-
-        const personDiv = document.createElement("div");
-        personDiv.className = "assignment-person";
-        personDiv.textContent = assignment.name;
-
-        const countryDiv = document.createElement("div");
-        countryDiv.className = "assignment-country";
-        countryDiv.innerHTML = countryWithFlag(assignment.country);
-
-        mainDiv.appendChild(personDiv);
-        mainDiv.appendChild(countryDiv);
-        pill.appendChild(mainDiv);
-        container.appendChild(pill);
-      });
-    }
-
-    function setStatus(message, isSuccess) {
-      const container = byId("status");
-      container.innerHTML =
-        "<strong>" +
-        escapeHtml(message) +
-        "</strong><div style=\"margin-top: 4px; font-size: 0.9rem;\">Updated just now</div>";
-    }
-
-    byId("spinButton").addEventListener("click", spinWheel);
-    byId("spinButtonSide").addEventListener("click", spinWheel);
-
-    byId("reloadButton").addEventListener("click", function() {
-      loadParticipants();
-    });
-
-    byId("resetButton").addEventListener("click", function() {
-      if (confirm("Clear all draws? This cannot be undone.")) {
-        assignments = [];
-        saveAssignments();
-
-        participants = originalParticipants.slice();
-        selectedName = "";
-        currentRotation = 0;
-
-        byId("winnerName").textContent = "Waiting...";
-        renderNames();
-        renderDrawnInfo();
-        renderDrawnList();
-        renderCountryGrid();
-        renderAssignments();
-        drawWheel();
-
-        setStatus("Wheel reset successfully.", true);
-      }
-    });
-
-    byId("addLastBackButton").addEventListener("click", function() {
-      if (assignments.length === 0) {
-        setStatus("No assignments to undo.", false);
+    function assignCountryToSelected(countryName) {
+      if (!selectedName) {
+        setStatus("Spin the wheel first, then choose a country.", true);
         return;
       }
 
-      const lastAssignment = assignments.pop();
-      saveAssignments();
-
-      const assignedPeople = assignmentPeopleMap();
-      participants = originalParticipants.filter(function(name) {
-        return !assignedPeople[lower(name)];
+      const chosen = countries.find(function(item) {
+        return lower(item.country) === lower(countryName);
       });
 
+      if (!chosen) return;
+
+      const assignedCountries = assignmentCountryMap();
+      if (assignedCountries[lower(chosen.country)]) {
+        setStatus(chosen.country + " has already been assigned.", true);
+        return;
+      }
+
+      assignments = assignments.filter(function(item) {
+        return lower(item.participant) !== lower(selectedName);
+      });
+
+      assignments.push({
+        participant: selectedName,
+        country: chosen.country,
+        group: chosen.group,
+        worldRanking: chosen.worldRanking || ""
+      });
+
+      saveAssignments();
+      renderCountryGrid();
+      renderAssignments();
+      setStatus(selectedName + " assigned " + chosen.country + ". Playing anthem clip.", false);
+      playAnthemForCountry(chosen.country);
+      selectedName = "";
+    }
+
+    function undoAssignment(index) {
+      const item = assignments[index];
+      if (!item) return;
+
+      assignments.splice(index, 1);
+
+      if (!participants.includes(item.participant)) {
+        participants.push(item.participant);
+      }
+
+      if (!drawnParticipants.includes(item.participant)) {
+        drawnParticipants.push(item.participant);
+      }
+
+      saveAssignments();
+      drawWheel();
       renderNames();
       renderDrawnInfo();
       renderDrawnList();
       renderCountryGrid();
       renderAssignments();
-      drawWheel();
+      byId("winnerName").textContent = "Ready";
+      selectedName = "";
+      setStatus(item.participant + " was added back.", false);
+    }
 
-      setStatus(lastAssignment.name + " added back to the wheel.", true);
-    });
 
-    byId("addAllBackButton").addEventListener("click", function() {
-      if (confirm("Add all drawn participants back to the wheel?")) {
-        assignments = [];
-        saveAssignments();
 
-        participants = originalParticipants.slice();
-        selectedName = "";
+    function setStatus(message, isError) {
+      byId("status").innerHTML = isError
+        ? '<span class="error">' + escapeHtml(message) + '</span>'
+        : '<strong>' + escapeHtml(message) + '</strong>';
+    }
 
-        renderNames();
-        renderDrawnInfo();
-        renderDrawnList();
-        renderCountryGrid();
-        renderAssignments();
+    function textColourForSlice(colour) {
+      const lightColours = ["#ffffff", "#f8fafc", "#e5e7eb", "#ffd24a", "#bbf7d0"];
+      return lightColours.includes(colour.toLowerCase()) ? "#07111f" : "#f8fbff";
+    }
+
+    function drawWheel() {
+      const size = canvas.width;
+      const radius = size / 2;
+      const centre = size / 2;
+
+      ctx.clearRect(0, 0, size, size);
+
+      if (!participants.length) {
+        drawEmptyWheel();
+        return;
+      }
+
+      const slice = (Math.PI * 2) / participants.length;
+
+      ctx.save();
+      ctx.translate(centre, centre);
+      ctx.rotate(currentRotation);
+
+      participants.forEach(function(name, index) {
+        const start = index * slice - Math.PI / 2;
+        const end = start + slice;
+
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, radius - 24, start, end);
+        ctx.closePath();
+        ctx.fillStyle = colours[index % colours.length];
+        ctx.fill();
+
+        ctx.strokeStyle = "rgba(6,21,43,0.45)";
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+        ctx.save();
+        ctx.rotate(start + slice / 2);
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = textColourForSlice(colours[index % colours.length]);
+        ctx.font = participants.length > 36 ? "700 24px Arial" : "800 30px Arial";
+
+        const label = name.length > 18 ? name.slice(0, 17) + "..." : name;
+        ctx.fillText(label, radius - 64, 0);
+        ctx.restore();
+      });
+
+      ctx.beginPath();
+      ctx.arc(0, 0, 104, 0, Math.PI * 2);
+      ctx.fillStyle = "#06152b";
+      ctx.fill();
+      ctx.lineWidth = 8;
+      ctx.strokeStyle = "rgba(255,255,255,0.25)";
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function drawEmptyWheel() {
+      const size = canvas.width;
+      const radius = size / 2;
+      const centre = size / 2;
+
+      ctx.clearRect(0, 0, size, size);
+      ctx.beginPath();
+      ctx.arc(centre, centre, radius - 24, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(255,255,255,0.06)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,0.18)";
+      ctx.lineWidth = 6;
+      ctx.stroke();
+
+      ctx.fillStyle = "#c8d6ea";
+      ctx.font = "800 42px Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("No names left", centre, centre);
+    }
+
+    function spinWheel() {
+      if (isSpinning || participants.length === 0) return;
+
+      isSpinning = true;
+      document.body.classList.add("spinning");
+      byId("spinButton").disabled = true;
+      byId("spinButtonSide").disabled = true;
+      byId("winnerName").textContent = "Spinning...";
+
+      const winnerIndex = Math.floor(Math.random() * participants.length);
+      const slice = (Math.PI * 2) / participants.length;
+
+      // The pointer is at the top of the wheel.
+      // The previous version did not account for currentRotation, so later spins could
+      // visually land on one slice while selecting another. This calculates the extra
+      // rotation needed from the wheel's current position.
+      const pointerAngle = -Math.PI / 2;
+      const sliceCentre = winnerIndex * slice + slice / 2 - Math.PI / 2;
+      const fullSpins = 8 + Math.floor(Math.random() * 4);
+
+      const currentSliceCentreAtScreen = normaliseAngle(currentRotation + sliceCentre);
+      const pointerNormalised = normaliseAngle(pointerAngle);
+      const neededRotation = normaliseAngle(pointerNormalised - currentSliceCentreAtScreen);
+
+      const startRotation = currentRotation;
+      const change = (Math.PI * 2 * fullSpins) + neededRotation;
+      const duration = 5200;
+      const startTime = performance.now();
+
+      function animate(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = easeOutCubic(progress);
+
+        currentRotation = startRotation + change * eased;
         drawWheel();
 
-        setStatus("All participants added back to the wheel.", true);
-      }
-    });
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          currentRotation = normaliseAngle(startRotation + change);
+          drawWheel();
+          selectedName = participants[winnerIndex];
+          byId("winnerName").textContent = selectedName;
 
+          participants.splice(winnerIndex, 1);
+
+          if (!drawnParticipants.includes(selectedName)) {
+            drawnParticipants.push(selectedName);
+          }
+
+          renderNames();
+          renderDrawnInfo();
+          renderDrawnList();
+          renderCountryGrid();
+          if (participants.length === 0) {
+            setStatus("All participants have been drawn.", false);
+          } else {
+            setStatus(participants.length + " participants remaining.", false);
+          }
+
+          setTimeout(function() {
+            drawWheel();
+          }, 700);
+
+          isSpinning = false;
+          document.body.classList.remove("spinning");
+          byId("spinButton").disabled = false;
+          byId("spinButtonSide").disabled = false;
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function normaliseAngle(angle) {
+      const full = Math.PI * 2;
+      return ((angle % full) + full) % full;
+    }
+
+    function easeOutCubic(value) {
+      return 1 - Math.pow(1 - value, 3);
+    }
+
+    function addParticipantBack(name) {
+      if (!name) return;
+
+      drawnParticipants = drawnParticipants.filter(function(drawnName) {
+        return drawnName !== name;
+      });
+
+      if (!participants.includes(name)) {
+        participants.push(name);
+      }
+
+      selectedName = "";
+      byId("winnerName").textContent = "Ready";
+      stopAnthem();
+      drawWheel();
+      renderNames();
+      renderDrawnInfo();
+      renderDrawnList();
+      renderCountryGrid();
+      renderAssignments();
+      setStatus(participants.length + " participants on the wheel.", false);
+    }
+
+    function addLastBack() {
+      if (!drawnParticipants.length) return;
+      addParticipantBack(drawnParticipants[drawnParticipants.length - 1]);
+    }
+
+    function addAllBack() {
+      drawnParticipants.slice().forEach(function(name) {
+        if (!participants.includes(name)) {
+          participants.push(name);
+        }
+      });
+
+      drawnParticipants = [];
+      assignments = [];
+      saveAssignments();
+      selectedName = "";
+      byId("winnerName").textContent = "Ready";
+      drawWheel();
+      renderNames();
+      renderDrawnInfo();
+      renderDrawnList();
+      renderCountryGrid();
+      renderAssignments();
+      setStatus(participants.length + " participants on the wheel.", false);
+    }
+
+    function resetWheel() {
+      participants = originalParticipants.slice();
+      drawnParticipants = [];
+      selectedName = "";
+      stopAnthem();
+      currentRotation = 0;
+      byId("winnerName").textContent = "Ready";
+      drawWheel();
+      renderNames();
+      renderDrawnInfo();
+      renderDrawnList();
+      renderCountryGrid();
+      renderAssignments();
+      setStatus("Reset to " + participants.length + " participants.", false);
+    }
+
+    function renderNames() {
+      byId("namesList").innerHTML = participants.map(function(name) {
+        return '<div class="name-pill">' + escapeHtml(name) + '</div>';
+      }).join("");
+    }
+
+    function renderDrawnInfo() {
+      if (!drawnParticipants.length) {
+        byId("drawnInfo").textContent = "No one has been drawn yet.";
+        return;
+      }
+
+      byId("drawnInfo").innerHTML =
+        "<strong>Drawn:</strong> " + drawnParticipants.map(escapeHtml).join(", ");
+    }
+
+    function renderDrawnList() {
+      const target = byId("drawnList");
+
+      if (!drawnParticipants.length) {
+        target.innerHTML = '<div class="name-pill">No one drawn yet</div>';
+        return;
+      }
+
+      target.innerHTML = drawnParticipants.map(function(name) {
+        return '<div class="drawn-pill">' +
+          '<span>' + escapeHtml(name) + '</span>' +
+          '<button class="add-back-button" type="button" data-add-back="' + escapeHtml(name) + '">Add back</button>' +
+        '</div>';
+      }).join("");
+
+      target.querySelectorAll("[data-add-back]").forEach(function(button) {
+        button.addEventListener("click", function() {
+          addParticipantBack(button.getAttribute("data-add-back"));
+        });
+      });
+    }
+
+    function renderCountryGrid() {
+      const target = byId("countryGrid");
+      const available = availableCountries();
+
+      if (!countries.length) {
+        target.innerHTML = '<div class="name-pill">No countries loaded yet</div>';
+        return;
+      }
+
+      if (!available.length) {
+        target.innerHTML = '<div class="name-pill">All countries assigned</div>';
+        return;
+      }
+
+      target.innerHTML = available.map(function(item) {
+        return '<button class="country-button" type="button" data-country="' + escapeHtml(item.country) + '">' +
+          '<span>' + countryWithFlag(item.country) + '</span>' +
+          '<span>' + worldRankingBadge(item.worldRanking) + '</span>' +
+          '<span class="country-group">' + escapeHtml(item.group) + '</span>' +
+        '</button>';
+      }).join("");
+
+      target.querySelectorAll("[data-country]").forEach(function(button) {
+        button.addEventListener("click", function() {
+          assignCountryToSelected(button.getAttribute("data-country"));
+        });
+      });
+    }
+
+    function renderAssignments() {
+      const target = byId("assignmentsList");
+
+      if (!assignments.length) {
+        target.innerHTML = '<div class="name-pill">No countries assigned yet</div>';
+        return;
+      }
+
+      target.innerHTML = assignments.map(function(item, index) {
+        return '<div class="assignment-pill">' +
+          '<div class="assignment-main">' +
+            '<span class="assignment-person">' + escapeHtml(item.participant) + '</span>' +
+            '<span class="assignment-country"><span class="assignment-country-name">' + countryWithFlag(item.country) + '</span> — ' + escapeHtml(item.group) + '</span>' +
+            worldRankingBadge(item.worldRanking || (countryInfoFor(item.country) && countryInfoFor(item.country).worldRanking) || "") +
+          '</div>' +
+          '<button class="undo-assignment-button" type="button" data-undo="' + index + '">Undo</button>' +
+        '</div>';
+      }).join("");
+
+      target.querySelectorAll("[data-undo]").forEach(function(button) {
+        button.addEventListener("click", function() {
+          undoAssignment(Number(button.getAttribute("data-undo")));
+        });
+      });
+    }
+
+
+
+    function bindEvents() {
+      byId("spinButton").addEventListener("click", spinWheel);
+      byId("spinButtonSide").addEventListener("click", spinWheel);
+      byId("addLastBackButton").addEventListener("click", addLastBack);
+      byId("addAllBackButton").addEventListener("click", addAllBack);
+      byId("resetButton").addEventListener("click", resetWheel);
+      byId("reloadButton").addEventListener("click", loadParticipants);
+
+      window.addEventListener("resize", drawWheel);
+
+      document.addEventListener("keydown", function(event) {
+        if (event.code === "Space") {
+          event.preventDefault();
+          spinWheel();
+        }
+
+      });
+    }
+
+    bindEvents();
     loadParticipants();
   </script>
 </body>
-
 </html>
