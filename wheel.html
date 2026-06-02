@@ -694,6 +694,66 @@
       min-width: 0;
     }
 
+
+    /* ------------------------------------------------------------
+       Live draw usability improvements
+       Adds a clear assignment prompt, a country search box, and
+       safer labels for already-assigned drawn participants.
+    ------------------------------------------------------------ */
+    .country-assign-prompt {
+      margin: 0 0 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,210,74,0.32);
+      background: rgba(255,210,74,0.10);
+      color: #fef3c7;
+      font-weight: 900;
+      line-height: 1.3;
+    }
+
+    .country-search {
+      width: 100%;
+      margin: 0 0 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      font: inherit;
+      font-weight: 700;
+      outline: none;
+    }
+
+    .country-search::placeholder {
+      color: var(--muted);
+    }
+
+    .country-search:focus {
+      border-color: rgba(255,210,74,0.58);
+      box-shadow: 0 0 0 3px rgba(255,210,74,0.12);
+    }
+
+    .drawn-assigned-label {
+      padding: 6px 9px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      color: #bbf7d0;
+      background: rgba(32,212,137,0.14);
+      border: 1px solid rgba(32,212,137,0.28);
+      white-space: nowrap;
+    }
+
+    .drawn-pending-label {
+      padding: 6px 9px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      color: #fef3c7;
+      background: rgba(255,210,74,0.14);
+      border: 1px solid rgba(255,210,74,0.28);
+      white-space: nowrap;
+    }
+
+
   </style>
 </head>
 
@@ -738,8 +798,8 @@
         <div class="controls">
           <button id="reloadButton" type="button">Reload names</button>
           <button id="addLastBackButton" type="button">Add last back</button>
-          <button id="resetButton" type="button">Reset wheel</button>
-          <button id="addAllBackButton" type="button">Add all back</button>
+          <button id="resetButton" type="button">Reset wheel only</button>
+          <button id="addAllBackButton" type="button">Clear full draw</button>
           <button id="spinButtonSide" class="primary" type="button">Spin the wheel</button>
         </div>
         <p class="drawn" id="drawnInfo">No one has been drawn yet.</p>
@@ -748,6 +808,8 @@
       <section class="panel country-panel">
         <h2>Pick their country</h2>
         <p class="country-help">After the person picks a country from the box, click it here to record the draw. If an anthem file exists, it will play for 5 seconds.</p>
+        <p id="countryAssignPrompt" class="country-assign-prompt">Spin the wheel first</p>
+        <input id="countrySearch" class="country-search" type="search" placeholder="Search country...">
         <div id="countryGrid" class="country-grid"></div>
       </section>
 
@@ -901,13 +963,27 @@
 
     function worldRankingBadge(value) {
       if (!value) return "";
-      return '<span class="world-ranking-badge">World ranking: ' + escapeHtml(value) + '</span>';
+      return '<span class="world-ranking-badge">Rank #' + escapeHtml(value) + '</span>';
     }
 
     function countryInfoFor(country) {
       return countries.find(function(item) {
         return lower(item.country) === lower(country);
       }) || null;
+    }
+
+    function updateCountryPrompt() {
+      const prompt = byId("countryAssignPrompt");
+      if (!prompt) return;
+
+      prompt.textContent = selectedName
+        ? "Assigning country to: " + selectedName
+        : "Spin the wheel first";
+    }
+
+    function countrySearchTerm() {
+      const search = byId("countrySearch");
+      return search ? lower(search.value) : "";
     }
 
     const anthemStartTimes = {
@@ -1046,14 +1122,23 @@
         originalParticipants = parseParticipants(participantResponse);
         countries = parseCountries(competitionResponse);
         assignments = loadSavedAssignments();
+        selectedName = loadPendingDraw();
 
         const assignedPeople = assignmentPeopleMap();
+        const selectedIsValid = selectedName &&
+          originalParticipants.some(function(name) { return lower(name) === lower(selectedName); }) &&
+          !assignedPeople[lower(selectedName)];
+
+        if (!selectedIsValid) {
+          selectedName = "";
+          clearPendingDraw();
+        }
+
         participants = originalParticipants.filter(function(name) {
-          return !assignedPeople[lower(name)];
+          return !assignedPeople[lower(name)] && lower(name) !== lower(selectedName);
         });
 
-        drawnParticipants = [];
-        selectedName = "";
+        drawnParticipants = selectedName ? [selectedName] : [];
         currentRotation = 0;
 
         drawWheel();
@@ -1062,8 +1147,14 @@
         renderDrawnList();
         renderCountryGrid();
         renderAssignments();
-        byId("winnerName").textContent = "Ready";
-        setStatus("Loaded " + participants.length + " participants and " + availableCountries().length + " countries.", false);
+        byId("winnerName").textContent = selectedName || "Ready";
+        updateCountryPrompt();
+
+        if (selectedName) {
+          setStatus("Restored pending draw for " + selectedName + ". Choose their country before spinning again.", false);
+        } else {
+          setStatus("Loaded " + participants.length + " participants and " + availableCountries().length + " countries.", false);
+        }
       } catch (error) {
         console.error(error);
         setStatus("Error: " + error.message, true);
@@ -1183,6 +1274,18 @@
       localStorage.setItem("applied-sciences-sweepstake-assignments", JSON.stringify(assignments));
     }
 
+    function savePendingDraw() {
+      localStorage.setItem("applied-sciences-sweepstake-pending", selectedName || "");
+    }
+
+    function loadPendingDraw() {
+      return localStorage.getItem("applied-sciences-sweepstake-pending") || "";
+    }
+
+    function clearPendingDraw() {
+      localStorage.removeItem("applied-sciences-sweepstake-pending");
+    }
+
     function assignmentPeopleMap() {
       const out = {};
       assignments.forEach(function(item) {
@@ -1224,23 +1327,29 @@
         return;
       }
 
+      const assignedParticipant = selectedName;
+
       assignments = assignments.filter(function(item) {
-        return lower(item.participant) !== lower(selectedName);
+        return lower(item.participant) !== lower(assignedParticipant);
       });
 
       assignments.push({
-        participant: selectedName,
+        participant: assignedParticipant,
         country: chosen.country,
         group: chosen.group,
         worldRanking: chosen.worldRanking || ""
       });
 
       saveAssignments();
+      selectedName = "";
+      clearPendingDraw();
+
+      renderDrawnList();
       renderCountryGrid();
       renderAssignments();
-      setStatus(selectedName + " assigned " + chosen.country + ". Playing anthem clip.", false);
+      updateCountryPrompt();
+      setStatus(assignedParticipant + " assigned " + chosen.country + ". Playing anthem clip.", false);
       playAnthemForCountry(chosen.country);
-      selectedName = "";
     }
 
     function undoAssignment(index) {
@@ -1266,6 +1375,8 @@
       renderAssignments();
       byId("winnerName").textContent = "Ready";
       selectedName = "";
+      clearPendingDraw();
+      updateCountryPrompt();
       setStatus(item.participant + " was added back.", false);
     }
 
@@ -1362,6 +1473,11 @@
     function spinWheel() {
       if (isSpinning || participants.length === 0) return;
 
+      if (selectedName) {
+        setStatus("Assign a country to " + selectedName + " before spinning again, or add them back first.", true);
+        return;
+      }
+
       isSpinning = true;
       document.body.classList.add("spinning");
       byId("spinButton").disabled = true;
@@ -1402,6 +1518,7 @@
           currentRotation = normaliseAngle(startRotation + change);
           drawWheel();
           selectedName = participants[winnerIndex];
+          savePendingDraw();
           byId("winnerName").textContent = selectedName;
 
           participants.splice(winnerIndex, 1);
@@ -1414,6 +1531,7 @@
           renderDrawnInfo();
           renderDrawnList();
           renderCountryGrid();
+          updateCountryPrompt();
           if (participants.length === 0) {
             setStatus("All participants have been drawn.", false);
           } else {
@@ -1454,8 +1572,12 @@
         participants.push(name);
       }
 
-      selectedName = "";
-      byId("winnerName").textContent = "Ready";
+      if (lower(selectedName) === lower(name)) {
+        selectedName = "";
+        clearPendingDraw();
+      }
+
+      byId("winnerName").textContent = selectedName || "Ready";
       stopAnthem();
       drawWheel();
       renderNames();
@@ -1463,6 +1585,7 @@
       renderDrawnList();
       renderCountryGrid();
       renderAssignments();
+      updateCountryPrompt();
       setStatus(participants.length + " participants on the wheel.", false);
     }
 
@@ -1472,30 +1595,14 @@
     }
 
     function addAllBack() {
-      drawnParticipants.slice().forEach(function(name) {
-        if (!participants.includes(name)) {
-          participants.push(name);
-        }
-      });
+      if (!confirm("Clear the full draw, remove all country assignments, and add everyone back to the wheel?")) return;
 
+      participants = originalParticipants.slice();
       drawnParticipants = [];
       assignments = [];
       saveAssignments();
       selectedName = "";
-      byId("winnerName").textContent = "Ready";
-      drawWheel();
-      renderNames();
-      renderDrawnInfo();
-      renderDrawnList();
-      renderCountryGrid();
-      renderAssignments();
-      setStatus(participants.length + " participants on the wheel.", false);
-    }
-
-    function resetWheel() {
-      participants = originalParticipants.slice();
-      drawnParticipants = [];
-      selectedName = "";
+      clearPendingDraw();
       stopAnthem();
       currentRotation = 0;
       byId("winnerName").textContent = "Ready";
@@ -1505,7 +1612,33 @@
       renderDrawnList();
       renderCountryGrid();
       renderAssignments();
-      setStatus("Reset to " + participants.length + " participants.", false);
+      updateCountryPrompt();
+      setStatus("Full draw cleared. " + participants.length + " participants are back on the wheel.", false);
+    }
+
+    function resetWheel() {
+      if (!confirm("Reset the wheel while keeping existing country assignments?")) return;
+
+      const assignedPeople = assignmentPeopleMap();
+
+      participants = originalParticipants.filter(function(name) {
+        return !assignedPeople[lower(name)];
+      });
+
+      drawnParticipants = [];
+      selectedName = "";
+      clearPendingDraw();
+      stopAnthem();
+      currentRotation = 0;
+      byId("winnerName").textContent = "Ready";
+      drawWheel();
+      renderNames();
+      renderDrawnInfo();
+      renderDrawnList();
+      renderCountryGrid();
+      renderAssignments();
+      updateCountryPrompt();
+      setStatus("Wheel reset. Existing country assignments were kept.", false);
     }
 
     function renderNames() {
@@ -1532,10 +1665,20 @@
         return;
       }
 
+      const assignedPeople = assignmentPeopleMap();
+
       target.innerHTML = drawnParticipants.map(function(name) {
+        const isAssigned = assignedPeople[lower(name)];
+        const isPending = selectedName && lower(name) === lower(selectedName);
+        const action = isAssigned
+          ? '<span class="drawn-assigned-label">Assigned</span>'
+          : isPending
+            ? '<button class="add-back-button" type="button" data-add-back="' + escapeHtml(name) + '">Add back</button>'
+            : '<span class="drawn-pending-label">Drawn</span>';
+
         return '<div class="drawn-pill">' +
           '<span>' + escapeHtml(name) + '</span>' +
-          '<button class="add-back-button" type="button" data-add-back="' + escapeHtml(name) + '">Add back</button>' +
+          action +
         '</div>';
       }).join("");
 
@@ -1548,7 +1691,18 @@
 
     function renderCountryGrid() {
       const target = byId("countryGrid");
-      const available = availableCountries();
+      const searchTerm = countrySearchTerm();
+      let available = availableCountries();
+
+      updateCountryPrompt();
+
+      if (searchTerm) {
+        available = available.filter(function(item) {
+          return lower(item.country).includes(searchTerm) ||
+            lower(item.group).includes(searchTerm) ||
+            lower(item.worldRanking).includes(searchTerm);
+        });
+      }
 
       if (!countries.length) {
         target.innerHTML = '<div class="name-pill">No countries loaded yet</div>';
@@ -1556,12 +1710,16 @@
       }
 
       if (!available.length) {
-        target.innerHTML = '<div class="name-pill">All countries assigned</div>';
+        target.innerHTML = searchTerm
+          ? '<div class="name-pill">No matching countries</div>'
+          : '<div class="name-pill">All countries assigned</div>';
         return;
       }
 
+      const disabledAttr = selectedName ? "" : " disabled";
+
       target.innerHTML = available.map(function(item) {
-        return '<button class="country-button" type="button" data-country="' + escapeHtml(item.country) + '">' +
+        return '<button class="country-button" type="button" data-country="' + escapeHtml(item.country) + '"' + disabledAttr + '>' +
           '<span>' + countryWithFlag(item.country) + '</span>' +
           '<span>' + worldRankingBadge(item.worldRanking) + '</span>' +
           '<span class="country-group">' + escapeHtml(item.group) + '</span>' +
@@ -1610,6 +1768,11 @@
       byId("addAllBackButton").addEventListener("click", addAllBack);
       byId("resetButton").addEventListener("click", resetWheel);
       byId("reloadButton").addEventListener("click", loadParticipants);
+
+      const countrySearch = byId("countrySearch");
+      if (countrySearch) {
+        countrySearch.addEventListener("input", renderCountryGrid);
+      }
 
       window.addEventListener("resize", drawWheel);
 
