@@ -1106,6 +1106,7 @@
           <button id="resetButton" type="button">Reset wheel only</button>
           <button id="addAllBackButton" type="button">Clear full draw</button>
           <button id="spinButtonSide" class="primary" type="button">Spin the wheel</button>
+          <button id="testAnthemButton" type="button">Test anthem sound</button>
         </div>
         <p class="drawn" id="drawnInfo">No one has been drawn yet.</p>
       </section>
@@ -1318,40 +1319,143 @@
         .replace(/^-+|-+$/g, "");
     }
 
-    function anthemFilenameForCountry(country) {
+    function anthemFilenamesForCountry(country) {
       // These filenames match the MP3s currently uploaded in audio/anthems.
       // GitHub Pages is case-sensitive, so England.mp3 and england.mp3 are different files.
+      // Each country has fallback names so the page can still work if a file is renamed later.
       const uploadedFilenames = {
-        "england": "England.mp3",
-        "ivory coast": "Ivory_coast.mp3",
-        "bosnia": "bosnia_and_herzegovina.mp3",
-        "bosnia and herzegovina": "bosnia_and_herzegovina.mp3",
-        "cape verde": "cabo_verde.mp3",
-        "cabo verde": "cabo_verde.mp3",
-        "canada": "canada.mp3",
-        "dr congo": "congo_DR.mp3",
-        "congo dr": "congo_DR.mp3",
-        "curaçao": "curaçao.mp3",
-        "curacao": "curaçao.mp3",
-        "korea": "korea_republic.mp3",
-        "korea republic": "korea_republic.mp3",
-        "south korea": "korea_republic.mp3",
-        "new zealand": "new_zealand.mp3",
-        "saudi arabia": "saudi_arabia.mp3",
-        "south africa": "south_africa.mp3",
-        "türkiye": "turkey.mp3",
-        "turkiye": "turkey.mp3",
-        "turkey": "turkey.mp3",
-        "usa": "usa.mp3"
+        "england": ["England.mp3", "england.mp3"],
+        "ivory coast": ["Ivory_coast.mp3", "ivory-coast.mp3"],
+        "bosnia": ["bosnia_and_herzegovina.mp3", "bosnia.mp3"],
+        "bosnia and herzegovina": ["bosnia_and_herzegovina.mp3", "bosnia.mp3"],
+        "cape verde": ["cabo_verde.mp3", "cape-verde.mp3"],
+        "cabo verde": ["cabo_verde.mp3", "cape-verde.mp3"],
+        "canada": ["canada.mp3", "canada\uFEFF.mp3"],
+        "dr congo": ["congo_DR.mp3", "dr-congo.mp3"],
+        "congo dr": ["congo_DR.mp3", "dr-congo.mp3"],
+        "curaçao": ["curaçao.mp3", "curacao.mp3"],
+        "curacao": ["curaçao.mp3", "curacao.mp3"],
+        "korea": ["korea_republic.mp3", "korea.mp3"],
+        "korea republic": ["korea_republic.mp3", "korea.mp3"],
+        "south korea": ["korea_republic.mp3", "korea.mp3"],
+        "new zealand": ["new_zealand.mp3", "new-zealand.mp3"],
+        "saudi arabia": ["saudi_arabia.mp3", "saudi-arabia.mp3"],
+        "south africa": ["south_africa.mp3", "south-africa.mp3"],
+        "türkiye": ["turkey.mp3", "turkiye.mp3"],
+        "turkiye": ["turkey.mp3", "turkiye.mp3"],
+        "turkey": ["turkey.mp3", "turkiye.mp3"],
+        "usa": ["usa.mp3"]
       };
 
       const key = lower(country);
+      const fallback = slugifyCountry(country) + ".mp3";
+      const list = uploadedFilenames[key] || [fallback];
 
-      if (uploadedFilenames[key]) {
-        return uploadedFilenames[key];
+      if (!list.includes(fallback)) {
+        list.push(fallback);
       }
 
-      return slugifyCountry(country) + ".mp3";
+      return list;
+    }
+
+    function anthemFilenameForCountry(country) {
+      return anthemFilenamesForCountry(country)[0];
+    }
+
+    function anthemUrlForFilename(filename) {
+      // Use an absolute URL so audio works reliably from GitHub Pages and from a
+      // locally opened copy of the HTML. GitHub Pages paths are case-sensitive.
+      const encodedFilename = encodeURIComponent(filename);
+
+      if (window.location.protocol === "file:") {
+        return "https://srattray350.github.io/world_cup/audio/anthems/" + encodedFilename;
+      }
+
+      return new URL("audio/anthems/" + encodedFilename, window.location.href).href;
+    }
+
+    function relativeAnthemPath(filename) {
+      return "audio/anthems/" + filename;
+    }
+
+    function startAnthemStopTimer(player) {
+      if (anthemStopTimer) {
+        clearTimeout(anthemStopTimer);
+      }
+
+      anthemStopTimer = setTimeout(function() {
+        player.pause();
+        player.currentTime = 0;
+        anthemStopTimer = null;
+      }, 15000);
+    }
+
+    function tryPlayAnthem(country, filenames, index) {
+      const player = byId("anthemPlayer");
+      if (!player || !country || !filenames.length) return;
+
+      const filename = filenames[index];
+      const url = anthemUrlForFilename(filename);
+      const slug = filename.replace(/\.mp3$/i, "");
+      const startAt = anthemStartTimes[slug] || anthemStartTimes[slugifyCountry(country)] || anthemStartTimes[lower(country)] || 0;
+
+      player.pause();
+      player.removeAttribute("src");
+      player.load();
+      player.preload = "auto";
+      player.src = url;
+      player.load();
+
+      player.onloadedmetadata = function() {
+        if (startAt > 0) {
+          try {
+            player.currentTime = startAt;
+          } catch (error) {
+            console.warn("Could not set anthem start time:", error);
+          }
+        }
+      };
+
+      player.onerror = function() {
+        if (index + 1 < filenames.length) {
+          console.warn("Anthem file did not load, trying fallback:", url);
+          tryPlayAnthem(country, filenames, index + 1);
+          return;
+        }
+
+        const tried = filenames.map(function(name) {
+          return relativeAnthemPath(name);
+        }).join(", ");
+
+        console.warn("No anthem file could be loaded for", country, tried);
+        setStatus("Country assigned, but no anthem file could be loaded for " + country + ". Tried: " + tried, true);
+      };
+
+      const playPromise = player.play();
+
+      if (playPromise && typeof playPromise.then === "function") {
+        playPromise.then(function() {
+          setStatus("Playing anthem clip for " + country + " from " + relativeAnthemPath(filename) + ".", false);
+          startAnthemStopTimer(player);
+        }).catch(function(error) {
+          console.warn("Anthem could not play:", error, url);
+
+          if (index + 1 < filenames.length && error && error.name === "NotSupportedError") {
+            tryPlayAnthem(country, filenames, index + 1);
+            return;
+          }
+
+          setStatus("Country assigned, but the browser could not play the anthem. Tried: " + relativeAnthemPath(filename) + ". Error: " + (error && error.name ? error.name : error) + ". Direct test URL: " + url, true);
+        });
+      } else {
+        startAnthemStopTimer(player);
+      }
+    }
+
+    function testAnthemSound() {
+      stopAnthem();
+      setStatus("Testing anthem sound with audio/anthems/algeria.mp3", false);
+      tryPlayAnthem("Algeria", ["algeria.mp3"], 0);
     }
 
 
@@ -1377,42 +1481,7 @@
         anthemStopTimer = null;
       }
 
-      const filename = anthemFilenameForCountry(country);
-      const slug = filename.replace(/\.mp3$/i, "");
-      const startAt = anthemStartTimes[slug] || anthemStartTimes[slugifyCountry(country)] || anthemStartTimes[lower(country)] || 0;
-
-      player.pause();
-      player.currentTime = 0;
-      player.src = "audio/anthems/" + encodeURIComponent(filename);
-
-      const startPlayback = function() {
-        try {
-          player.currentTime = startAt;
-        } catch (error) {
-          // Some browsers only allow currentTime after metadata has loaded.
-        }
-
-        const playPromise = player.play();
-
-        if (playPromise && typeof playPromise.catch === "function") {
-          playPromise.catch(function(error) {
-            console.warn("Anthem could not play:", error);
-            setStatus("Country assigned. Anthem file not found or could not be played: " + country, false);
-          });
-        }
-
-        anthemStopTimer = setTimeout(function() {
-          player.pause();
-          player.currentTime = 0;
-          anthemStopTimer = null;
-        }, 5000);
-      };
-
-      if (player.readyState >= 1) {
-        startPlayback();
-      } else {
-        player.onloadedmetadata = startPlayback;
-      }
+      tryPlayAnthem(country, anthemFilenamesForCountry(country), 0);
     }
 
 
@@ -2459,6 +2528,7 @@
       byId("addAllBackButton").addEventListener("click", addAllBack);
       byId("resetButton").addEventListener("click", resetWheel);
       byId("reloadButton").addEventListener("click", loadParticipants);
+      byId("testAnthemButton").addEventListener("click", testAnthemSound);
       byId("randomiseNumbersButton").addEventListener("click", randomiseCountryNumbers);
       byId("toggleNumberTableButton").addEventListener("click", toggleNumberTable);
       byId("hideNumberRevealButton").addEventListener("click", hideNumberReveal);
