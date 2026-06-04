@@ -1059,7 +1059,428 @@
 
 
 
-  </style>
+  
+
+    /* ------------------------------------------------------------
+       Rio carnival theme + expanded current draw board
+       Makes the grouped World Cup draw easier to view without an
+       internal scrollbar and gives the page brighter carnival colours.
+    ------------------------------------------------------------ */
+    :root {
+      --bg: #071a5b;
+      --bg-2: #009c3b;
+      --card: rgba(7, 26, 91, 0.90);
+      --text: #fffdf2;
+      --muted: #dff7ff;
+      --line: rgba(255,255,255,0.22);
+      --accent: #00d5ff;
+      --green: #00e676;
+      --gold: #ffdf00;
+      --red: #ff2d75;
+      --pink: #ff2d75;
+      --orange: #ff7a00;
+      --purple: #7c3aed;
+      --blue: #002776;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 10% 8%, rgba(255,223,0,0.32), transparent 18rem),
+        radial-gradient(circle at 86% 10%, rgba(255,45,117,0.28), transparent 22rem),
+        radial-gradient(circle at 76% 72%, rgba(0,213,255,0.22), transparent 24rem),
+        radial-gradient(circle at 16% 78%, rgba(0,230,118,0.22), transparent 22rem),
+        linear-gradient(135deg, #071a5b 0%, #002776 28%, #009c3b 62%, #ff7a00 100%);
+    }
+
+    .title-card {
+      background:
+        radial-gradient(circle at top right, rgba(255,223,0,0.30), transparent 14rem),
+        radial-gradient(circle at bottom left, rgba(255,45,117,0.22), transparent 16rem),
+        linear-gradient(135deg, rgba(0,213,255,0.16), rgba(0,230,118,0.10)),
+        var(--card);
+    }
+
+    .kicker {
+      background: linear-gradient(135deg, rgba(255,223,0,0.22), rgba(255,45,117,0.18));
+      border-color: rgba(255,223,0,0.38);
+    }
+
+    .panel {
+      background:
+        radial-gradient(circle at top right, rgba(255,223,0,0.10), transparent 12rem),
+        linear-gradient(180deg, rgba(255,255,255,0.075), rgba(255,255,255,0.02)),
+        var(--card);
+      border-color: rgba(255,255,255,0.20);
+    }
+
+    .wheel-panel {
+      background:
+        repeating-linear-gradient(
+          135deg,
+          rgba(255,223,0,0.10) 0px,
+          rgba(255,223,0,0.10) 24px,
+          rgba(255,45,117,0.08) 24px,
+          rgba(255,45,117,0.08) 48px,
+          rgba(0,213,255,0.07) 48px,
+          rgba(0,213,255,0.07) 72px,
+          rgba(0,230,118,0.07) 72px,
+          rgba(0,230,118,0.07) 96px
+        ),
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015)),
+        var(--card);
+    }
+
+    .pointer,
+    button.primary,
+    .centre-button,
+    .add-back-button {
+      background: linear-gradient(135deg, var(--gold), var(--orange));
+      color: #07111f;
+      border-color: rgba(255,223,0,0.72);
+    }
+
+    .pointer {
+      border-top-color: var(--gold);
+      background: none;
+    }
+
+    button:hover {
+      border-color: rgba(255,223,0,0.72);
+      box-shadow: 0 8px 20px rgba(255,45,117,0.18);
+    }
+
+    .winner-card {
+      border-color: rgba(255,223,0,0.55);
+      background:
+        radial-gradient(circle at top, rgba(255,223,0,0.28), transparent 12rem),
+        radial-gradient(circle at bottom right, rgba(255,45,117,0.25), transparent 14rem),
+        linear-gradient(180deg, rgba(0,39,118,0.82), rgba(7,26,91,0.94));
+    }
+
+    .winner-name {
+      color: var(--gold);
+      text-shadow: 0 4px 18px rgba(255,45,117,0.38), 0 5px 20px rgba(0,0,0,0.35);
+    }
+
+    .projection-main {
+      grid-template-columns: minmax(500px, 0.95fr) minmax(560px, 1.05fr);
+    }
+
+    .projection-panel {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      min-height: 650px;
+    }
+
+    .projection-panel .assignments-panel {
+      min-height: 560px;
+    }
+
+    .assignments-list,
+    .projection-panel .assignments-list {
+      max-height: none;
+      overflow: visible;
+      padding-right: 0;
+    }
+
+    .assignments-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+      gap: 12px;
+      align-items: start;
+    }
+
+    .assignment-group-block {
+      gap: 7px;
+      margin-bottom: 0;
+      padding: 8px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .assignment-group-title {
+      margin: 0;
+      color: #07111f;
+      background: linear-gradient(135deg, var(--gold), var(--orange), var(--pink));
+      box-shadow: 0 8px 18px rgba(255,45,117,0.16);
+    }
+
+    .assignment-pill {
+      padding: 8px 9px;
+      border-color: rgba(0,213,255,0.22);
+      background: linear-gradient(135deg, rgba(0,213,255,0.11), rgba(255,45,117,0.08));
+    }
+
+    .assignment-person {
+      color: #fff3b0;
+    }
+
+    .assignment-country {
+      color: #bcffdd;
+    }
+
+    .world-ranking-badge {
+      color: #fffdf2;
+      background: rgba(255,45,117,0.18);
+      border-color: rgba(255,223,0,0.30);
+    }
+
+    .number-reveal-card {
+      border-color: rgba(255,223,0,0.42);
+      background:
+        radial-gradient(circle at top left, rgba(255,223,0,0.20), transparent 12rem),
+        radial-gradient(circle at bottom right, rgba(0,213,255,0.18), transparent 12rem),
+        rgba(255,255,255,0.08);
+    }
+
+    .number-button,
+    .number-table td,
+    .number-table th {
+      border-color: rgba(255,255,255,0.16);
+    }
+
+    .number-button:hover {
+      border-color: rgba(255,223,0,0.58);
+      box-shadow: 0 8px 18px rgba(255,223,0,0.14);
+    }
+
+    @media (max-width: 1180px) {
+      .projection-main {
+        grid-template-columns: 1fr;
+      }
+
+      .projection-panel {
+        min-height: auto;
+      }
+
+      .projection-panel .assignments-panel {
+        min-height: auto;
+      }
+    }
+
+  
+
+    /* ------------------------------------------------------------
+       Overlap fix
+       Keeps the carnival draw board from sitting over the wheel.
+       The wheel now respects its grid column width, and the layout
+       collapses to a safe stacked view on normal laptop/projector widths.
+    ------------------------------------------------------------ */
+    .projection-main,
+    .wheel-panel,
+    .projection-panel,
+    .assignments-panel,
+    .assignments-list {
+      min-width: 0;
+    }
+
+    .projection-main {
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+      align-items: start;
+    }
+
+    .wheel-panel {
+      position: relative;
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    .projection-panel {
+      position: relative;
+      z-index: 1;
+    }
+
+    .wheel-area {
+      width: min(660px, 100%, 72vh);
+      max-width: 100%;
+    }
+
+    canvas {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .assignments-panel {
+      overflow: hidden;
+    }
+
+    .assignments-list {
+      max-width: 100%;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    }
+
+    .assignment-group-block,
+    .assignment-pill,
+    .assignment-main {
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    @media (max-width: 1450px) {
+      .projection-main {
+        grid-template-columns: 1fr;
+      }
+
+      .projection-panel {
+        min-height: auto;
+        grid-template-columns: minmax(260px, 0.35fr) minmax(0, 1fr);
+        grid-template-rows: auto;
+        align-items: stretch;
+      }
+
+      .projection-panel .assignments-panel {
+        min-height: auto;
+      }
+
+      .wheel-area {
+        width: min(720px, 100%, 76vh);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .projection-panel {
+        grid-template-columns: 1fr;
+      }
+    }
+
+
+    /* ------------------------------------------------------------
+       Clean pointer + compact full draw board
+       Removes the unwanted square-looking pointer border and makes
+       the completed current draw fit much more tightly on screen.
+    ------------------------------------------------------------ */
+    .pointer {
+      background: transparent !important;
+      border-left-color: transparent !important;
+      border-right-color: transparent !important;
+      border-bottom: 0 solid transparent !important;
+      box-shadow: none !important;
+      outline: none !important;
+      filter: drop-shadow(0 5px 8px rgba(0,0,0,0.4));
+    }
+
+    .assignments-panel {
+      padding: 14px;
+    }
+
+    .assignments-panel h2 {
+      margin-bottom: 8px;
+      font-size: 0.98rem;
+      line-height: 1;
+    }
+
+    .projection-panel .assignments-panel {
+      min-height: auto;
+    }
+
+    .assignments-list,
+    .projection-panel .assignments-list {
+      grid-template-columns: repeat(4, minmax(145px, 1fr));
+      gap: 7px;
+      align-items: start;
+    }
+
+    .assignment-group-block {
+      display: grid;
+      gap: 4px;
+      padding: 5px;
+      border-radius: 12px;
+    }
+
+    .assignment-group-title {
+      padding: 5px 7px;
+      border-radius: 10px;
+      font-size: 0.72rem;
+      line-height: 1;
+      min-height: 0;
+    }
+
+    .assignment-group-count {
+      padding: 1px 4px;
+      font-size: 0.65rem;
+      line-height: 1;
+    }
+
+    .assignment-pill {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 4px;
+      padding: 3px 5px;
+      border-radius: 9px;
+      min-height: 0;
+    }
+
+    .assignment-main {
+      gap: 0;
+      min-width: 0;
+    }
+
+    .assignment-person {
+      font-size: 0.76rem;
+      line-height: 1.08;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .assignment-country {
+      font-size: 0.72rem;
+      line-height: 1.08;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .assignments-list .assignment-country-name {
+      flex-wrap: nowrap;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    .assignments-list .flag-img {
+      width: 1.05em;
+      height: 0.78em;
+    }
+
+    .assignments-list .world-ranking-badge {
+      display: inline-flex;
+      width: fit-content;
+      max-width: 100%;
+      margin-top: 1px;
+      padding: 1px 4px;
+      border-radius: 999px;
+      font-size: 0.52rem;
+      line-height: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .undo-assignment-button {
+      padding: 3px 5px;
+      border-radius: 999px;
+      font-size: 0.6rem;
+      line-height: 1;
+    }
+
+    @media (max-width: 1150px) {
+      .assignments-list,
+      .projection-panel .assignments-list {
+        grid-template-columns: repeat(3, minmax(140px, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .assignments-list,
+      .projection-panel .assignments-list {
+        grid-template-columns: repeat(2, minmax(130px, 1fr));
+      }
+    }
+
+
+</style>
 </head>
 
 <body>
@@ -1156,14 +1577,15 @@
     let currentRotation = 0;
     let isSpinning = false;
     let selectedName = "";
+    let heldParticipantOnWheel = "";
 
     const canvas = document.getElementById("wheelCanvas");
     const ctx = canvas.getContext("2d");
 
     const colours = [
-      "#0f7a45", "#ffffff", "#1f2937", "#20d489",
-      "#095b34", "#f8fafc", "#ffd24a", "#14532d",
-      "#16a34a", "#e5e7eb", "#0b3d24", "#bbf7d0"
+      "#009C3B", "#FFDF00", "#002776", "#FF2D75",
+      "#00D5FF", "#FF7A00", "#7C3AED", "#FFFFFF",
+      "#00E676", "#FFE066", "#C026D3", "#10B981"
     ];
 
     function clean(value) {
@@ -1387,7 +1809,7 @@
         player.pause();
         player.currentTime = 0;
         anthemStopTimer = null;
-      }, 20000);
+      }, 15000);
     }
 
     function tryPlayAnthem(country, filenames, index) {
@@ -1528,6 +1950,7 @@
         }
         assignments = loadSavedAssignments();
         selectedName = loadPendingDraw();
+        heldParticipantOnWheel = loadHeldParticipantOnWheel();
 
         const assignedPeople = assignmentPeopleMap();
         const selectedIsValid = selectedName &&
@@ -1539,8 +1962,20 @@
           clearPendingDraw();
         }
 
+        const heldParticipantIsValid = heldParticipantOnWheel &&
+          originalParticipants.some(function(name) { return lower(name) === lower(heldParticipantOnWheel); }) &&
+          assignedPeople[lower(heldParticipantOnWheel)];
+
+        if (!heldParticipantIsValid) {
+          heldParticipantOnWheel = "";
+          clearHeldParticipantOnWheel();
+        }
+
         participants = originalParticipants.filter(function(name) {
-          return !assignedPeople[lower(name)] && lower(name) !== lower(selectedName);
+          const key = lower(name);
+          return !assignedPeople[key] ||
+            (selectedName && key === lower(selectedName)) ||
+            (heldParticipantOnWheel && key === lower(heldParticipantOnWheel));
         });
 
         drawnParticipants = selectedName ? [selectedName] : [];
@@ -1553,11 +1988,13 @@
         renderCountryGrid();
         renderAssignments();
         renderCountryNumberTable();
-        byId("winnerName").textContent = selectedName || "Ready";
+        byId("winnerName").textContent = selectedName || heldParticipantOnWheel || "Ready";
         updateCountryPrompt();
 
         if (selectedName) {
           setStatus("Restored pending draw for " + selectedName + ". Enter their picked number before spinning again.", false);
+        } else if (heldParticipantOnWheel) {
+          setStatus(heldParticipantOnWheel + " will stay visible on the wheel until the next spin.", false);
         } else {
           setStatus("Loaded " + participants.length + " participants and " + availableCountries().length + " countries.", false);
         }
@@ -1965,6 +2402,18 @@
       localStorage.removeItem("applied-sciences-sweepstake-pending");
     }
 
+    function saveHeldParticipantOnWheel() {
+      localStorage.setItem("applied-sciences-sweepstake-held-on-wheel", heldParticipantOnWheel || "");
+    }
+
+    function loadHeldParticipantOnWheel() {
+      return localStorage.getItem("applied-sciences-sweepstake-held-on-wheel") || "";
+    }
+
+    function clearHeldParticipantOnWheel() {
+      localStorage.removeItem("applied-sciences-sweepstake-held-on-wheel");
+    }
+
     function assignmentPeopleMap() {
       const out = {};
       assignments.forEach(function(item) {
@@ -2023,8 +2472,11 @@
       });
 
       saveAssignments();
+      heldParticipantOnWheel = assignedParticipant;
+      saveHeldParticipantOnWheel();
       selectedName = "";
       clearPendingDraw();
+      byId("winnerName").textContent = assignedParticipant;
 
       renderDrawnList();
       renderCountryGrid();
@@ -2032,7 +2484,7 @@
       renderCountryNumberTable();
       updateCountryPrompt();
       const numberText = assignedNumber ? " (No. " + assignedNumber + ")" : "";
-      setStatus(assignedParticipant + " assigned " + chosen.country + numberText + ". Playing anthem clip.", false);
+      setStatus(assignedParticipant + " assigned " + chosen.country + numberText + ". They will stay on the wheel until the next spin. Playing anthem clip.", false);
       playAnthemForCountry(chosen.country);
     }
 
@@ -2058,9 +2510,17 @@
       renderCountryGrid();
       renderAssignments();
       renderCountryNumberTable();
-      byId("winnerName").textContent = "Ready";
-      selectedName = "";
-      clearPendingDraw();
+      if (lower(selectedName) === lower(item.participant)) {
+        selectedName = "";
+        clearPendingDraw();
+      }
+
+      if (lower(heldParticipantOnWheel) === lower(item.participant)) {
+        heldParticipantOnWheel = "";
+        clearHeldParticipantOnWheel();
+      }
+
+      byId("winnerName").textContent = selectedName || heldParticipantOnWheel || "Ready";
       updateCountryPrompt();
       setStatus(item.participant + " was added back.", false);
     }
@@ -2155,11 +2615,43 @@
       ctx.fillText("No names left", centre, centre);
     }
 
+    function removeAssignedParticipantsFromWheelBeforeSpin() {
+      const assignedPeople = assignmentPeopleMap();
+      const beforeCount = participants.length;
+
+      participants = participants.filter(function(name) {
+        return !assignedPeople[lower(name)];
+      });
+
+      if (heldParticipantOnWheel) {
+        heldParticipantOnWheel = "";
+        clearHeldParticipantOnWheel();
+      }
+
+      if (participants.length !== beforeCount) {
+        drawWheel();
+        renderNames();
+        renderDrawnInfo();
+        renderDrawnList();
+        renderCountryGrid();
+        renderCountryNumberTable();
+      }
+    }
+
     function spinWheel() {
-      if (isSpinning || participants.length === 0) return;
+      if (isSpinning) return;
 
       if (selectedName) {
         setStatus("Assign a country to " + selectedName + " before spinning again, or add them back first.", true);
+        return;
+      }
+
+      removeAssignedParticipantsFromWheelBeforeSpin();
+
+      if (participants.length === 0) {
+        drawWheel();
+        byId("winnerName").textContent = "Complete";
+        setStatus("All participants have been drawn.", false);
         return;
       }
 
@@ -2206,8 +2698,6 @@
           savePendingDraw();
           byId("winnerName").textContent = selectedName;
 
-          participants.splice(winnerIndex, 1);
-
           if (!drawnParticipants.includes(selectedName)) {
             drawnParticipants.push(selectedName);
           }
@@ -2218,11 +2708,7 @@
           renderCountryGrid();
           renderCountryNumberTable();
           updateCountryPrompt();
-          if (participants.length === 0) {
-            setStatus("All participants have been drawn.", false);
-          } else {
-            setStatus(participants.length + " participants remaining.", false);
-          }
+          setStatus(selectedName + " selected. Enter or click their picked number to reveal the country.", false);
 
           setTimeout(function() {
             drawWheel();
@@ -2263,7 +2749,12 @@
         clearPendingDraw();
       }
 
-      byId("winnerName").textContent = selectedName || "Ready";
+      if (lower(heldParticipantOnWheel) === lower(name)) {
+        heldParticipantOnWheel = "";
+        clearHeldParticipantOnWheel();
+      }
+
+      byId("winnerName").textContent = selectedName || heldParticipantOnWheel || "Ready";
       stopAnthem();
       drawWheel();
       renderNames();
@@ -2289,7 +2780,9 @@
       assignments = [];
       saveAssignments();
       selectedName = "";
+      heldParticipantOnWheel = "";
       clearPendingDraw();
+      clearHeldParticipantOnWheel();
       stopAnthem();
       currentRotation = 0;
       byId("winnerName").textContent = "Ready";
@@ -2315,7 +2808,9 @@
 
       drawnParticipants = [];
       selectedName = "";
+      heldParticipantOnWheel = "";
       clearPendingDraw();
+      clearHeldParticipantOnWheel();
       stopAnthem();
       currentRotation = 0;
       byId("winnerName").textContent = "Ready";
@@ -2474,7 +2969,7 @@
       return '<div class="assignment-pill">' +
         '<div class="assignment-main">' +
           '<span class="assignment-person">' + escapeHtml(item.participant) + '</span>' +
-          '<span class="assignment-country"><span class="assignment-country-name">' + countryWithFlag(item.country) + '</span> — ' + escapeHtml(item.group) + assignmentNumberLabel(item) + '</span>' +
+          '<span class="assignment-country"><span class="assignment-country-name">' + countryWithFlag(item.country) + '</span></span>' +
           worldRankingBadge(item.worldRanking || (countryInfoFor(item.country) && countryInfoFor(item.country).worldRanking) || "") +
         '</div>' +
         '<button class="undo-assignment-button" type="button" data-undo="' + index + '">Undo</button>' +
