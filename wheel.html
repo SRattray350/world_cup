@@ -524,7 +524,7 @@
 
     .management-area {
       display: grid;
-      grid-template-columns: repeat(4, minmax(240px, 1fr));
+      grid-template-columns: minmax(240px, 0.85fr) minmax(520px, 1.7fr) minmax(280px, 0.95fr);
       gap: 18px;
       margin-top: 18px;
       align-items: start;
@@ -539,9 +539,12 @@
     }
 
     .management-area .country-grid,
-    .management-area .names-list,
     .management-area .drawn-list {
       max-height: 360px;
+    }
+
+    .drawn-panel {
+      grid-column: span 2;
     }
 
     .wheel-panel {
@@ -620,6 +623,37 @@
     .assignment-country .world-ranking-badge {
       margin-left: 0;
       margin-top: 4px;
+    }
+
+    .assignment-group-block {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .assignment-group-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: 2px 0 0;
+      padding: 8px 10px;
+      border-radius: 14px;
+      color: #07111f;
+      background: linear-gradient(135deg, var(--gold), #ffe48e);
+      font-size: 0.82rem;
+      font-weight: 1000;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .assignment-group-count {
+      margin-left: auto;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(7,17,31,0.12);
+      font-size: 0.72rem;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
     }
 
   
@@ -754,6 +788,277 @@
     }
 
 
+    /* ------------------------------------------------------------
+       Secret number-to-country reveal
+       Numbers can be randomised without exposing the full lookup.
+       The organiser only reveals the single number that was picked.
+    ------------------------------------------------------------ */
+    .number-panel {
+      grid-column: span 3;
+      align-self: stretch;
+    }
+
+    .controls-panel {
+      grid-column: span 1;
+    }
+
+    .drawn-panel {
+      grid-column: span 4;
+    }
+
+    .number-controls {
+      display: grid;
+      grid-template-columns: minmax(200px, 1fr) auto auto;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .number-controls .primary {
+      min-width: 0;
+    }
+
+    .number-map-info {
+      margin: 0 0 12px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,210,74,0.32);
+      background: rgba(255,210,74,0.10);
+      color: #fef3c7;
+      font-size: 0.9rem;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+
+    .number-entry-row {
+      display: grid;
+      grid-template-columns: minmax(160px, 1fr) auto;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .number-input {
+      width: 100%;
+      min-width: 0;
+      padding: 13px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      font: inherit;
+      font-size: 1.25rem;
+      font-weight: 900;
+      text-align: center;
+      outline: none;
+    }
+
+    .number-input::placeholder {
+      color: var(--muted);
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
+    .number-input:focus {
+      border-color: rgba(255,210,74,0.58);
+      box-shadow: 0 0 0 3px rgba(255,210,74,0.12);
+    }
+
+    .number-reveal-card {
+      min-height: 132px;
+      display: grid;
+      align-content: center;
+      gap: 7px;
+      margin-bottom: 14px;
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,210,74,0.38);
+      background:
+        radial-gradient(circle at top right, rgba(255,210,74,0.18), transparent 13rem),
+        rgba(255,255,255,0.06);
+      text-align: center;
+    }
+
+    .number-reveal-card .reveal-label {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .number-reveal-card .reveal-number {
+      color: var(--gold);
+      font-size: clamp(1.6rem, 3vw, 2.5rem);
+      font-weight: 1000;
+      line-height: 1;
+    }
+
+    .number-reveal-card .reveal-country {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 7px;
+      color: #bbf7d0;
+      font-size: clamp(1.7rem, 3vw, 2.7rem);
+      font-weight: 1000;
+      line-height: 1.08;
+      flex-wrap: wrap;
+    }
+
+    .number-reveal-card .reveal-meta {
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 800;
+    }
+
+    .number-button-grid {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(48px, 1fr));
+      gap: 8px;
+    }
+
+    .number-button {
+      min-width: 0;
+      min-height: 52px;
+      padding: 8px;
+      border-radius: 14px;
+      color: var(--gold);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.14);
+      font-size: 1.18rem;
+      font-weight: 1000;
+      line-height: 1;
+    }
+
+    .number-button:hover {
+      border-color: rgba(255,210,74,0.6);
+      box-shadow: 0 8px 18px rgba(255,210,74,0.13);
+    }
+
+    .number-button.assigned {
+      color: #bbf7d0;
+      background: rgba(32,212,137,0.12);
+      border-color: rgba(32,212,137,0.25);
+      opacity: 0.72;
+    }
+
+    .number-button:disabled {
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+
+    .number-table-panel {
+      margin: 0 0 14px;
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,210,74,0.30);
+      background: rgba(255,255,255,0.055);
+    }
+
+    .number-table-panel[hidden] {
+      display: none;
+    }
+
+    .number-table-title {
+      margin: 0 0 10px;
+      color: #fef3c7;
+      font-size: 0.95rem;
+      font-weight: 1000;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .number-table-wrapper {
+      max-height: 360px;
+      overflow: auto;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .number-country-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 620px;
+      background: rgba(6,21,43,0.22);
+    }
+
+    .number-country-table th,
+    .number-country-table td {
+      padding: 9px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    .number-country-table th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      color: #fef3c7;
+      background: rgba(9,55,33,0.98);
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .number-country-table td:first-child {
+      color: var(--gold);
+      font-weight: 1000;
+      text-align: center;
+      width: 72px;
+    }
+
+    .number-table-status {
+      display: inline-flex;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .number-table-status.available {
+      color: #dbeafe;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.16);
+    }
+
+    .number-table-status.assigned {
+      color: #bbf7d0;
+      background: rgba(32,212,137,0.14);
+      border: 1px solid rgba(32,212,137,0.28);
+    }
+
+    @media (max-width: 1100px) {
+      .number-panel,
+      .drawn-panel {
+        grid-column: span 2;
+      }
+
+      .number-button-grid {
+        grid-template-columns: repeat(6, minmax(48px, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .number-panel,
+      .drawn-panel {
+        grid-column: span 1;
+      }
+
+      .number-entry-row,
+      .number-controls {
+        grid-template-columns: 1fr;
+      }
+
+      .number-button-grid {
+        grid-template-columns: repeat(4, minmax(48px, 1fr));
+      }
+    }
+
+
+
   </style>
 </head>
 
@@ -805,17 +1110,24 @@
         <p class="drawn" id="drawnInfo">No one has been drawn yet.</p>
       </section>
 
-      <section class="panel country-panel">
-        <h2>Pick their country</h2>
-        <p class="country-help">After the person picks a country from the box, click it here to record the draw. If an anthem file exists, it will play for 5 seconds.</p>
-        <p id="countryAssignPrompt" class="country-assign-prompt">Spin the wheel first</p>
-        <input id="countrySearch" class="country-search" type="search" placeholder="Search country...">
-        <div id="countryGrid" class="country-grid"></div>
-      </section>
-
-      <section class="panel names-panel">
-        <h2>Participants on wheel</h2>
-        <div id="namesList" class="names-list"></div>
+      <section class="panel number-panel">
+        <h2>Numbered country draw</h2>
+        <div class="number-controls">
+          <button id="randomiseNumbersButton" class="primary" type="button">Randomise numbers</button>
+          <button id="toggleNumberTableButton" type="button">Show number table</button>
+          <button id="hideNumberRevealButton" type="button">Hide reveal</button>
+        </div>
+        <div id="numberTablePanel" class="number-table-panel" hidden>
+          <h3 class="number-table-title">Number to country table</h3>
+          <div id="numberCountryTable" class="number-table-wrapper"></div>
+        </div>
+        <p id="numberMapInfo" class="number-map-info">Load countries first, then randomise the numbers.</p>
+        <div class="number-entry-row">
+          <input id="numberInput" class="number-input" type="number" min="1" max="48" inputmode="numeric" placeholder="Enter ball number">
+          <button id="revealNumberButton" type="button">Reveal country</button>
+        </div>
+        <div id="numberRevealCard" class="number-reveal-card"></div>
+        <div id="numberButtonGrid" class="number-button-grid"></div>
       </section>
 
       <section class="panel drawn-panel">
@@ -836,6 +1148,9 @@
     let participants = [];
     let drawnParticipants = [];
     let countries = [];
+    let countryNumberMap = [];
+    let lastNumberReveal = null;
+    let isNumberTableVisible = false;
     let assignments = [];
     let currentRotation = 0;
     let isSpinning = false;
@@ -995,33 +1310,48 @@
 
     let anthemStopTimer = null;
 
-    function countryAudioSlug(country) {
-      const manual = {
-        "south africa": "south-africa",
-        "new zealand": "new-zealand",
-        "saudi arabia": "saudi-arabia",
-        "cape verde": "cape-verde",
-        "ivory coast": "ivory-coast",
-        "dr congo": "dr-congo",
-        "czechia": "czechia",
-        "türkiye": "turkiye",
-        "turkiye": "turkiye",
-        "curaçao": "curacao",
-        "curacao": "curacao",
-        "usa": "usa"
-      };
-
-      const key = lower(country);
-
-      if (manual[key]) {
-        return manual[key];
-      }
-
-      return key
+    function slugifyCountry(country) {
+      return lower(country)
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "");
+    }
+
+    function anthemFilenameForCountry(country) {
+      // These filenames match the MP3s currently uploaded in audio/anthems.
+      // GitHub Pages is case-sensitive, so England.mp3 and england.mp3 are different files.
+      const uploadedFilenames = {
+        "england": "England.mp3",
+        "ivory coast": "Ivory_coast.mp3",
+        "bosnia": "bosnia_and_herzegovina.mp3",
+        "bosnia and herzegovina": "bosnia_and_herzegovina.mp3",
+        "cape verde": "cabo_verde.mp3",
+        "cabo verde": "cabo_verde.mp3",
+        "canada": "canada.mp3",
+        "dr congo": "congo_DR.mp3",
+        "congo dr": "congo_DR.mp3",
+        "curaçao": "curaçao.mp3",
+        "curacao": "curaçao.mp3",
+        "korea": "korea_republic.mp3",
+        "korea republic": "korea_republic.mp3",
+        "south korea": "korea_republic.mp3",
+        "new zealand": "new_zealand.mp3",
+        "saudi arabia": "saudi_arabia.mp3",
+        "south africa": "south_africa.mp3",
+        "türkiye": "turkey.mp3",
+        "turkiye": "turkey.mp3",
+        "turkey": "turkey.mp3",
+        "usa": "usa.mp3"
+      };
+
+      const key = lower(country);
+
+      if (uploadedFilenames[key]) {
+        return uploadedFilenames[key];
+      }
+
+      return slugifyCountry(country) + ".mp3";
     }
 
 
@@ -1047,12 +1377,13 @@
         anthemStopTimer = null;
       }
 
-      const slug = countryAudioSlug(country);
-      const startAt = anthemStartTimes[slug] || anthemStartTimes[lower(country)] || 0;
+      const filename = anthemFilenameForCountry(country);
+      const slug = filename.replace(/\.mp3$/i, "");
+      const startAt = anthemStartTimes[slug] || anthemStartTimes[slugifyCountry(country)] || anthemStartTimes[lower(country)] || 0;
 
       player.pause();
       player.currentTime = 0;
-      player.src = "audio/anthems/" + slug + ".mp3";
+      player.src = "audio/anthems/" + encodeURIComponent(filename);
 
       const startPlayback = function() {
         try {
@@ -1121,6 +1452,11 @@
 
         originalParticipants = parseParticipants(participantResponse);
         countries = parseCountries(competitionResponse);
+        countryNumberMap = loadSavedCountryNumberMap();
+        if (!isCountryNumberMapValid(countryNumberMap)) {
+          countryNumberMap = [];
+          clearSavedCountryNumberMap();
+        }
         assignments = loadSavedAssignments();
         selectedName = loadPendingDraw();
 
@@ -1147,11 +1483,12 @@
         renderDrawnList();
         renderCountryGrid();
         renderAssignments();
+        renderCountryNumberTable();
         byId("winnerName").textContent = selectedName || "Ready";
         updateCountryPrompt();
 
         if (selectedName) {
-          setStatus("Restored pending draw for " + selectedName + ". Choose their country before spinning again.", false);
+          setStatus("Restored pending draw for " + selectedName + ". Enter their picked number before spinning again.", false);
         } else {
           setStatus("Loaded " + participants.length + " participants and " + availableCountries().length + " countries.", false);
         }
@@ -1259,6 +1596,279 @@
       return -1;
     }
 
+    function loadSavedCountryNumberMap() {
+      try {
+        const saved = localStorage.getItem("applied-sciences-sweepstake-country-number-map");
+        const parsed = saved ? JSON.parse(saved) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function saveCountryNumberMap() {
+      localStorage.setItem("applied-sciences-sweepstake-country-number-map", JSON.stringify(countryNumberMap));
+    }
+
+    function clearSavedCountryNumberMap() {
+      localStorage.removeItem("applied-sciences-sweepstake-country-number-map");
+    }
+
+    function isCountryNumberMapValid(map) {
+      if (!Array.isArray(map) || !countries.length || map.length !== countries.length) {
+        return false;
+      }
+
+      const countryNames = countries.map(function(item) {
+        return lower(item.country);
+      }).sort();
+
+      const mappedNames = map.map(function(item) {
+        return lower(item.country);
+      }).sort();
+
+      const numbers = map.map(function(item) {
+        return Number(item.number);
+      }).sort(function(a, b) { return a - b; });
+
+      for (let i = 0; i < countryNames.length; i++) {
+        if (countryNames[i] !== mappedNames[i] || numbers[i] !== i + 1) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    function shuffleArray(items) {
+      const out = items.slice();
+      for (let i = out.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = out[i];
+        out[i] = out[j];
+        out[j] = temp;
+      }
+      return out;
+    }
+
+    function randomiseCountryNumbers() {
+      if (!countries.length) {
+        setStatus("Countries have not loaded yet.", true);
+        return;
+      }
+
+      if (assignments.length && !confirm("Randomise the number-country mapping? Existing participant-country assignments will be kept, but future number reveals will use the new hidden mapping.")) {
+        return;
+      }
+
+      countryNumberMap = shuffleArray(countries).map(function(item, index) {
+        return {
+          number: index + 1,
+          country: item.country,
+          group: item.group,
+          worldRanking: item.worldRanking || ""
+        };
+      });
+
+      lastNumberReveal = null;
+      const input = byId("numberInput");
+      if (input) input.value = "";
+      saveCountryNumberMap();
+      renderCountryNumberTable();
+      setStatus(isNumberTableVisible ? "Country numbers randomised. The evidence table has been updated." : "Country numbers randomised and kept hidden.", false);
+    }
+
+    function countryNumberFor(country) {
+      const item = countryNumberMap.find(function(row) {
+        return lower(row.country) === lower(country);
+      });
+
+      return item ? item.number : "";
+    }
+
+    function countryByNumber(number) {
+      return countryNumberMap.find(function(row) {
+        return Number(row.number) === Number(number);
+      }) || null;
+    }
+
+    function hideNumberReveal() {
+      lastNumberReveal = null;
+      renderCountryNumberTable();
+    }
+
+    function toggleNumberTable() {
+      isNumberTableVisible = !isNumberTableVisible;
+      renderCountryNumberTable();
+    }
+
+    function renderFullNumberCountryTable() {
+      const panel = byId("numberTablePanel");
+      const tableTarget = byId("numberCountryTable");
+      const toggleButton = byId("toggleNumberTableButton");
+
+      if (!panel || !tableTarget || !toggleButton) return;
+
+      toggleButton.textContent = isNumberTableVisible ? "Hide number table" : "Show number table";
+      panel.hidden = !isNumberTableVisible;
+
+      if (!isNumberTableVisible) {
+        tableTarget.innerHTML = "";
+        return;
+      }
+
+      if (!countryNumberMap.length) {
+        tableTarget.innerHTML = '<div class="name-pill">Randomise the numbers first</div>';
+        return;
+      }
+
+      const assignedCountries = assignmentCountryMap();
+      const rows = countryNumberMap
+        .slice()
+        .sort(function(a, b) { return Number(a.number) - Number(b.number); })
+        .map(function(item) {
+          const isAssigned = !!assignedCountries[lower(item.country)];
+          const statusClass = isAssigned ? "assigned" : "available";
+          const statusText = isAssigned ? "Used" : "Hidden";
+          const rankText = item.worldRanking ? "#" + escapeHtml(item.worldRanking) : "Not listed";
+
+          return '<tr>' +
+            '<td>' + escapeHtml(item.number) + '</td>' +
+            '<td>' + countryWithFlag(item.country) + '</td>' +
+            '<td>' + escapeHtml(item.group) + '</td>' +
+            '<td>' + rankText + '</td>' +
+            '<td><span class="number-table-status ' + statusClass + '">' + statusText + '</span></td>' +
+          '</tr>';
+        })
+        .join("");
+
+      tableTarget.innerHTML = '<table class="number-country-table">' +
+        '<thead><tr><th>No.</th><th>Country</th><th>Group</th><th>Rank</th><th>Status</th></tr></thead>' +
+        '<tbody>' + rows + '</tbody>' +
+      '</table>';
+    }
+
+    function revealNumberCountry(rawNumber) {
+      if (!countryNumberMap.length) {
+        setStatus("Randomise the country numbers first.", true);
+        return;
+      }
+
+      const number = Number(rawNumber);
+
+      if (!Number.isInteger(number) || number < 1 || number > countryNumberMap.length) {
+        setStatus("Enter a number between 1 and " + countryNumberMap.length + ".", true);
+        return;
+      }
+
+      const item = countryByNumber(number);
+
+      if (!item) {
+        setStatus("No country is linked to number " + number + ".", true);
+        return;
+      }
+
+      const assignedCountries = assignmentCountryMap();
+
+      if (assignedCountries[lower(item.country)]) {
+        setStatus("Number " + number + " has already been used.", true);
+        return;
+      }
+
+      if (!selectedName) {
+        setStatus("Spin the wheel first, then enter or click their number.", true);
+        return;
+      }
+
+      const participant = selectedName;
+
+      lastNumberReveal = {
+        participant: participant,
+        number: item.number,
+        country: item.country,
+        group: item.group,
+        worldRanking: item.worldRanking || ""
+      };
+
+      assignCountryToSelected(item.country);
+    }
+
+    function renderNumberRevealCard() {
+      const card = byId("numberRevealCard");
+      if (!card) return;
+
+      if (!countryNumberMap.length) {
+        card.innerHTML = '<span class="reveal-label">Hidden country reveal</span>' +
+          '<span class="reveal-meta">Randomise the numbers first</span>';
+        return;
+      }
+
+      if (!lastNumberReveal) {
+        card.innerHTML = '<span class="reveal-label">Hidden country reveal</span>' +
+          '<span class="reveal-meta">' + (selectedName ? "Ready for " + escapeHtml(selectedName) : "Spin the wheel, then enter or click the picked number") + '</span>';
+        return;
+      }
+
+      const rankText = lastNumberReveal.worldRanking ? "Rank #" + escapeHtml(lastNumberReveal.worldRanking) : "Rank not listed";
+
+      card.innerHTML =
+        '<span class="reveal-label">' + escapeHtml(lastNumberReveal.participant) + ' picked</span>' +
+        '<span class="reveal-number">No. ' + escapeHtml(lastNumberReveal.number) + '</span>' +
+        '<span class="reveal-country">' + countryWithFlag(lastNumberReveal.country) + '</span>' +
+        '<span class="reveal-meta">' + escapeHtml(lastNumberReveal.group) + ' · ' + rankText + '</span>';
+    }
+
+    function renderCountryNumberTable() {
+      const info = byId("numberMapInfo");
+      const input = byId("numberInput");
+      const revealButton = byId("revealNumberButton");
+      const grid = byId("numberButtonGrid");
+
+      if (!info || !input || !revealButton || !grid) return;
+
+      if (!countryNumberMap.length) {
+        info.textContent = countries.length
+          ? "Numbers have not been randomised yet."
+          : "Load countries first, then randomise the numbers.";
+        input.disabled = true;
+        revealButton.disabled = true;
+        grid.innerHTML = "";
+        renderNumberRevealCard();
+        renderFullNumberCountryTable();
+        return;
+      }
+
+      input.disabled = false;
+      input.max = String(countryNumberMap.length);
+      revealButton.disabled = false;
+
+      const assignedCountries = assignmentCountryMap();
+      const assignedCount = countryNumberMap.filter(function(item) {
+        return assignedCountries[lower(item.country)];
+      }).length;
+
+      info.textContent = countryNumberMap.length + " numbers randomised. " + assignedCount + " used, " + (countryNumberMap.length - assignedCount) + " still available.";
+
+      grid.innerHTML = countryNumberMap.map(function(item) {
+        const isAssigned = !!assignedCountries[lower(item.country)];
+        const className = isAssigned ? "number-button assigned" : "number-button";
+        const disabledAttr = isAssigned ? " disabled" : "";
+
+        return '<button class="' + className + '" type="button" data-number="' + escapeHtml(item.number) + '"' + disabledAttr + ' aria-label="Reveal number ' + escapeHtml(item.number) + '">' +
+          escapeHtml(item.number) +
+        '</button>';
+      }).join("");
+
+      grid.querySelectorAll("[data-number]").forEach(function(button) {
+        button.addEventListener("click", function() {
+          revealNumberCountry(button.getAttribute("data-number"));
+        });
+      });
+
+      renderNumberRevealCard();
+      renderFullNumberCountryTable();
+    }
+
 
     function loadSavedAssignments() {
       try {
@@ -1311,7 +1921,7 @@
 
     function assignCountryToSelected(countryName) {
       if (!selectedName) {
-        setStatus("Spin the wheel first, then choose a country.", true);
+        setStatus("Spin the wheel first, then enter or click their picked number.", true);
         return;
       }
 
@@ -1333,11 +1943,14 @@
         return lower(item.participant) !== lower(assignedParticipant);
       });
 
+      const assignedNumber = countryNumberFor(chosen.country);
+
       assignments.push({
         participant: assignedParticipant,
         country: chosen.country,
         group: chosen.group,
-        worldRanking: chosen.worldRanking || ""
+        worldRanking: chosen.worldRanking || "",
+        number: assignedNumber
       });
 
       saveAssignments();
@@ -1347,8 +1960,10 @@
       renderDrawnList();
       renderCountryGrid();
       renderAssignments();
+      renderCountryNumberTable();
       updateCountryPrompt();
-      setStatus(assignedParticipant + " assigned " + chosen.country + ". Playing anthem clip.", false);
+      const numberText = assignedNumber ? " (No. " + assignedNumber + ")" : "";
+      setStatus(assignedParticipant + " assigned " + chosen.country + numberText + ". Playing anthem clip.", false);
       playAnthemForCountry(chosen.country);
     }
 
@@ -1373,6 +1988,7 @@
       renderDrawnList();
       renderCountryGrid();
       renderAssignments();
+      renderCountryNumberTable();
       byId("winnerName").textContent = "Ready";
       selectedName = "";
       clearPendingDraw();
@@ -1531,6 +2147,7 @@
           renderDrawnInfo();
           renderDrawnList();
           renderCountryGrid();
+          renderCountryNumberTable();
           updateCountryPrompt();
           if (participants.length === 0) {
             setStatus("All participants have been drawn.", false);
@@ -1585,6 +2202,7 @@
       renderDrawnList();
       renderCountryGrid();
       renderAssignments();
+      renderCountryNumberTable();
       updateCountryPrompt();
       setStatus(participants.length + " participants on the wheel.", false);
     }
@@ -1612,6 +2230,7 @@
       renderDrawnList();
       renderCountryGrid();
       renderAssignments();
+      renderCountryNumberTable();
       updateCountryPrompt();
       setStatus("Full draw cleared. " + participants.length + " participants are back on the wheel.", false);
     }
@@ -1637,12 +2256,16 @@
       renderDrawnList();
       renderCountryGrid();
       renderAssignments();
+      renderCountryNumberTable();
       updateCountryPrompt();
       setStatus("Wheel reset. Existing country assignments were kept.", false);
     }
 
     function renderNames() {
-      byId("namesList").innerHTML = participants.map(function(name) {
+      const target = byId("namesList");
+      if (!target) return;
+
+      target.innerHTML = participants.map(function(name) {
         return '<div class="name-pill">' + escapeHtml(name) + '</div>';
       }).join("");
     }
@@ -1691,6 +2314,11 @@
 
     function renderCountryGrid() {
       const target = byId("countryGrid");
+      if (!target) {
+        updateCountryPrompt();
+        return;
+      }
+
       const searchTerm = countrySearchTerm();
       let available = availableCountries();
 
@@ -1733,6 +2361,57 @@
       });
     }
 
+    function assignmentNumberLabel(item) {
+      const number = item.number || countryNumberFor(item.country);
+      return number ? " — No. " + escapeHtml(number) : "";
+    }
+
+    function normaliseWorldCupGroup(groupName) {
+      const value = clean(groupName) || "Ungrouped";
+
+      // World Cup 2026 has groups A-L. Match the actual group label rather than
+      // grabbing any capital letter. The old version matched the "p" in "Group",
+      // which is why every section appeared as "Group P".
+      const groupMatch = value.match(/\bgroup\s*([A-L])\b/i);
+      if (groupMatch) {
+        return "Group " + groupMatch[1].toUpperCase();
+      }
+
+      const singleLetterMatch = value.match(/^([A-L])$/i);
+      if (singleLetterMatch) {
+        return "Group " + singleLetterMatch[1].toUpperCase();
+      }
+
+      return value;
+    }
+
+    function groupSortValue(groupName) {
+      const value = normaliseWorldCupGroup(groupName);
+      const groupMatch = value.match(/\bgroup\s*([A-L])\b/i);
+
+      if (groupMatch) {
+        const letter = groupMatch[1].toUpperCase();
+        return String(letter.charCodeAt(0) - 64).padStart(2, "0");
+      }
+
+      return value.toUpperCase();
+    }
+
+    function assignmentGroupTitle(groupName) {
+      return normaliseWorldCupGroup(groupName);
+    }
+
+    function assignmentCardHtml(item, index) {
+      return '<div class="assignment-pill">' +
+        '<div class="assignment-main">' +
+          '<span class="assignment-person">' + escapeHtml(item.participant) + '</span>' +
+          '<span class="assignment-country"><span class="assignment-country-name">' + countryWithFlag(item.country) + '</span> — ' + escapeHtml(item.group) + assignmentNumberLabel(item) + '</span>' +
+          worldRankingBadge(item.worldRanking || (countryInfoFor(item.country) && countryInfoFor(item.country).worldRanking) || "") +
+        '</div>' +
+        '<button class="undo-assignment-button" type="button" data-undo="' + index + '">Undo</button>' +
+      '</div>';
+    }
+
     function renderAssignments() {
       const target = byId("assignmentsList");
 
@@ -1741,15 +2420,28 @@
         return;
       }
 
-      target.innerHTML = assignments.map(function(item, index) {
-        return '<div class="assignment-pill">' +
-          '<div class="assignment-main">' +
-            '<span class="assignment-person">' + escapeHtml(item.participant) + '</span>' +
-            '<span class="assignment-country"><span class="assignment-country-name">' + countryWithFlag(item.country) + '</span> — ' + escapeHtml(item.group) + '</span>' +
-            worldRankingBadge(item.worldRanking || (countryInfoFor(item.country) && countryInfoFor(item.country).worldRanking) || "") +
-          '</div>' +
-          '<button class="undo-assignment-button" type="button" data-undo="' + index + '">Undo</button>' +
-        '</div>';
+      const groups = {};
+
+      assignments.forEach(function(item, index) {
+        const key = assignmentGroupTitle(item.group);
+        if (!groups[key]) groups[key] = [];
+        groups[key].push({ item: item, index: index });
+      });
+
+      const groupKeys = Object.keys(groups).sort(function(a, b) {
+        return groupSortValue(a).localeCompare(groupSortValue(b), undefined, { numeric: true, sensitivity: "base" });
+      });
+
+      target.innerHTML = groupKeys.map(function(groupKey) {
+        const entries = groups[groupKey];
+        const rows = entries.map(function(entry) {
+          return assignmentCardHtml(entry.item, entry.index);
+        }).join("");
+
+        return '<section class="assignment-group-block">' +
+          '<h3 class="assignment-group-title">' + escapeHtml(assignmentGroupTitle(groupKey)) + '<span class="assignment-group-count">' + entries.length + '/4</span></h3>' +
+          rows +
+        '</section>';
       }).join("");
 
       target.querySelectorAll("[data-undo]").forEach(function(button) {
@@ -1760,7 +2452,6 @@
     }
 
 
-
     function bindEvents() {
       byId("spinButton").addEventListener("click", spinWheel);
       byId("spinButtonSide").addEventListener("click", spinWheel);
@@ -1768,6 +2459,22 @@
       byId("addAllBackButton").addEventListener("click", addAllBack);
       byId("resetButton").addEventListener("click", resetWheel);
       byId("reloadButton").addEventListener("click", loadParticipants);
+      byId("randomiseNumbersButton").addEventListener("click", randomiseCountryNumbers);
+      byId("toggleNumberTableButton").addEventListener("click", toggleNumberTable);
+      byId("hideNumberRevealButton").addEventListener("click", hideNumberReveal);
+      byId("revealNumberButton").addEventListener("click", function() {
+        revealNumberCountry(byId("numberInput").value);
+      });
+
+      const numberInput = byId("numberInput");
+      if (numberInput) {
+        numberInput.addEventListener("keydown", function(event) {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            revealNumberCountry(numberInput.value);
+          }
+        });
+      }
 
       const countrySearch = byId("countrySearch");
       if (countrySearch) {
