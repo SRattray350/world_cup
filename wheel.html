@@ -1480,6 +1480,301 @@
     }
 
 
+    /* ------------------------------------------------------------
+       Ranked country board above the wheel
+       Keeps the rankings visible without stealing a whole side column,
+       leaving the current draw room on the right.
+    ------------------------------------------------------------ */
+    .projection-main {
+      grid-template-columns: minmax(560px, 1.05fr) minmax(420px, 0.95fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .wheel-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      min-width: 0;
+      min-height: auto;
+      overflow: visible;
+      padding: 14px;
+    }
+
+    .wheel-area {
+      width: min(640px, 100%, 66vh);
+      max-width: 100%;
+    }
+
+    .rankings-panel {
+      width: 100%;
+      min-width: 0;
+      padding: 10px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background:
+        radial-gradient(circle at top left, rgba(255,223,0,0.16), transparent 12rem),
+        linear-gradient(135deg, rgba(0,213,255,0.12), rgba(255,45,117,0.08));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+      overflow: visible;
+    }
+
+    .rankings-panel h2 {
+      margin: 0 0 8px;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      line-height: 1;
+    }
+
+    .country-rank-grid {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      gap: 5px;
+      align-content: start;
+    }
+
+    .rank-country-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 3px;
+      align-items: center;
+      min-width: 0;
+      padding: 4px 5px;
+      border-radius: 9px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: linear-gradient(135deg, rgba(0,213,255,0.14), rgba(255,223,0,0.09));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+      transition: opacity 0.18s ease, filter 0.18s ease, transform 0.18s ease;
+    }
+
+    .rank-country-card.is-picked {
+      opacity: 0.34;
+      filter: grayscale(1) saturate(0.45);
+      background: rgba(255,255,255,0.045);
+      border-color: rgba(255,255,255,0.08);
+    }
+
+    .rank-country-card.is-latest {
+      opacity: 1;
+      filter: none;
+      transform: translateY(-1px);
+      border-color: rgba(255,223,0,0.95);
+      background:
+        radial-gradient(circle at top left, rgba(255,223,0,0.42), transparent 5rem),
+        linear-gradient(135deg, rgba(255,45,117,0.42), rgba(0,213,255,0.26));
+      box-shadow:
+        0 0 0 2px rgba(255,223,0,0.22),
+        0 8px 18px rgba(255,45,117,0.24),
+        inset 0 1px 0 rgba(255,255,255,0.22);
+    }
+
+    .rank-country-card.is-picked.is-latest {
+      opacity: 1;
+      filter: none;
+    }
+
+    .rank-country-card.is-latest .rank-country-badge {
+      color: #07111f;
+      background: linear-gradient(135deg, #ffffff, var(--gold));
+      box-shadow: 0 0 10px rgba(255,223,0,0.42);
+    }
+
+    .rank-country-name {
+      min-width: 0;
+      color: #f8fbff;
+      font-size: 0.61rem;
+      font-weight: 900;
+      line-height: 1.05;
+      overflow-wrap: anywhere;
+    }
+
+    .rank-country-name .country-name-with-flag {
+      gap: 2px;
+      flex-wrap: nowrap;
+    }
+
+    .rank-country-name .flag-img {
+      width: 1.1em;
+      height: 0.78em;
+    }
+
+    .rank-country-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 23px;
+      padding: 2px 3px;
+      border-radius: 999px;
+      color: #07111f;
+      background: linear-gradient(135deg, var(--gold), var(--orange));
+      font-size: 0.5rem;
+      font-weight: 950;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .rank-country-card.is-picked .rank-country-badge {
+      color: #e5e7eb;
+      background: rgba(255,255,255,0.16);
+    }
+
+    .rank-country-picked-label {
+      display: none;
+      grid-column: 1 / -1;
+      color: #d1d5db;
+      font-size: 0.48rem;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+
+    .rank-country-card.is-picked .rank-country-picked-label {
+      display: block;
+    }
+
+    .projection-panel {
+      min-width: 0;
+      min-height: auto;
+      display: grid;
+      grid-template-rows: auto auto;
+      gap: 14px;
+    }
+
+    .projection-panel .assignments-panel {
+      min-height: auto;
+      overflow: visible;
+    }
+
+    .assignments-list,
+    .projection-panel .assignments-list {
+      grid-template-columns: repeat(3, minmax(135px, 1fr));
+    }
+
+    @media (max-width: 1500px) {
+      .country-rank-grid {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+      }
+
+      .wheel-area {
+        width: min(610px, 100%, 62vh);
+      }
+
+      .assignments-list,
+      .projection-panel .assignments-list {
+        grid-template-columns: repeat(2, minmax(135px, 1fr));
+      }
+    }
+
+    @media (max-width: 1180px) {
+      .projection-main {
+        grid-template-columns: 1fr;
+      }
+
+      .country-rank-grid {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+      }
+
+      .projection-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .assignments-list,
+      .projection-panel .assignments-list {
+        grid-template-columns: repeat(4, minmax(135px, 1fr));
+      }
+    }
+
+    @media (max-width: 820px) {
+      .country-rank-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .assignments-list,
+      .projection-panel .assignments-list {
+        grid-template-columns: repeat(2, minmax(130px, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      .country-rank-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+
+
+    /* ------------------------------------------------------------
+       Tidy ranking strip
+       Keeps each country on one line and truncates long names neatly
+       rather than wrapping across multiple ugly lines.
+    ------------------------------------------------------------ */
+    .country-rank-grid {
+      grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+      gap: 5px;
+    }
+
+    .rank-country-card {
+      min-height: 28px;
+      padding: 4px 6px;
+      gap: 4px;
+      overflow: hidden;
+    }
+
+    .rank-country-name {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      min-width: 0;
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      overflow-wrap: normal;
+      word-break: normal;
+      line-height: 1;
+    }
+
+    .rank-country-text {
+      display: block;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .rank-country-name .flag-img {
+      flex: 0 0 auto;
+      width: 1.08em;
+      height: 0.78em;
+      margin-left: 0;
+    }
+
+    .rank-country-badge {
+      flex: 0 0 auto;
+      min-width: 22px;
+      padding: 2px 4px;
+      font-size: 0.5rem;
+    }
+
+    .rank-country-picked-label {
+      display: none !important;
+    }
+
+    @media (max-width: 820px) {
+      .country-rank-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .country-rank-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      }
+    }
+
 </style>
 </head>
 
@@ -1498,6 +1793,11 @@
 
     <main class="projection-main">
       <section class="panel wheel-panel">
+        <div class="rankings-panel">
+          <h2>Country rankings</h2>
+          <div id="countryRankGrid" class="country-rank-grid"></div>
+        </div>
+
         <div class="wheel-area">
           <div class="pointer" aria-hidden="true"></div>
           <canvas id="wheelCanvas" width="1200" height="1200"></canvas>
@@ -1809,7 +2109,7 @@
         player.pause();
         player.currentTime = 0;
         anthemStopTimer = null;
-      }, 15000);
+      }, 20000);
     }
 
     function tryPlayAnthem(country, filenames, index) {
@@ -2876,7 +3176,66 @@
       });
     }
 
+    function countryRankNumber(value) {
+      const match = clean(value).match(/\d+/);
+      return match ? Number(match[0]) : 9999;
+    }
+
+    function sortedCountriesByRanking() {
+      return countries.slice().sort(function(a, b) {
+        const rankA = countryRankNumber(a.worldRanking);
+        const rankB = countryRankNumber(b.worldRanking);
+
+        if (rankA !== rankB) return rankA - rankB;
+        return clean(a.country).localeCompare(clean(b.country), undefined, { sensitivity: "base" });
+      });
+    }
+
+    function latestPickedCountryName() {
+      if (lastNumberReveal && lastNumberReveal.country) {
+        return lastNumberReveal.country;
+      }
+
+      if (assignments.length) {
+        const latest = assignments[assignments.length - 1];
+        return latest && latest.country ? latest.country : "";
+      }
+
+      return "";
+    }
+
+    function renderCountryRankGrid() {
+      const target = byId("countryRankGrid");
+      if (!target) return;
+
+      if (!countries.length) {
+        target.innerHTML = '<div class="name-pill">No countries loaded yet</div>';
+        return;
+      }
+
+      const assignedCountries = assignmentCountryMap();
+      const latestPicked = lower(latestPickedCountryName());
+
+      target.innerHTML = sortedCountriesByRanking().map(function(item) {
+        const isPicked = !!assignedCountries[lower(item.country)];
+        const isLatest = latestPicked && lower(item.country) === latestPicked;
+        const rankText = item.worldRanking ? '#' + escapeHtml(item.worldRanking) : '—';
+        const cardClass = 'rank-country-card' + (isPicked ? ' is-picked' : '') + (isLatest ? ' is-latest' : '');
+
+        return '<div class="' + cardClass + '">' +
+          '<span class="rank-country-name" title="' + escapeHtml(item.country) + '">' +
+            '<span class="rank-country-text">' + escapeHtml(item.country) + '</span>' +
+            flagImageForCountry(item.country) +
+          '</span>' +
+          '<span class="rank-country-badge">' + rankText + '</span>' +
+          '<span class="rank-country-picked-label">Picked</span>' +
+        '</div>';
+      }).join("");
+    }
+
     function renderCountryGrid() {
+      renderCountryRankGrid();
+
       const target = byId("countryGrid");
       if (!target) {
         updateCountryPrompt();
