@@ -1678,20 +1678,37 @@
 
         const ranked = sortHighToLow(groupRows, true);
 
-        ranked.slice(0, 2).forEach(function(row) {
-          topTwoKeys[rowKey(row)] = true;
-        });
+        // Only mark the current top two if the 2nd/3rd-place boundary
+        // is separated by points or GD. This avoids pretending that
+        // alphabetical order has resolved an actual table tie.
+        if (ranked[0]) {
+          topTwoKeys[rowKey(ranked[0])] = true;
+        }
 
-        if (ranked[2]) {
-          thirdPlaced.push(ranked[2]);
+        if (ranked[1] && !sameScoreAndGd(ranked[1], ranked[2])) {
+          topTwoKeys[rowKey(ranked[1])] = true;
+        }
+
+        const third = ranked[2];
+
+        // Only send a team into the best-third calculation if third place
+        // is clear on points + GD. If 3rd and 4th are tied, or 2nd and 3rd
+        // are tied, no single team should be labelled as "Best 3rd" yet.
+        if (
+          third &&
+          !sameScoreAndGd(third, ranked[1]) &&
+          !sameScoreAndGd(third, ranked[3])
+        ) {
+          thirdPlaced.push(third);
         }
       });
 
       thirdPlaced.sort(compareHighToLow);
 
       const bestThirdKeys = {};
+      const bestThirdRows = bestThirdPlaceRows(thirdPlaced, 8);
 
-      thirdPlaced.slice(0, 8).forEach(function(row) {
+      bestThirdRows.forEach(function(row) {
         bestThirdKeys[rowKey(row)] = true;
       });
 
@@ -1699,6 +1716,25 @@
         topTwoKeys: topTwoKeys,
         bestThirdKeys: bestThirdKeys
       };
+    }
+
+    function bestThirdPlaceRows(thirdPlaced, limit) {
+      if (thirdPlaced.length <= limit) {
+        return thirdPlaced;
+      }
+
+      const cutoff = thirdPlaced[limit - 1];
+      const next = thirdPlaced[limit];
+
+      if (!sameScoreAndGd(cutoff, next)) {
+        return thirdPlaced.slice(0, limit);
+      }
+
+      // If the final best-third slot is tied on points + GD, do not award
+      // that boundary place alphabetically. Only show teams clearly above it.
+      return thirdPlaced.filter(function(row) {
+        return compareHighToLow(row, cutoff) < 0;
+      });
     }
 
     function rowKey(row) {
