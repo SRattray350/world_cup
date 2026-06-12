@@ -551,19 +551,20 @@
 
     .group-card th:nth-child(2),
     .group-card td:nth-child(2) {
-      width: 42%;
+      width: 34%;
     }
 
     .group-card th:nth-child(3),
     .group-card td:nth-child(3) {
-      width: 38%;
+      width: 30%;
     }
 
-
     .group-card th:nth-child(4),
-    .group-card td:nth-child(4) {
-      width: 70px;
-      padding-right: 16px;
+    .group-card td:nth-child(4),
+    .group-card th:nth-child(5),
+    .group-card td:nth-child(5) {
+      width: 58px;
+      padding-right: 12px;
       text-align: right;
     }
 
@@ -943,6 +944,14 @@
         letter-spacing: 0.06em;
       }
 
+      .group-card td:nth-child(5)::before {
+        content: "GD";
+        color: var(--muted);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
       .group-card .country,
       .group-card .participant,
       .group-card .muted,
@@ -953,12 +962,13 @@
         word-break: normal;
       }
 
-      .group-card .score {
+      .group-card .score,
+      .group-card .gd {
         text-align: left;
       }
 
-
-      .group-card td:nth-child(4) {
+      .group-card td:nth-child(4),
+      .group-card td:nth-child(5) {
         width: 100% !important;
         padding-right: 0;
         text-align: left !important;
@@ -1037,7 +1047,7 @@
 <section id="groupsView" class="card panel view active">
       <h2>Groups</h2>
       <div class="qualification-note">
-        <strong>Knockout qualification:</strong> the top two teams in each group qualify automatically for the knockout rounds. They are joined by the eight best third-placed teams across all groups. Below, the live results highlight the current qualifiers.</div>
+        <strong>Knockout qualification:</strong> the top two teams in each group qualify automatically for the knockout rounds. They are joined by the eight best third-placed teams across all groups. Teams are ranked by points first, then goal difference. Below, the live results highlight the current qualifiers.</div>
       <div id="groupsGrid" class="group-grid"></div>
     </section>
 
@@ -1259,6 +1269,7 @@
       const countryIndex = headers.indexOf("country");
       const participantIndex = headers.indexOf("participant");
       const scoreIndex = headers.indexOf("score");
+      const gdIndex = findHeaderIndex(headers, ["gd", "goal difference", "goal diff", "goal-difference"]);
       const worldRankingIndex = findHeaderIndex(headers, ["world ranking", "ranking", "world rank", "rank"]);
 
       if (groupIndex === -1 || countryIndex === -1 || participantIndex === -1 || scoreIndex === -1) {
@@ -1274,6 +1285,7 @@
             country: getCell(cells[countryIndex]),
             participant: getCell(cells[participantIndex]),
             score: toScore(getCell(cells[scoreIndex])),
+            gd: gdIndex === -1 ? 0 : toScore(getCell(cells[gdIndex])),
             worldRanking: worldRankingIndex === -1 ? "" : getCell(cells[worldRankingIndex])
           };
         })
@@ -1380,7 +1392,8 @@
         country: clean(country),
         participant: "",
         group: "",
-        score: ""
+        score: "",
+        gd: 0
       };
     }
 
@@ -1427,15 +1440,25 @@
       });
     }
 
+    function compareHighToLow(a, b) {
+      return b.score - a.score || b.gd - a.gd || a.country.localeCompare(b.country);
+    }
+
+    function compareLowToHigh(a, b) {
+      return a.score - b.score || a.gd - b.gd || a.country.localeCompare(b.country);
+    }
+
+    function sameScoreAndGd(a, b) {
+      return a && b && a.score === b.score && a.gd === b.gd;
+    }
+
     function sortHighToLow(list, includeUnassigned) {
       return list
         .slice()
         .filter(function(row) {
           return includeUnassigned || row.participant;
         })
-        .sort(function(a, b) {
-          return b.score - a.score || a.country.localeCompare(b.country);
-        });
+        .sort(compareHighToLow);
     }
 
     function grouped(list) {
@@ -1451,20 +1474,24 @@
 
     function getPrizes() {
       const assigned = assignedRows();
-      const lowestScore = assigned.length
-        ? Math.min.apply(null, assigned.map(function(row) { return row.score; }))
-        : undefined;
+      const sortedLowest = assigned.slice().sort(compareLowToHigh);
+      const loserBenchmark = sortedLowest[0];
 
       const groupWinners = [];
 
       Object.entries(grouped(assigned)).forEach(function(entry) {
         const groupName = entry[0];
         const groupRows = entry[1];
-        const topScore = Math.max.apply(null, groupRows.map(function(row) { return row.score; }));
+        const rankedGroupRows = sortHighToLow(groupRows, true);
+        const winnerBenchmark = rankedGroupRows[0];
 
-        groupRows
+        if (!winnerBenchmark) {
+          return;
+        }
+
+        rankedGroupRows
           .filter(function(row) {
-            return row.score === topScore;
+            return sameScoreAndGd(row, winnerBenchmark);
           })
           .forEach(function(row) {
             const copy = Object.assign({}, row);
@@ -1483,7 +1510,9 @@
         first: firstCountry ? [entryForCountry(firstCountry)] : [],
         second: secondCountry ? [entryForCountry(secondCountry)] : [],
         third: thirdCountry ? [entryForCountry(thirdCountry)] : [],
-        loser: assigned.filter(function(row) { return row.score === lowestScore; }),
+        loser: loserBenchmark
+          ? assigned.filter(function(row) { return sameScoreAndGd(row, loserBenchmark); })
+          : [],
         groupWinners: groupWinners
       };
     }
@@ -1568,7 +1597,9 @@
       const loser = prizes.loser[0];
 
       const loserText = loser
-        ? countryWithFlag(loser.country) + '<span class="loser-player">' + escapeHtml(loser.participant || "Unassigned") + '</span>'
+        ? countryWithFlag(loser.country) +
+          '<span class="loser-player">' + escapeHtml(loser.participant || "Unassigned") + '</span>' +
+          '<span class="loser-player">Pts: ' + escapeHtml(loser.score) + ' | GD: ' + escapeHtml(formatGd(loser.gd)) + '</span>'
         : "-";
 
       byId("stats").innerHTML =
@@ -1604,9 +1635,7 @@
         }
       });
 
-      thirdPlaced.sort(function(a, b) {
-        return b.score - a.score || a.country.localeCompare(b.country);
-      });
+      thirdPlaced.sort(compareHighToLow);
 
       const bestThirdKeys = {};
 
@@ -1630,6 +1659,11 @@
       }
 
       return '<span class="world-ranking-badge">World ranking: ' + escapeHtml(row.worldRanking) + '</span>';
+    }
+
+    function formatGd(gd) {
+      const value = Number(gd || 0);
+      return value > 0 ? "+" + value : String(value);
     }
 
     function qualificationBadge(row, qualifiers) {
@@ -1685,6 +1719,7 @@
                 '<th>Country</th>' +
                 '<th>Participant</th>' +
                 '<th>Score</th>' +
+                '<th>GD</th>' +
               '</tr>' +
             '</thead>' +
             '<tbody>' +
@@ -1698,6 +1733,7 @@
                       : '<span class="muted">Unassigned</span>') +
                   '</td>' +
                   '<td class="score">' + escapeHtml(row.score) + '</td>' +
+                  '<td class="score gd">' + escapeHtml(formatGd(row.gd)) + '</td>' +
                 '</tr>';
               }).join("") +
             '</tbody>' +
@@ -1941,8 +1977,10 @@
             " - " +
             countryWithFlag(row.country) +
             (row.prizeGroup ? " (" + escapeHtml(row.prizeGroup) + ")" : "") +
-            " - " +
+            " - Pts: " +
             escapeHtml(row.score) +
+            " | GD: " +
+            escapeHtml(formatGd(row.gd)) +
           '</span>';
         }).join("") +
       '</div>';
