@@ -504,7 +504,7 @@
 
     .group-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 14px;
     }
 
@@ -544,27 +544,44 @@
       width: 100%;
     }
 
+    .group-card th,
+    .group-card td {
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .group-card th {
+      padding-left: 7px;
+      padding-right: 7px;
+      font-size: 0.68rem;
+    }
+
     .group-card th:nth-child(1),
     .group-card td:nth-child(1) {
-      width: 42px;
+      width: 38px;
     }
 
     .group-card th:nth-child(2),
     .group-card td:nth-child(2) {
-      width: 34%;
+      width: 37%;
     }
 
     .group-card th:nth-child(3),
     .group-card td:nth-child(3) {
-      width: 30%;
+      width: auto;
     }
 
     .group-card th:nth-child(4),
-    .group-card td:nth-child(4),
+    .group-card td:nth-child(4) {
+      width: 48px;
+      padding-right: 7px;
+      text-align: right;
+    }
+
     .group-card th:nth-child(5),
     .group-card td:nth-child(5) {
-      width: 58px;
-      padding-right: 12px;
+      width: 44px;
+      padding-right: 7px;
       text-align: right;
     }
 
@@ -929,7 +946,7 @@
       }
 
       .group-card td:nth-child(3)::before {
-        content: "Participant";
+        content: "Player";
         color: var(--muted);
         font-size: 0.75rem;
         text-transform: uppercase;
@@ -937,7 +954,7 @@
       }
 
       .group-card td:nth-child(4)::before {
-        content: "Score";
+        content: "Pts";
         color: var(--muted);
         font-size: 0.75rem;
         text-transform: uppercase;
@@ -982,23 +999,34 @@
 
   
   
-    /* Stronger spacing between country/ranking badge and participant column */
+    /* Keep the country badges inside their own cell now that GD is shown */
     .group-card th:nth-child(2),
     .group-card td:nth-child(2) {
-      padding-right: 32px;
+      padding-right: 12px;
     }
 
     .group-card th:nth-child(3),
     .group-card td:nth-child(3) {
-      padding-left: 18px;
+      padding-left: 8px;
     }
 
     .world-ranking-badge {
       display: block;
       width: fit-content;
+      max-width: 100%;
       margin-top: 6px;
       margin-right: 0;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .group-card .country,
+    .group-card .participant,
+    .group-card .muted {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      word-break: normal;
     }
 
   </style>
@@ -1047,7 +1075,7 @@
 <section id="groupsView" class="card panel view active">
       <h2>Groups</h2>
       <div class="qualification-note">
-        <strong>Knockout qualification:</strong> the top two teams in each group qualify automatically for the knockout rounds. They are joined by the eight best third-placed teams across all groups. Teams are ranked by points first, then goal difference. Below, the live results highlight the current qualifiers.</div>
+        <strong>Knockout qualification:</strong> the top two teams in each group qualify automatically for the knockout rounds. They are joined by the eight best third-placed teams across all groups. Teams are ranked by points first, then goal difference. Below, the live results highlight the current qualifiers. Ties are ordered by goal difference.</div>
       <div id="groupsGrid" class="group-grid"></div>
     </section>
 
@@ -1717,8 +1745,8 @@
               '<tr>' +
                 '<th>#</th>' +
                 '<th>Country</th>' +
-                '<th>Participant</th>' +
-                '<th>Score</th>' +
+                '<th>Player</th>' +
+                '<th>Pts</th>' +
                 '<th>GD</th>' +
               '</tr>' +
             '</thead>' +
