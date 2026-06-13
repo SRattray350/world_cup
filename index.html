@@ -1660,6 +1660,62 @@
         "</strong></div>";
     }
 
+    function sortByStandingForLogic(list) {
+      return list
+        .slice()
+        .sort(function(a, b) {
+          return b.score - a.score || b.gd - a.gd;
+        });
+    }
+
+    function rowsTiedOnScoreAndGd(a, b) {
+      return a && b && a.score === b.score && a.gd === b.gd;
+    }
+
+    function clearRowsAboveCutoff(ranked, places) {
+      const output = [];
+      let i = 0;
+
+      while (i < ranked.length) {
+        let j = i + 1;
+
+        while (j < ranked.length && rowsTiedOnScoreAndGd(ranked[i], ranked[j])) {
+          j++;
+        }
+
+        const tiedBlockEndsAtOrBeforeCutoff = j <= places;
+        const tiedBlockCrossesCutoff = i < places && j > places;
+
+        if (tiedBlockEndsAtOrBeforeCutoff) {
+          for (let k = i; k < j; k++) {
+            output.push(ranked[k]);
+          }
+        } else if (tiedBlockCrossesCutoff) {
+          break;
+        } else {
+          break;
+        }
+
+        i = j;
+      }
+
+      return output;
+    }
+
+    function clearRowAtPosition(ranked, positionIndex) {
+      const row = ranked[positionIndex];
+
+      if (!row) {
+        return null;
+      }
+
+      const tiedRows = ranked.filter(function(otherRow) {
+        return rowsTiedOnScoreAndGd(row, otherRow);
+      });
+
+      return tiedRows.length === 1 ? row : null;
+    }
+
     function currentQualifiers() {
       const allGroups = grouped(rows);
       const topTwoKeys = {};
@@ -1669,46 +1725,36 @@
         const groupRows = allGroups[groupName];
 
         const groupHasStarted = groupRows.some(function(row) {
-          return row.score > 0;
+          return row.score > 0 || row.gd !== 0;
         });
 
         if (!groupHasStarted) {
           return;
         }
 
-        const ranked = sortHighToLow(groupRows, true);
+        const ranked = sortByStandingForLogic(groupRows);
 
-        // Only mark the current top two if the 2nd/3rd-place boundary
-        // is separated by points or GD. This avoids pretending that
-        // alphabetical order has resolved an actual table tie.
-        if (ranked[0]) {
-          topTwoKeys[rowKey(ranked[0])] = true;
-        }
+        // Only mark automatic qualifiers when the top-two boundary is clear.
+        // If a tied block crosses 2nd/3rd place, nobody in that tied block is
+        // highlighted just because of alphabetical order.
+        clearRowsAboveCutoff(ranked, 2).forEach(function(row) {
+          topTwoKeys[rowKey(row)] = true;
+        });
 
-        if (ranked[1] && !sameScoreAndGd(ranked[1], ranked[2])) {
-          topTwoKeys[rowKey(ranked[1])] = true;
-        }
+        // Only pass a team into the best-third calculation when third place
+        // itself is unique on points + GD. If 3rd is tied with 2nd or 4th,
+        // there is no clear third-placed team yet.
+        const clearThird = clearRowAtPosition(ranked, 2);
 
-        const third = ranked[2];
-
-        // Only send a team into the best-third calculation if third place
-        // is clear on points + GD. If 3rd and 4th are tied, or 2nd and 3rd
-        // are tied, no single team should be labelled as "Best 3rd" yet.
-        if (
-          third &&
-          !sameScoreAndGd(third, ranked[1]) &&
-          !sameScoreAndGd(third, ranked[3])
-        ) {
-          thirdPlaced.push(third);
+        if (clearThird) {
+          thirdPlaced.push(clearThird);
         }
       });
 
-      thirdPlaced.sort(compareHighToLow);
-
+      const rankedThirdPlaced = sortByStandingForLogic(thirdPlaced);
       const bestThirdKeys = {};
-      const bestThirdRows = bestThirdPlaceRows(thirdPlaced, 8);
 
-      bestThirdRows.forEach(function(row) {
+      clearRowsAboveCutoff(rankedThirdPlaced, 8).forEach(function(row) {
         bestThirdKeys[rowKey(row)] = true;
       });
 
@@ -1716,25 +1762,6 @@
         topTwoKeys: topTwoKeys,
         bestThirdKeys: bestThirdKeys
       };
-    }
-
-    function bestThirdPlaceRows(thirdPlaced, limit) {
-      if (thirdPlaced.length <= limit) {
-        return thirdPlaced;
-      }
-
-      const cutoff = thirdPlaced[limit - 1];
-      const next = thirdPlaced[limit];
-
-      if (!sameScoreAndGd(cutoff, next)) {
-        return thirdPlaced.slice(0, limit);
-      }
-
-      // If the final best-third slot is tied on points + GD, do not award
-      // that boundary place alphabetically. Only show teams clearly above it.
-      return thirdPlaced.filter(function(row) {
-        return compareHighToLow(row, cutoff) < 0;
-      });
     }
 
     function rowKey(row) {
