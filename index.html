@@ -523,7 +523,7 @@
       border-radius: 16px;
       padding: 14px;
       height: 100%;
-      overflow: hidden;
+      overflow: visible;
     }
 
     .group-card h3 {
@@ -548,11 +548,12 @@
     }
 
     .group-card col.country-col {
-      width: 205px;
+      width: 230px;
     }
 
     .group-card col.player-col {
       width: auto;
+      min-width: 0;
     }
 
     .group-card col.points-col {
@@ -576,7 +577,7 @@
     }
 
     .group-card tbody tr {
-      height: 58px;
+      height: 68px;
     }
 
     .group-card th:nth-child(4),
@@ -588,9 +589,9 @@
 
     .group-card .country {
       line-height: 1.15;
-      white-space: nowrap;
+      white-space: normal;
       overflow: visible;
-      padding-right: 10px;
+      padding-right: 12px;
     }
 
     .country-name {
@@ -601,11 +602,21 @@
       max-width: 100%;
     }
 
+    .country-badges {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 4px;
+      margin-top: 5px;
+      min-width: 0;
+    }
+
     .world-ranking-badge {
       display: inline-flex;
+      flex: 0 0 auto;
       width: fit-content;
       max-width: none;
-      margin-top: 5px;
+      margin-top: 0;
       padding: 3px 7px;
       border-radius: 999px;
       color: #dbeafe;
@@ -620,7 +631,11 @@
     }
 
     .qualify-badge {
-      margin-top: 4px;
+      flex: 0 0 auto;
+      margin-top: 0;
+      max-width: 100%;
+      overflow: visible;
+      text-overflow: clip;
     }
 
     .group-card .participant,
@@ -1039,7 +1054,7 @@
       }
 
       .group-card col.country-col {
-        width: 230px;
+        width: 260px;
       }
     }
 
@@ -1848,7 +1863,7 @@
               list.map(function(row, index) {
                 return '<tr class="' + qualificationRowClass(row, qualifiers) + '">' +
                   '<td><span class="rank ' + (index === 0 && row.participant ? "gold" : "") + '">' + (index + 1) + '</span></td>' +
-                  '<td class="country"><span class="country-name">' + countryWithFlag(row.country) + '</span>' + worldRankingBadge(row) + qualificationBadge(row, qualifiers) + '</td>' +
+                  '<td class="country"><span class="country-name">' + countryWithFlag(row.country) + '</span><div class="country-badges">' + worldRankingBadge(row) + qualificationBadge(row, qualifiers) + '</div></td>' +
                   '<td>' +
                     (row.participant
                       ? '<span class="participant">' + escapeHtml(row.participant) + '</span>'
