@@ -445,24 +445,30 @@
       margin: 0 0 16px;
       padding: 14px 16px;
       border-radius: 16px;
-      border: 1px solid rgba(0,194,255,0.38);
+      border: 1px solid rgba(255,210,74,0.34);
       background:
-        linear-gradient(135deg, rgba(0,194,255,0.10), rgba(32,212,137,0.07)),
+        linear-gradient(135deg, rgba(255,210,74,0.10), rgba(0,194,255,0.08)),
         rgba(255,255,255,0.035);
       color: var(--muted);
       line-height: 1.5;
     }
 
     .qualification-note strong {
-      color: #e0f2fe;
+      color: #fff2b8;
+    }
+
+    .confirmed-row {
+      background:
+        linear-gradient(90deg, rgba(255,210,74,0.22), rgba(255,210,74,0.07));
+      box-shadow: inset 4px 0 0 rgba(255,210,74,0.92);
     }
 
     .qualify-row {
-      background: rgba(32,212,137,0.08);
+      background: rgba(32,212,137,0.055);
     }
 
     .third-place-row {
-      background: rgba(0,194,255,0.07);
+      background: rgba(0,194,255,0.055);
     }
 
 
@@ -490,16 +496,23 @@
       border-radius: 999px;
       font-size: 0.70rem;
       font-weight: 800;
-      color: #bbf7d0;
-      background: rgba(32,212,137,0.15);
-      border: 1px solid rgba(32,212,137,0.36);
+      color: #c7f9d8;
+      background: rgba(32,212,137,0.10);
+      border: 1px dashed rgba(32,212,137,0.48);
       white-space: nowrap;
     }
 
     .third-badge {
       color: #bae6fd;
-      background: rgba(0,194,255,0.14);
-      border-color: rgba(0,194,255,0.36);
+      background: rgba(0,194,255,0.10);
+      border-color: rgba(0,194,255,0.45);
+    }
+
+    .confirmed-badge {
+      color: #09111f;
+      background: linear-gradient(135deg, var(--gold), #fff2a8);
+      border: 1px solid rgba(255,210,74,0.70);
+      box-shadow: 0 0 0 1px rgba(255,210,74,0.18), 0 4px 12px rgba(255,210,74,0.16);
     }
 
     .group-grid {
@@ -953,12 +966,17 @@
         background: rgba(255,255,255,0.04);
       }
 
+      .group-card tbody tr.confirmed-row {
+        background: linear-gradient(135deg, rgba(255,210,74,0.24), rgba(255,210,74,0.08));
+        border-color: rgba(255,210,74,0.34);
+      }
+
       .group-card tbody tr.qualify-row {
-        background: rgba(32,212,137,0.10);
+        background: rgba(32,212,137,0.075);
       }
 
       .group-card tbody tr.third-place-row {
-        background: rgba(0,194,255,0.09);
+        background: rgba(0,194,255,0.075);
       }
 
       .group-card td {
@@ -1114,7 +1132,7 @@
 <section id="groupsView" class="card panel view active">
       <h2>Groups</h2>
       <div class="qualification-note">
-        <strong>Knockout qualification:</strong> the top two teams in each group qualify automatically for the knockout rounds. They are joined by the eight best third-placed teams across all groups. Teams are ranked by points first, then goal difference. Below, the live results highlight the current qualifiers. Ties are ordered by goal difference.</div>
+        <strong>Knockout qualification:</strong> the top two teams in each group qualify automatically for the knockout rounds. They are joined by the eight best third-placed teams across all groups. Teams are ranked by points first, then goal difference.</div>
       <div id="groupsGrid" class="group-grid"></div>
     </section>
 
@@ -1735,6 +1753,7 @@
       const allGroups = grouped(rows);
       const topTwoKeys = {};
       const thirdPlaced = [];
+      const confirmedKeys = confirmedQualifierKeys();
 
       Object.keys(allGroups).forEach(function(groupName) {
         const groupRows = allGroups[groupName];
@@ -1775,8 +1794,61 @@
 
       return {
         topTwoKeys: topTwoKeys,
-        bestThirdKeys: bestThirdKeys
+        bestThirdKeys: bestThirdKeys,
+        confirmedKeys: confirmedKeys
       };
+    }
+
+    function confirmedQualifierKeys() {
+      const rowKeysByCountry = {};
+      const confirmedKeys = {};
+
+      rows.forEach(function(row) {
+        rowKeysByCountry[countryLookupKey(row.country)] = rowKey(row);
+      });
+
+      knockoutRows.forEach(function(match) {
+        [match.team1, match.team2].forEach(function(team) {
+          const lookupKey = countryLookupKey(team);
+          const matchedRowKey = rowKeysByCountry[lookupKey];
+
+          if (matchedRowKey) {
+            confirmedKeys[matchedRowKey] = true;
+          }
+        });
+      });
+
+      return confirmedKeys;
+    }
+
+    function countryLookupKey(country) {
+      const value = lower(country)
+        .replace(/&/g, "and")
+        .replace(/[.’']/g, "")
+        .replace(/\./g, "")
+        .replace(/\s+/g, " ");
+
+      const aliases = {
+        "united states": "usa",
+        "us": "usa",
+        "u s a": "usa",
+        "south korea": "korea",
+        "republic of korea": "korea",
+        "bosnia and herzegovina": "bosnia",
+        "czech republic": "czechia",
+        "türkiye": "turkey",
+        "turkiye": "turkey",
+        "curaçao": "curacao",
+        "côte divoire": "ivory coast",
+        "cote divoire": "ivory coast",
+        "ivory coast cote divoire": "ivory coast",
+        "democratic republic of congo": "dr congo",
+        "d r congo": "dr congo",
+        "drc": "dr congo",
+        "congo dr": "dr congo"
+      };
+
+      return aliases[value] || value;
     }
 
     function rowKey(row) {
@@ -1799,12 +1871,18 @@
     function qualificationBadge(row, qualifiers) {
       const key = rowKey(row);
 
+      // Confirmed qualification is based on the Knockout tab and overrides
+      // the projected/current qualifying badges.
+      if (qualifiers.confirmedKeys[key]) {
+        return '<span class="qualify-badge confirmed-badge">✓ Confirmed Q</span>';
+      }
+
       if (qualifiers.topTwoKeys[key]) {
-        return '<span class="qualify-badge">Qualifies</span>';
+        return '<span class="qualify-badge">Projected Q only</span>';
       }
 
       if (qualifiers.bestThirdKeys[key]) {
-        return '<span class="qualify-badge third-badge">Best 3rd</span>';
+        return '<span class="qualify-badge third-badge">Projected best 3rd</span>';
       }
 
       return "";
@@ -1812,6 +1890,12 @@
 
     function qualificationRowClass(row, qualifiers) {
       const key = rowKey(row);
+
+      // Confirmed qualification is based on the Knockout tab and overrides
+      // the projected/current qualifying row colour.
+      if (qualifiers.confirmedKeys[key]) {
+        return "confirmed-row";
+      }
 
       if (qualifiers.topTwoKeys[key]) {
         return "qualify-row";
