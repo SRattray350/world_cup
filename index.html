@@ -1355,6 +1355,7 @@
       const participantIndex = headers.indexOf("participant");
       const scoreIndex = headers.indexOf("score");
       const gdIndex = findHeaderIndex(headers, ["gd", "goal difference", "goal diff", "goal-difference"]);
+      const playedIndex = findHeaderIndex(headers, ["mp", "played", "matches played", "games played", "p"]);
       const worldRankingIndex = findHeaderIndex(headers, ["world ranking", "ranking", "world rank", "rank"]);
 
       if (groupIndex === -1 || countryIndex === -1 || participantIndex === -1 || scoreIndex === -1) {
@@ -1371,6 +1372,7 @@
             participant: getCell(cells[participantIndex]),
             score: toScore(getCell(cells[scoreIndex])),
             gd: gdIndex === -1 ? 0 : toScore(getCell(cells[gdIndex])),
+            played: playedIndex === -1 ? null : toScore(getCell(cells[playedIndex])),
             worldRanking: worldRankingIndex === -1 ? "" : getCell(cells[worldRankingIndex])
           };
         })
@@ -1478,7 +1480,8 @@
         participant: "",
         group: "",
         score: "",
-        gd: 0
+        gd: 0,
+        played: null
       };
     }
 
@@ -1759,7 +1762,7 @@
         const groupRows = allGroups[groupName];
 
         const groupHasStarted = groupRows.some(function(row) {
-          return row.score > 0 || row.gd !== 0;
+          return row.score > 0 || row.gd !== 0 || Number(row.played || 0) > 0;
         });
 
         if (!groupHasStarted) {
@@ -1800,6 +1803,14 @@
     }
 
     function confirmedQualifierKeys() {
+      return Object.assign(
+        {},
+        confirmedFromKnockoutTab(),
+        confirmedFromGroupStandings()
+      );
+    }
+
+    function confirmedFromKnockoutTab() {
       const rowKeysByCountry = {};
       const confirmedKeys = {};
 
@@ -1821,6 +1832,320 @@
       return confirmedKeys;
     }
 
+    function confirmedFromGroupStandings() {
+      const confirmedKeys = {};
+      const allGroups = grouped(rows);
+      const outcomesByGroup = {};
+      const maxThirdPointsByGroup = {};
+
+      Object.keys(allGroups).forEach(function(groupName) {
+        const groupRows = allGroups[groupName];
+        const outcomes = simulateGroupPointOutcomes(groupRows);
+
+        outcomesByGroup[groupName] = outcomes;
+        maxThirdPointsByGroup[groupName] = outcomes
+          ? maxThirdPointsFromOutcomes(outcomes)
+          : null;
+      });
+
+      Object.keys(allGroups).forEach(function(groupName) {
+        const groupRows = allGroups[groupName];
+        const outcomes = outcomesByGroup[groupName];
+
+        groupRows.forEach(function(row) {
+          if (isGuaranteedQualifiedFromStandings(row, groupName, outcomes, maxThirdPointsByGroup)) {
+            confirmedKeys[rowKey(row)] = true;
+          }
+        });
+      });
+
+      return confirmedKeys;
+    }
+
+    function hasValidPlayedData(row) {
+      return Number.isFinite(Number(row.played)) && Number(row.played) >= 0 && Number(row.played) <= 3;
+    }
+
+    function groupLetter(groupName) {
+      const value = clean(groupName).replace(/^group\s+/i, "").trim().toUpperCase();
+      return value.charAt(0);
+    }
+
+    function officialGroupFixtures() {
+      return {
+        A: [
+          ["mexico", "south africa"],
+          ["korea", "czechia"],
+          ["czechia", "south africa"],
+          ["mexico", "korea"],
+          ["czechia", "mexico"],
+          ["south africa", "korea"]
+        ],
+        B: [
+          ["canada", "bosnia"],
+          ["qatar", "switzerland"],
+          ["switzerland", "bosnia"],
+          ["canada", "qatar"],
+          ["switzerland", "canada"],
+          ["bosnia", "qatar"]
+        ],
+        C: [
+          ["brazil", "morocco"],
+          ["haiti", "scotland"],
+          ["scotland", "morocco"],
+          ["brazil", "haiti"],
+          ["scotland", "brazil"],
+          ["morocco", "haiti"]
+        ],
+        D: [
+          ["usa", "paraguay"],
+          ["australia", "turkey"],
+          ["usa", "australia"],
+          ["turkey", "paraguay"],
+          ["turkey", "usa"],
+          ["paraguay", "australia"]
+        ],
+        E: [
+          ["germany", "curacao"],
+          ["ivory coast", "ecuador"],
+          ["germany", "ivory coast"],
+          ["ecuador", "curacao"],
+          ["ecuador", "germany"],
+          ["curacao", "ivory coast"]
+        ],
+        F: [
+          ["netherlands", "japan"],
+          ["sweden", "tunisia"],
+          ["netherlands", "sweden"],
+          ["tunisia", "japan"],
+          ["tunisia", "netherlands"],
+          ["japan", "sweden"]
+        ],
+        G: [
+          ["belgium", "egypt"],
+          ["iran", "new zealand"],
+          ["belgium", "iran"],
+          ["new zealand", "egypt"],
+          ["new zealand", "belgium"],
+          ["egypt", "iran"]
+        ],
+        H: [
+          ["spain", "cape verde"],
+          ["saudi arabia", "uruguay"],
+          ["spain", "saudi arabia"],
+          ["uruguay", "cape verde"],
+          ["uruguay", "spain"],
+          ["cape verde", "saudi arabia"]
+        ],
+        I: [
+          ["france", "senegal"],
+          ["iraq", "norway"],
+          ["france", "iraq"],
+          ["norway", "senegal"],
+          ["norway", "france"],
+          ["senegal", "iraq"]
+        ],
+        J: [
+          ["argentina", "algeria"],
+          ["austria", "jordan"],
+          ["argentina", "austria"],
+          ["jordan", "algeria"],
+          ["jordan", "argentina"],
+          ["algeria", "austria"]
+        ],
+        K: [
+          ["portugal", "dr congo"],
+          ["uzbekistan", "colombia"],
+          ["portugal", "uzbekistan"],
+          ["colombia", "dr congo"],
+          ["colombia", "portugal"],
+          ["dr congo", "uzbekistan"]
+        ],
+        L: [
+          ["england", "croatia"],
+          ["ghana", "panama"],
+          ["england", "ghana"],
+          ["panama", "croatia"],
+          ["panama", "england"],
+          ["croatia", "ghana"]
+        ]
+      };
+    }
+
+    function officialFixtureRowsForGroup(groupRows) {
+      if (!groupRows.length || !groupRows.every(hasValidPlayedData)) {
+        return null;
+      }
+
+      const fixtures = officialGroupFixtures()[groupLetter(groupRows[0].group)];
+
+      if (!fixtures) {
+        return null;
+      }
+
+      const rowByCountry = {};
+
+      groupRows.forEach(function(row) {
+        rowByCountry[countryLookupKey(row.country)] = row;
+      });
+
+      const fixtureRows = fixtures.map(function(pair) {
+        const team1 = rowByCountry[countryLookupKey(pair[0])];
+        const team2 = rowByCountry[countryLookupKey(pair[1])];
+
+        if (!team1 || !team2) {
+          return null;
+        }
+
+        return {
+          team1: team1,
+          team2: team2
+        };
+      });
+
+      if (fixtureRows.some(function(fixture) { return fixture == null; })) {
+        return null;
+      }
+
+      return fixtureRows;
+    }
+
+    function remainingOfficialFixtures(groupRows, fixtureRows) {
+      const playedSlots = {};
+
+      groupRows.forEach(function(row) {
+        playedSlots[rowKey(row)] = Number(row.played);
+      });
+
+      return fixtureRows.filter(function(fixture) {
+        const team1Key = rowKey(fixture.team1);
+        const team2Key = rowKey(fixture.team2);
+
+        if (playedSlots[team1Key] > 0 && playedSlots[team2Key] > 0) {
+          playedSlots[team1Key] -= 1;
+          playedSlots[team2Key] -= 1;
+          return false;
+        }
+
+        return true;
+      });
+    }
+
+    function simulateGroupPointOutcomes(groupRows) {
+      const fixtureRows = officialFixtureRowsForGroup(groupRows);
+
+      if (!fixtureRows) {
+        return null;
+      }
+
+      const remainingFixtures = remainingOfficialFixtures(groupRows, fixtureRows);
+      const initialPoints = {};
+
+      groupRows.forEach(function(row) {
+        initialPoints[rowKey(row)] = Number(row.score);
+      });
+
+      const outcomes = [];
+
+      function simulate(index, points) {
+        if (index >= remainingFixtures.length) {
+          outcomes.push(Object.assign({}, points));
+          return;
+        }
+
+        const fixture = remainingFixtures[index];
+        const team1Key = rowKey(fixture.team1);
+        const team2Key = rowKey(fixture.team2);
+
+        let next = Object.assign({}, points);
+        next[team1Key] += 3;
+        simulate(index + 1, next);
+
+        next = Object.assign({}, points);
+        next[team1Key] += 1;
+        next[team2Key] += 1;
+        simulate(index + 1, next);
+
+        next = Object.assign({}, points);
+        next[team2Key] += 3;
+        simulate(index + 1, next);
+      }
+
+      simulate(0, initialPoints);
+      return outcomes;
+    }
+
+    function thirdPlacePointsFromOutcome(points) {
+      const sortedPoints = Object.values(points).sort(function(a, b) {
+        return b - a;
+      });
+
+      return sortedPoints[2] == null ? 0 : sortedPoints[2];
+    }
+
+    function maxThirdPointsFromOutcomes(outcomes) {
+      return Math.max.apply(null, outcomes.map(thirdPlacePointsFromOutcome));
+    }
+
+    function worstPointRankForRow(points, row) {
+      const targetPoints = points[rowKey(row)];
+      let rank = 0;
+
+      Object.keys(points).forEach(function(key) {
+        if (points[key] >= targetPoints) {
+          rank += 1;
+        }
+      });
+
+      return rank;
+    }
+
+    function isGuaranteedQualifiedFromStandings(row, groupName, outcomes, maxThirdPointsByGroup) {
+      if (!outcomes || !outcomes.length) {
+        return false;
+      }
+
+      return outcomes.every(function(points) {
+        const worstRank = worstPointRankForRow(points, row);
+
+        // Top two in every group qualify automatically.
+        if (worstRank <= 2) {
+          return true;
+        }
+
+        // If the team could finish fourth on points/tie-breaks, do not confirm it.
+        if (worstRank > 3) {
+          return false;
+        }
+
+        // The team is guaranteed to be at least third in this outcome.
+        // To avoid over-confirming borderline third-place teams, only use
+        // the best-third route once the team has six points. This catches
+        // teams such as Germany that are safe before their exact knockout
+        // fixture is assigned, without turning every projected third place gold.
+        const candidatePoints = points[rowKey(row)];
+
+        if (candidatePoints < 6) {
+          return false;
+        }
+        let otherGroupsThatCouldBeatThisThirdPlace = 0;
+
+        Object.keys(maxThirdPointsByGroup).forEach(function(otherGroupName) {
+          if (otherGroupName === groupName) {
+            return;
+          }
+
+          const maxThirdPoints = maxThirdPointsByGroup[otherGroupName];
+
+          if (maxThirdPoints == null || maxThirdPoints > candidatePoints) {
+            otherGroupsThatCouldBeatThisThirdPlace += 1;
+          }
+        });
+
+        return otherGroupsThatCouldBeatThisThirdPlace <= 7;
+      });
+    }
+
     function countryLookupKey(country) {
       const value = lower(country)
         .replace(/&/g, "and")
@@ -1833,6 +2158,7 @@
         "us": "usa",
         "u s a": "usa",
         "south korea": "korea",
+        "korea republic": "korea",
         "republic of korea": "korea",
         "bosnia and herzegovina": "bosnia",
         "czech republic": "czechia",
@@ -1840,12 +2166,16 @@
         "turkiye": "turkey",
         "curaçao": "curacao",
         "côte divoire": "ivory coast",
+        "côte d ivoire": "ivory coast",
         "cote divoire": "ivory coast",
+        "cote d ivoire": "ivory coast",
         "ivory coast cote divoire": "ivory coast",
         "democratic republic of congo": "dr congo",
         "d r congo": "dr congo",
         "drc": "dr congo",
-        "congo dr": "dr congo"
+        "congo dr": "dr congo",
+        "congo democratic republic": "dr congo",
+        "ir iran": "iran"
       };
 
       return aliases[value] || value;
@@ -1871,8 +2201,8 @@
     function qualificationBadge(row, qualifiers) {
       const key = rowKey(row);
 
-      // Confirmed qualification is based on the Knockout tab and overrides
-      // the projected/current qualifying badges.
+      // Confirmed qualification is based on the Knockout tab OR standings maths.
+      // It overrides the projected/current qualifying badges.
       if (qualifiers.confirmedKeys[key]) {
         return '<span class="qualify-badge confirmed-badge">✓ Confirmed Q</span>';
       }
@@ -1891,8 +2221,8 @@
     function qualificationRowClass(row, qualifiers) {
       const key = rowKey(row);
 
-      // Confirmed qualification is based on the Knockout tab and overrides
-      // the projected/current qualifying row colour.
+      // Confirmed qualification is based on the Knockout tab OR standings maths.
+      // It overrides the projected/current qualifying row colour.
       if (qualifiers.confirmedKeys[key]) {
         return "confirmed-row";
       }
