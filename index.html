@@ -490,16 +490,23 @@
     .qualify-badge {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       width: fit-content;
+      max-width: 100%;
+      min-width: 0;
       margin-top: 4px;
       padding: 3px 7px;
       border-radius: 999px;
       font-size: 0.70rem;
       font-weight: 800;
+      line-height: 1.15;
+      text-align: center;
       color: #c7f9d8;
       background: rgba(32,212,137,0.10);
       border: 1px dashed rgba(32,212,137,0.48);
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .third-badge {
@@ -644,11 +651,12 @@
     }
 
     .qualify-badge {
-      flex: 0 0 auto;
+      flex: 0 1 auto;
       margin-top: 0;
       max-width: 100%;
-      overflow: visible;
-      text-overflow: clip;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .group-card .participant,
@@ -1059,6 +1067,9 @@
       .qualify-badge {
         margin-left: 0;
         margin-top: 5px;
+        max-width: 100%;
+        white-space: normal;
+        overflow-wrap: anywhere;
       }
     }
 
@@ -1803,11 +1814,12 @@
     }
 
     function confirmedQualifierKeys() {
-      return Object.assign(
-        {},
-        confirmedFromKnockoutTab(),
-        confirmedFromGroupStandings()
-      );
+      const confirmedKeys = {};
+
+      Object.assign(confirmedKeys, confirmedFromKnockoutTab());
+      Object.assign(confirmedKeys, confirmedFromConservativeStandings());
+
+      return confirmedKeys;
     }
 
     function confirmedFromKnockoutTab() {
@@ -1832,28 +1844,25 @@
       return confirmedKeys;
     }
 
-    function confirmedFromGroupStandings() {
+    function confirmedFromConservativeStandings() {
       const confirmedKeys = {};
       const allGroups = grouped(rows);
-      const outcomesByGroup = {};
-      const maxThirdPointsByGroup = {};
 
       Object.keys(allGroups).forEach(function(groupName) {
         const groupRows = allGroups[groupName];
-        const outcomes = simulateGroupPointOutcomes(groupRows);
 
-        outcomesByGroup[groupName] = outcomes;
-        maxThirdPointsByGroup[groupName] = outcomes
-          ? maxThirdPointsFromOutcomes(outcomes)
-          : null;
-      });
+        // MP is required for standings-based confirmation. If it is missing,
+        // fall back to the Knockout tab only and do not guess.
+        const hasPlayedData = groupRows.every(function(row) {
+          return hasValidPlayedData(row);
+        });
 
-      Object.keys(allGroups).forEach(function(groupName) {
-        const groupRows = allGroups[groupName];
-        const outcomes = outcomesByGroup[groupName];
+        if (!hasPlayedData) {
+          return;
+        }
 
         groupRows.forEach(function(row) {
-          if (isGuaranteedQualifiedFromStandings(row, groupName, outcomes, maxThirdPointsByGroup)) {
+          if (isGuaranteedTopTwoByPoints(row, groupRows) || isSixPointThirdPlaceSafe(row)) {
             confirmedKeys[rowKey(row)] = true;
           }
         });
@@ -1863,287 +1872,45 @@
     }
 
     function hasValidPlayedData(row) {
-      return Number.isFinite(Number(row.played)) && Number(row.played) >= 0 && Number(row.played) <= 3;
+      const played = Number(row.played);
+      return Number.isFinite(played) && played >= 0 && played <= 3;
     }
 
-    function groupLetter(groupName) {
-      const value = clean(groupName).replace(/^group\s+/i, "").trim().toUpperCase();
-      return value.charAt(0);
-    }
+    function maxPossiblePoints(row) {
+      const played = Number(row.played);
 
-    function officialGroupFixtures() {
-      return {
-        A: [
-          ["mexico", "south africa"],
-          ["korea", "czechia"],
-          ["czechia", "south africa"],
-          ["mexico", "korea"],
-          ["czechia", "mexico"],
-          ["south africa", "korea"]
-        ],
-        B: [
-          ["canada", "bosnia"],
-          ["qatar", "switzerland"],
-          ["switzerland", "bosnia"],
-          ["canada", "qatar"],
-          ["switzerland", "canada"],
-          ["bosnia", "qatar"]
-        ],
-        C: [
-          ["brazil", "morocco"],
-          ["haiti", "scotland"],
-          ["scotland", "morocco"],
-          ["brazil", "haiti"],
-          ["scotland", "brazil"],
-          ["morocco", "haiti"]
-        ],
-        D: [
-          ["usa", "paraguay"],
-          ["australia", "turkey"],
-          ["usa", "australia"],
-          ["turkey", "paraguay"],
-          ["turkey", "usa"],
-          ["paraguay", "australia"]
-        ],
-        E: [
-          ["germany", "curacao"],
-          ["ivory coast", "ecuador"],
-          ["germany", "ivory coast"],
-          ["ecuador", "curacao"],
-          ["ecuador", "germany"],
-          ["curacao", "ivory coast"]
-        ],
-        F: [
-          ["netherlands", "japan"],
-          ["sweden", "tunisia"],
-          ["netherlands", "sweden"],
-          ["tunisia", "japan"],
-          ["tunisia", "netherlands"],
-          ["japan", "sweden"]
-        ],
-        G: [
-          ["belgium", "egypt"],
-          ["iran", "new zealand"],
-          ["belgium", "iran"],
-          ["new zealand", "egypt"],
-          ["new zealand", "belgium"],
-          ["egypt", "iran"]
-        ],
-        H: [
-          ["spain", "cape verde"],
-          ["saudi arabia", "uruguay"],
-          ["spain", "saudi arabia"],
-          ["uruguay", "cape verde"],
-          ["uruguay", "spain"],
-          ["cape verde", "saudi arabia"]
-        ],
-        I: [
-          ["france", "senegal"],
-          ["iraq", "norway"],
-          ["france", "iraq"],
-          ["norway", "senegal"],
-          ["norway", "france"],
-          ["senegal", "iraq"]
-        ],
-        J: [
-          ["argentina", "algeria"],
-          ["austria", "jordan"],
-          ["argentina", "austria"],
-          ["jordan", "algeria"],
-          ["jordan", "argentina"],
-          ["algeria", "austria"]
-        ],
-        K: [
-          ["portugal", "dr congo"],
-          ["uzbekistan", "colombia"],
-          ["portugal", "uzbekistan"],
-          ["colombia", "dr congo"],
-          ["colombia", "portugal"],
-          ["dr congo", "uzbekistan"]
-        ],
-        L: [
-          ["england", "croatia"],
-          ["ghana", "panama"],
-          ["england", "ghana"],
-          ["panama", "croatia"],
-          ["panama", "england"],
-          ["croatia", "ghana"]
-        ]
-      };
-    }
-
-    function officialFixtureRowsForGroup(groupRows) {
-      if (!groupRows.length || !groupRows.every(hasValidPlayedData)) {
-        return null;
+      if (!Number.isFinite(played)) {
+        return row.score;
       }
 
-      const fixtures = officialGroupFixtures()[groupLetter(groupRows[0].group)];
-
-      if (!fixtures) {
-        return null;
-      }
-
-      const rowByCountry = {};
-
-      groupRows.forEach(function(row) {
-        rowByCountry[countryLookupKey(row.country)] = row;
-      });
-
-      const fixtureRows = fixtures.map(function(pair) {
-        const team1 = rowByCountry[countryLookupKey(pair[0])];
-        const team2 = rowByCountry[countryLookupKey(pair[1])];
-
-        if (!team1 || !team2) {
-          return null;
-        }
-
-        return {
-          team1: team1,
-          team2: team2
-        };
-      });
-
-      if (fixtureRows.some(function(fixture) { return fixture == null; })) {
-        return null;
-      }
-
-      return fixtureRows;
+      const remainingMatches = Math.max(0, 3 - played);
+      return row.score + remainingMatches * 3;
     }
 
-    function remainingOfficialFixtures(groupRows, fixtureRows) {
-      const playedSlots = {};
+    function isGuaranteedTopTwoByPoints(row, groupRows) {
+      const currentPoints = Number(row.score);
 
-      groupRows.forEach(function(row) {
-        playedSlots[rowKey(row)] = Number(row.played);
-      });
-
-      return fixtureRows.filter(function(fixture) {
-        const team1Key = rowKey(fixture.team1);
-        const team2Key = rowKey(fixture.team2);
-
-        if (playedSlots[team1Key] > 0 && playedSlots[team2Key] > 0) {
-          playedSlots[team1Key] -= 1;
-          playedSlots[team2Key] -= 1;
+      // Conservative rule: if two other teams can still catch or pass this
+      // team on points, do not mark it confirmed, because tie-breakers could
+      // still matter.
+      const rivalsWhoCanCatchOrPass = groupRows.filter(function(otherRow) {
+        if (rowKey(otherRow) === rowKey(row)) {
           return false;
         }
 
-        return true;
-      });
-    }
-
-    function simulateGroupPointOutcomes(groupRows) {
-      const fixtureRows = officialFixtureRowsForGroup(groupRows);
-
-      if (!fixtureRows) {
-        return null;
-      }
-
-      const remainingFixtures = remainingOfficialFixtures(groupRows, fixtureRows);
-      const initialPoints = {};
-
-      groupRows.forEach(function(row) {
-        initialPoints[rowKey(row)] = Number(row.score);
+        return maxPossiblePoints(otherRow) >= currentPoints;
       });
 
-      const outcomes = [];
-
-      function simulate(index, points) {
-        if (index >= remainingFixtures.length) {
-          outcomes.push(Object.assign({}, points));
-          return;
-        }
-
-        const fixture = remainingFixtures[index];
-        const team1Key = rowKey(fixture.team1);
-        const team2Key = rowKey(fixture.team2);
-
-        let next = Object.assign({}, points);
-        next[team1Key] += 3;
-        simulate(index + 1, next);
-
-        next = Object.assign({}, points);
-        next[team1Key] += 1;
-        next[team2Key] += 1;
-        simulate(index + 1, next);
-
-        next = Object.assign({}, points);
-        next[team2Key] += 3;
-        simulate(index + 1, next);
-      }
-
-      simulate(0, initialPoints);
-      return outcomes;
+      return rivalsWhoCanCatchOrPass.length <= 1;
     }
 
-    function thirdPlacePointsFromOutcome(points) {
-      const sortedPoints = Object.values(points).sort(function(a, b) {
-        return b - a;
-      });
-
-      return sortedPoints[2] == null ? 0 : sortedPoints[2];
-    }
-
-    function maxThirdPointsFromOutcomes(outcomes) {
-      return Math.max.apply(null, outcomes.map(thirdPlacePointsFromOutcome));
-    }
-
-    function worstPointRankForRow(points, row) {
-      const targetPoints = points[rowKey(row)];
-      let rank = 0;
-
-      Object.keys(points).forEach(function(key) {
-        if (points[key] >= targetPoints) {
-          rank += 1;
-        }
-      });
-
-      return rank;
-    }
-
-    function isGuaranteedQualifiedFromStandings(row, groupName, outcomes, maxThirdPointsByGroup) {
-      if (!outcomes || !outcomes.length) {
-        return false;
-      }
-
-      return outcomes.every(function(points) {
-        const worstRank = worstPointRankForRow(points, row);
-
-        // Top two in every group qualify automatically.
-        if (worstRank <= 2) {
-          return true;
-        }
-
-        // If the team could finish fourth on points/tie-breaks, do not confirm it.
-        if (worstRank > 3) {
-          return false;
-        }
-
-        // The team is guaranteed to be at least third in this outcome.
-        // To avoid over-confirming borderline third-place teams, only use
-        // the best-third route once the team has six points. This catches
-        // teams such as Germany that are safe before their exact knockout
-        // fixture is assigned, without turning every projected third place gold.
-        const candidatePoints = points[rowKey(row)];
-
-        if (candidatePoints < 6) {
-          return false;
-        }
-        let otherGroupsThatCouldBeatThisThirdPlace = 0;
-
-        Object.keys(maxThirdPointsByGroup).forEach(function(otherGroupName) {
-          if (otherGroupName === groupName) {
-            return;
-          }
-
-          const maxThirdPoints = maxThirdPointsByGroup[otherGroupName];
-
-          if (maxThirdPoints == null || maxThirdPoints > candidatePoints) {
-            otherGroupsThatCouldBeatThisThirdPlace += 1;
-          }
-        });
-
-        return otherGroupsThatCouldBeatThisThirdPlace <= 7;
-      });
+    function isSixPointThirdPlaceSafe(row) {
+      // 2026 format: eight of the twelve third-placed teams qualify.
+      // A team already on 6 points after at least two matches is safe for the
+      // practical Germany-style case where FIFA has confirmed qualification
+      // before the exact knockout slot is assigned. This deliberately does NOT
+      // confirm 3- or 4-point teams through the best-third route.
+      return Number(row.score) >= 6 && Number(row.played) >= 2;
     }
 
     function countryLookupKey(country) {
@@ -2208,11 +1975,11 @@
       }
 
       if (qualifiers.topTwoKeys[key]) {
-        return '<span class="qualify-badge">Projected Q only</span>';
+        return '<span class="qualify-badge">Projected Q</span>';
       }
 
       if (qualifiers.bestThirdKeys[key]) {
-        return '<span class="qualify-badge third-badge">Projected best 3rd</span>';
+        return '<span class="qualify-badge third-badge">Best 3rd Q</span>';
       }
 
       return "";
