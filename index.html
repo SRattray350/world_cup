@@ -2481,11 +2481,11 @@
       // Confirmed qualification is based on the Knockout tab OR standings maths.
       // It overrides the projected/current qualifying badges.
       if (qualifiers.confirmedBestThirdKeys && qualifiers.confirmedBestThirdKeys[key]) {
-        return '<span class="qualify-badge confirmed-badge">✓ Locked 3rd Q</span>';
+        return '<span class="qualify-badge confirmed-badge" title="Guaranteed to qualify at least as one of the best third-placed teams">✓ Confirmed Q</span>';
       }
 
       if (qualifiers.confirmedKeys[key]) {
-        return '<span class="qualify-badge confirmed-badge">✓ Confirmed Q</span>';
+        return '<span class="qualify-badge confirmed-badge" title="Guaranteed to qualify">✓ Confirmed Q</span>';
       }
 
       if (qualifiers.topTwoKeys[key]) {
