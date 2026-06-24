@@ -522,6 +522,13 @@
       box-shadow: 0 0 0 1px rgba(255,210,74,0.18), 0 4px 12px rgba(255,210,74,0.16);
     }
 
+    .group-prize-badge {
+      color: #062015;
+      background: linear-gradient(135deg, #7df2b8, #d4ff89);
+      border: 1px solid rgba(125,242,184,0.70);
+      box-shadow: 0 0 0 1px rgba(32,212,137,0.16), 0 4px 12px rgba(32,212,137,0.16);
+    }
+
     .group-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(540px, 1fr));
@@ -1576,29 +1583,7 @@
       const sortedLowest = assigned.slice().sort(compareLowToHigh);
       const loserBenchmark = sortedLowest[0];
       const groupStageComplete = isEntireGroupStageComplete();
-
-      const groupWinners = [];
-
-      Object.entries(grouped(assigned)).forEach(function(entry) {
-        const groupName = entry[0];
-        const groupRows = entry[1];
-        const rankedGroupRows = sortHighToLow(groupRows, true);
-        const winnerBenchmark = rankedGroupRows[0];
-
-        if (!winnerBenchmark) {
-          return;
-        }
-
-        rankedGroupRows
-          .filter(function(row) {
-            return sameScoreAndGd(row, winnerBenchmark);
-          })
-          .forEach(function(row) {
-            const copy = Object.assign({}, row);
-            copy.prizeGroup = groupName;
-            groupWinners.push(copy);
-          });
-      });
+      const groupWinners = lockedTopGroupPrizeWinners();
 
       const final = finalMatch();
       const thirdPlace = thirdPlaceMatch();
@@ -1616,6 +1601,84 @@
         loserConfirmed: Boolean(groupStageComplete && loserBenchmark),
         groupWinners: groupWinners
       };
+    }
+
+    function lockedTopGroupPrizeWinners() {
+      const winners = [];
+      const allGroups = grouped(rows);
+
+      Object.entries(allGroups).forEach(function(entry) {
+        const groupName = entry[0];
+        const groupRows = entry[1];
+        let lockedRows = [];
+
+        if (isGroupComplete(groupRows)) {
+          // When the group is complete, the top-of-group prize can be locked
+          // using the final points + GD table. If the top is tied on both
+          // points and GD, all tied teams are shown because the sheet has no
+          // deeper tie-breakers to separate them.
+          lockedRows = finalTopGroupRows(groupRows);
+        } else {
+          // While the group is still live, only lock the prize if the team is
+          // guaranteed to finish above every other team on points in every
+          // possible remaining-results scenario. This prevents false locks
+          // where another team can still catch them and then overtake on GD.
+          const outcomes = simulateGroupPointOutcomes(groupRows);
+          lockedRows = groupRows.filter(function(row) {
+            return isGuaranteedTopOfGroupOnPoints(row, groupRows, outcomes);
+          });
+        }
+
+        lockedRows
+          .filter(function(row) {
+            return row.participant;
+          })
+          .forEach(function(row) {
+            const copy = Object.assign({}, row);
+            copy.prizeGroup = groupName;
+            winners.push(copy);
+          });
+      });
+
+      return winners;
+    }
+
+    function finalTopGroupRows(groupRows) {
+      const ranked = groupRows.slice().sort(compareCurrentStanding);
+      const topRow = ranked[0];
+
+      if (!topRow) {
+        return [];
+      }
+
+      return ranked.filter(function(row) {
+        return rowsTiedOnCurrentStanding(row, topRow);
+      });
+    }
+
+    function isGuaranteedTopOfGroupOnPoints(row, groupRows, outcomes) {
+      if (!outcomes || !outcomes.length) {
+        return false;
+      }
+
+      const targetKey = rowKey(row);
+
+      return outcomes.every(function(points) {
+        const targetPoints = points[targetKey];
+
+        return groupRows.every(function(otherRow) {
+          const otherKey = rowKey(otherRow);
+
+          if (otherKey === targetKey) {
+            return true;
+          }
+
+          // Require strictly fewer points. If another team can still finish
+          // level on points, the group winner is not locked because GD may
+          // still change.
+          return points[otherKey] < targetPoints;
+        });
+      });
     }
 
     function sameEntry(a, b) {
@@ -2327,6 +2390,14 @@
       return "";
     }
 
+    function topGroupPrizeBadge(row, prizes) {
+      if (prizes.groupWinners.some(function(entry) { return sameEntry(entry, row); })) {
+        return '<span class="qualify-badge group-prize-badge">Top group &pound;5</span>';
+      }
+
+      return "";
+    }
+
     function qualificationRowClass(row, qualifiers) {
       const key = rowKey(row);
 
@@ -2350,6 +2421,7 @@
     function renderGroups() {
       const groups = grouped(visibleRows());
       const qualifiers = currentQualifiers();
+      const prizes = getPrizes();
       const groupNames = Object.keys(groups).sort(function(a, b) {
         return a.localeCompare(b, undefined, { numeric: true });
       });
@@ -2386,7 +2458,7 @@
               list.map(function(row, index) {
                 return '<tr class="' + qualificationRowClass(row, qualifiers) + '">' +
                   '<td><span class="rank ' + (index === 0 && row.participant ? "gold" : "") + '">' + (index + 1) + '</span></td>' +
-                  '<td class="country"><span class="country-name">' + countryWithFlag(row.country) + '</span><div class="country-badges">' + worldRankingBadge(row) + qualificationBadge(row, qualifiers) + '</div></td>' +
+                  '<td class="country"><span class="country-name">' + countryWithFlag(row.country) + '</span><div class="country-badges">' + worldRankingBadge(row) + qualificationBadge(row, qualifiers) + topGroupPrizeBadge(row, prizes) + '</div></td>' +
                   '<td>' +
                     (row.participant
                       ? '<span class="participant">' + escapeHtml(row.participant) + '</span>'
