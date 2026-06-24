@@ -1,104 +1,3 @@
-Skip to content
-SRattray350
-world_cup
-Repository navigation
-Code
-Issues
-Pull requests
-Agents
-Actions
-Projects
-Wiki
-Security and quality
-Insights
-Settings
-Files
-Go to file
-t
-T
-.github
-audio
-England.mp3
-Ivory_coast.mp3
-algeria.mp3
-argentina.mp3
-australia.mp3
-austria.mp3
-belgium.mp3
-bosnia_and_herzegovina.mp3
-brazil.mp3
-cabo_verde.mp3
-canada﻿.mp3
-colombia.mp3
-congo_DR.mp3
-croatia.mp3
-curaçao.mp3
-czechia.mp3
-ecuador.mp3
-egypt.mp3
-france.mp3
-germany.mp3
-ghana.mp3
-haiti.mp3
-index.html
-iran.mp3
-iraq.mp3
-wheel.html
-world_cup
-/
-index.html
-in
-main
-
-Edit
-
-Preview
-Indent mode
-
-Spaces
-Indent size
-
-2
-Line wrap mode
-
-No wrap
-Editing index.html file contents
-  1
-  2
-  3
-  4
-  5
-  6
-  7
-  8
-  9
- 10
- 11
- 12
- 13
- 14
- 15
- 16
- 17
- 18
- 19
- 20
- 21
- 22
- 23
- 24
- 25
- 26
- 27
- 28
- 29
- 30
- 31
- 32
- 33
- 34
- 35
- 36
 <!doctype html>
 <html lang="en">
 <head>
@@ -135,4 +34,2695 @@ Editing index.html file contents
       font-family: Arial, Helvetica, sans-serif;
       color: var(--text);
       background:
-Use Control + Shift + m to toggle the tab key moving focus. Alternatively, use esc then tab to move to the next interactive element on the page.
+        radial-gradient(circle at top center, rgba(255,255,255,0.10), transparent 18rem),
+        radial-gradient(circle at 18% 8%, rgba(0,194,255,0.16), transparent 25rem),
+        radial-gradient(circle at 82% 2%, rgba(32,212,137,0.13), transparent 23rem),
+        linear-gradient(180deg, var(--bg-2) 0%, var(--bg) 58%, #04101f 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.18;
+      background:
+        linear-gradient(90deg, transparent 0 48%, rgba(255,255,255,0.09) 48% 52%, transparent 52% 100%),
+        repeating-linear-gradient(
+          90deg,
+          rgba(255,255,255,0.035) 0px,
+          rgba(255,255,255,0.035) 1px,
+          transparent 1px,
+          transparent 72px
+        );
+      mask-image: linear-gradient(180deg, transparent, black 8rem, black 80%, transparent);
+    }
+
+    .wrap {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      padding: 36px 0 20px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .card {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.012)),
+        var(--card);
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 22px;
+      box-shadow:
+        0 20px 50px rgba(0,0,0,0.36),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+      backdrop-filter: blur(8px);
+    }
+
+    .intro,
+    .prize-card,
+    .panel {
+      padding: 24px;
+    }
+
+    .intro {
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at top right, rgba(255,210,74,0.18), transparent 13rem),
+        radial-gradient(circle at bottom left, rgba(32,212,137,0.16), transparent 15rem),
+        linear-gradient(135deg, rgba(0,194,255,0.18), rgba(255,255,255,0.02)),
+        var(--card-2);
+    }
+
+    .intro::before {
+      display: none;
+    }
+
+    .intro::after {
+      content: "";
+      position: absolute;
+      right: -44px;
+      bottom: -54px;
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.10), transparent 69%);
+      pointer-events: none;
+    }
+
+    .hero-kicker {
+      display: inline-block;
+      position: relative;
+      z-index: 2;
+      margin-bottom: 13px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.14);
+      color: #e9f4ff;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      position: relative;
+      z-index: 2;
+      margin: 0;
+      font-size: clamp(2.3rem, 6vw, 4.35rem);
+      letter-spacing: -0.055em;
+      line-height: 0.94;
+      text-transform: uppercase;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.36);
+    }
+
+    .hero-sub {
+      position: relative;
+      z-index: 2;
+      margin: 12px 0 0;
+      color: #dce9f8;
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    h2,
+    h3 {
+      margin-top: 0;
+    }
+
+    .panel h2,
+    .prize-card h2 {
+      margin-bottom: 16px;
+      font-size: 1.35rem;
+      text-transform: uppercase;
+      letter-spacing: 0.045em;
+    }
+
+    .prizes {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .prizes li {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--muted);
+      transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+    }
+
+    .prizes li:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255,210,74,0.45);
+      background: rgba(255,255,255,0.075);
+    }
+
+    .amount {
+      color: var(--gold);
+      font-weight: 800;
+    }
+
+    .status {
+      margin: 14px 0;
+      padding: 13px 16px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.065);
+      border: 1px solid rgba(255,255,255,0.11);
+      color: var(--muted);
+    }
+
+    .error {
+      color: #fecdd3;
+      border-color: rgba(255,107,107,0.46);
+      background: rgba(255,107,107,0.13);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .stat {
+      padding: 17px;
+      background:
+        linear-gradient(135deg, rgba(255,107,107,0.10), rgba(255,255,255,0.035)),
+        rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+    }
+
+    .stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.86rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+
+    .loser-player {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 5px;
+      font-size: 1.45rem;
+      line-height: 1.2;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    input,
+    select,
+    button {
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 11px 13px;
+      font: inherit;
+      color: var(--text);
+      background: rgba(3,10,22,0.90);
+      outline: none;
+    }
+
+    input::placeholder {
+      color: #8fa4be;
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 800;
+      transition: all 0.18s ease;
+    }
+
+    button:hover {
+      border-color: rgba(0,194,255,0.48);
+      box-shadow: 0 8px 18px rgba(0,194,255,0.12);
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 20px 0 14px;
+    }
+
+    .tab {
+      border: 1px solid rgba(255,255,255,0.11);
+      background: rgba(255,255,255,0.055);
+      color: var(--muted);
+      padding: 11px 16px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 800;
+      transition: all 0.18s ease;
+    }
+
+    .tab:hover {
+      border-color: rgba(0,194,255,0.48);
+      color: white;
+    }
+
+    .tab.active {
+      color: #07111f;
+      background: linear-gradient(135deg, var(--gold), #ffe48e);
+      border-color: rgba(255,210,74,0.66);
+      box-shadow: 0 8px 22px rgba(255,210,74,0.22);
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+
+    th,
+    td {
+      padding: 12px 10px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    th {
+      color: #d9efff;
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: rgba(255,255,255,0.065);
+    }
+
+    tbody tr:hover {
+      background: rgba(255,255,255,0.04);
+    }
+
+    .rank {
+      display: inline-grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.10);
+      font-weight: 800;
+    }
+
+    .rank.gold {
+      color: #09111f;
+      background: linear-gradient(135deg, var(--gold), #ffe48e);
+      box-shadow: 0 0 0 1px rgba(255,210,74,0.28);
+    }
+
+    .rank.silver {
+      color: white;
+      background: rgba(229,231,235,0.18);
+    }
+
+    .rank.bronze {
+      color: #ffedd5;
+      background: rgba(251,146,60,0.18);
+    }
+
+    .country {
+      font-weight: 800;
+    }
+
+    .flag-img {
+      width: 1.35em;
+      height: 1em;
+      margin-left: 0.35em;
+      vertical-align: -0.12em;
+      border-radius: 2px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.18);
+    }
+
+    .participant {
+      color: #e0f2fe;
+      font-weight: 800;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .score {
+      font-weight: 800;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .badge {
+      display: inline-flex;
+      padding: 5px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.08);
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .badge.gold {
+      color: #09111f;
+      background: linear-gradient(135deg, var(--gold), #ffe48e);
+      border-color: rgba(255,210,74,0.42);
+    }
+
+    .badge.green {
+      color: #bbf7d0;
+      background: rgba(32,212,137,0.14);
+      border-color: rgba(32,212,137,0.38);
+    }
+
+    .badge.red {
+      color: #fecdd3;
+      background: rgba(255,107,107,0.13);
+      border-color: rgba(255,107,107,0.40);
+    }
+
+    .qualification-note {
+      margin: 0 0 16px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,210,74,0.34);
+      background:
+        linear-gradient(135deg, rgba(255,210,74,0.10), rgba(0,194,255,0.08)),
+        rgba(255,255,255,0.035);
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .qualification-note strong {
+      color: #fff2b8;
+    }
+
+    .confirmed-row {
+      background:
+        linear-gradient(90deg, rgba(255,210,74,0.22), rgba(255,210,74,0.07));
+      box-shadow: inset 4px 0 0 rgba(255,210,74,0.92);
+    }
+
+    .qualify-row {
+      background: rgba(32,212,137,0.055);
+    }
+
+    .third-place-row {
+      background: rgba(0,194,255,0.055);
+    }
+
+
+    .world-ranking-badge {
+      display: inline-flex;
+      width: fit-content;
+      margin-top: 5px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      color: #dbeafe;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.16);
+      font-size: 0.68rem;
+      font-weight: 800;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+
+    .qualify-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: fit-content;
+      max-width: 100%;
+      min-width: 0;
+      margin-top: 4px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      font-size: 0.70rem;
+      font-weight: 800;
+      line-height: 1.15;
+      text-align: center;
+      color: #c7f9d8;
+      background: rgba(32,212,137,0.10);
+      border: 1px dashed rgba(32,212,137,0.48);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .third-badge {
+      color: #bae6fd;
+      background: rgba(0,194,255,0.10);
+      border-color: rgba(0,194,255,0.45);
+    }
+
+    .confirmed-badge {
+      color: #09111f;
+      background: linear-gradient(135deg, var(--gold), #fff2a8);
+      border: 1px solid rgba(255,210,74,0.70);
+      box-shadow: 0 0 0 1px rgba(255,210,74,0.18), 0 4px 12px rgba(255,210,74,0.16);
+    }
+
+    .group-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(540px, 1fr));
+      gap: 14px;
+      align-items: start;
+    }
+
+    .group-card {
+      background:
+        repeating-linear-gradient(
+          180deg,
+          rgba(32,212,137,0.055) 0px,
+          rgba(32,212,137,0.055) 24px,
+          rgba(255,255,255,0.020) 24px,
+          rgba(255,255,255,0.020) 48px
+        ),
+        rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: 14px;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .group-card h3 {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+      color: #dff3ff;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .group-card table {
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: collapse;
+    }
+
+    .group-card col.rank-col {
+      width: 38px;
+    }
+
+    .group-card col.country-col {
+      width: 230px;
+    }
+
+    .group-card col.player-col {
+      width: auto;
+      min-width: 0;
+    }
+
+    .group-card col.points-col {
+      width: 44px;
+    }
+
+    .group-card col.gd-col {
+      width: 48px;
+    }
+
+    .group-card th,
+    .group-card td {
+      padding: 9px 7px;
+      vertical-align: middle;
+      overflow: visible;
+    }
+
+    .group-card th {
+      font-size: 0.68rem;
+      white-space: nowrap;
+    }
+
+    .group-card tbody tr {
+      height: 68px;
+    }
+
+    .group-card th:nth-child(4),
+    .group-card th:nth-child(5),
+    .group-card td:nth-child(4),
+    .group-card td:nth-child(5) {
+      text-align: right;
+    }
+
+    .group-card .country {
+      line-height: 1.15;
+      white-space: normal;
+      overflow: visible;
+      padding-right: 12px;
+    }
+
+    .country-name {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      max-width: 100%;
+    }
+
+    .country-badges {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 4px;
+      margin-top: 5px;
+      min-width: 0;
+    }
+
+    .world-ranking-badge {
+      display: inline-flex;
+      flex: 0 0 auto;
+      width: fit-content;
+      max-width: none;
+      margin-top: 0;
+      padding: 3px 7px;
+      border-radius: 999px;
+      color: #dbeafe;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.16);
+      font-size: 0.68rem;
+      font-weight: 800;
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: visible;
+      text-overflow: clip;
+    }
+
+    .qualify-badge {
+      flex: 0 1 auto;
+      margin-top: 0;
+      max-width: 100%;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .group-card .participant,
+    .group-card .muted {
+      display: inline-block;
+      max-width: 100%;
+      line-height: 1.2;
+      overflow-wrap: break-word;
+      word-break: normal;
+    }
+
+    .empty {
+      padding: 24px;
+      border: 1px dashed rgba(255,255,255,0.18);
+      border-radius: 16px;
+      color: var(--muted);
+      text-align: center;
+      background: rgba(255,255,255,0.035);
+    }
+
+    .bracket-scroll {
+      overflow-x: auto;
+      padding: 0 2px 18px;
+      position: relative;
+    }
+
+
+    .bracket-stage {
+      position: relative;
+      min-width: 1900px;
+    }
+
+    .bracket-lines {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: visible;
+      z-index: 1;
+    }
+
+    .bracket-lines path {
+      fill: none;
+      stroke: rgba(255,210,74,0.56);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .bracket-lines path.dashed {
+      stroke: rgba(0,194,255,0.38);
+      stroke-dasharray: 5 6;
+    }
+
+    .bracket-grid {
+      min-width: 1900px;
+      display: grid;
+      grid-template-columns:
+        minmax(205px, 1fr)
+        minmax(205px, 1fr)
+        minmax(205px, 1fr)
+        minmax(205px, 1fr)
+        minmax(280px, 1.15fr)
+        minmax(205px, 1fr)
+        minmax(205px, 1fr)
+        minmax(205px, 1fr)
+        minmax(205px, 1fr);
+      gap: 36px;
+      align-items: stretch;
+      position: relative;
+      z-index: 2;
+    }
+
+    .round-column {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 12px;
+      min-height: 1120px;
+      position: relative;
+    }
+
+    .round-matches {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      gap: 18px;
+      height: 100%;
+    }
+
+    .round-column.compact {
+      min-height: 760px;
+    }
+
+    .round-column.tight {
+      min-height: 480px;
+    }
+
+    .round-column.semi {
+      min-height: 300px;
+    }
+
+    .round-column.center {
+      display: flex;
+      min-height: 760px;
+      justify-content: center;
+      align-items: stretch;
+      gap: 26px;
+      padding-top: 180px;
+    }
+
+    .centre-finals-stack {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 28px;
+      width: 100%;
+      margin-top: 120px;
+    }
+
+    .round-title {
+      position: sticky;
+      top: 0;
+      z-index: 4;
+      margin: 0 0 4px;
+      padding: 8px 10px;
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 999px;
+      color: #07111f;
+      background: linear-gradient(135deg, var(--gold), #ffe48e);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      text-align: center;
+    }
+
+    .bracket-pair,
+    .bracket-single {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .bracket-pair {
+      min-height: 212px;
+    }
+
+    .round-column.compact .bracket-pair {
+      min-height: 286px;
+    }
+
+    .round-column.tight .bracket-pair {
+      min-height: 360px;
+    }
+
+    .bracket-single {
+      min-height: 150px;
+    }
+
+    .match-slot {
+      position: relative;
+    }
+
+    .match-card {
+      position: relative;
+      z-index: 2;
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 16px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.040), rgba(255,255,255,0.015)),
+        rgba(255,255,255,0.055);
+      padding: 10px;
+      min-height: 92px;
+    }
+
+    .match-card.final-card {
+      border-color: rgba(255,210,74,0.55);
+      background: rgba(255,210,74,0.10);
+    }
+
+    .match-card.third-card {
+      border-color: rgba(0,194,255,0.40);
+      background: rgba(0,194,255,0.08);
+    }
+
+    .match-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 0.74rem;
+      margin-bottom: 7px;
+    }
+
+    .team-line {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2px;
+      padding: 7px 8px;
+      border-radius: 11px;
+      background: rgba(255,255,255,0.052);
+      margin-top: 5px;
+      min-height: 39px;
+    }
+
+    .team-line.winner {
+      color: #bbf7d0;
+      background: rgba(32,212,137,0.15);
+      border: 1px solid rgba(32,212,137,0.36);
+    }
+
+    .team-country {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 800;
+      line-height: 1.15;
+    }
+
+    .team-player {
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.15;
+    }
+
+    .team-line.winner .team-player {
+      color: #d1fae5;
+    }
+
+    .center-title {
+      margin: 0 0 6px;
+      color: var(--gold);
+      font-size: 0.9rem;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .controls {
+        grid-template-columns: 1fr;
+      }
+
+      .group-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      th,
+      td {
+        padding: 9px 7px;
+        font-size: 0.9rem;
+      }
+
+      .hide-mobile {
+        display: none;
+      }
+
+      .intro,
+      .prize-card,
+      .panel {
+        padding: 18px;
+      }
+    }
+  
+    /* Centre the Final and Third-place matches lower in the bracket */
+    .round-column.center {
+      display: flex !important;
+      min-height: 760px !important;
+      justify-content: center !important;
+      align-items: stretch !important;
+      gap: 26px !important;
+      padding-top: 180px !important;
+    }
+
+    .centre-finals-stack {
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      gap: 28px !important;
+      width: 100% !important;
+      margin-top: 120px !important;
+    }
+
+  
+    @media (max-width: 640px) {
+      .group-card table,
+      .group-card thead,
+      .group-card tbody,
+      .group-card tr,
+      .group-card th,
+      .group-card td {
+        display: block;
+        width: 100% !important;
+      }
+
+      .group-card thead {
+        display: none;
+      }
+
+      .group-card tbody tr {
+        height: auto !important;
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.10);
+        background: rgba(255,255,255,0.04);
+      }
+
+      .group-card tbody tr.confirmed-row {
+        background: linear-gradient(135deg, rgba(255,210,74,0.24), rgba(255,210,74,0.08));
+        border-color: rgba(255,210,74,0.34);
+      }
+
+      .group-card tbody tr.qualify-row {
+        background: rgba(32,212,137,0.075);
+      }
+
+      .group-card tbody tr.third-place-row {
+        background: rgba(0,194,255,0.075);
+      }
+
+      .group-card td {
+        display: grid;
+        grid-template-columns: 90px minmax(0, 1fr);
+        gap: 8px;
+        padding: 6px 0;
+        border-bottom: 0;
+        text-align: left !important;
+        align-items: center;
+      }
+
+      .group-card td:nth-child(1)::before {
+        content: "Rank";
+        color: var(--muted);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .group-card td:nth-child(2)::before {
+        content: "Country";
+        color: var(--muted);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .group-card td:nth-child(3)::before {
+        content: "Player";
+        color: var(--muted);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .group-card td:nth-child(4)::before {
+        content: "Pts";
+        color: var(--muted);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .group-card td:nth-child(5)::before {
+        content: "GD";
+        color: var(--muted);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .group-card .country,
+      .group-card .participant,
+      .group-card .muted,
+      .group-card .score,
+      .group-card .world-ranking-badge {
+        min-width: 0;
+        overflow-wrap: break-word;
+        word-break: normal;
+      }
+
+      .group-card .country,
+      .country-name {
+        white-space: normal;
+      }
+
+      .group-card .score,
+      .group-card .gd {
+        text-align: left;
+      }
+
+      .group-card td:nth-child(4),
+      .group-card td:nth-child(5) {
+        width: 100% !important;
+        padding-right: 0;
+        text-align: left !important;
+      }
+
+      .qualify-badge {
+        margin-left: 0;
+        margin-top: 5px;
+        max-width: 100%;
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+    }
+
+  
+  
+
+
+    @media (max-width: 1120px) {
+      .group-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .group-card col.country-col {
+        width: 260px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .group-card col.rank-col,
+      .group-card col.country-col,
+      .group-card col.player-col,
+      .group-card col.points-col,
+      .group-card col.gd-col {
+        width: auto;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+  <header class="wrap">
+    <div class="hero">
+      <section class="card intro">
+        <div class="hero-kicker">Applied Sciences Sweepstake</div>
+        <h1>World Cup Sweepstake</h1>
+        <p class="hero-sub">Presented by J&amp;J Productions + Sam</p>
+      </section>
+
+      <aside class="card prize-card">
+        <h2>Prize pot</h2>
+        <ul class="prizes">
+          <li><strong>1st Place</strong><span class="amount">&pound;100</span></li>
+          <li><strong>2nd Place</strong><span class="amount">&pound;40</span></li>
+          <li><strong>3rd Place</strong><span class="amount">&pound;20</span></li>
+          <li><strong>Loser</strong><span class="amount">&pound;20</span></li>
+          <li><strong>Top of the group</strong><span class="amount">&pound;5</span></li>
+        </ul>
+      </aside>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div id="status" class="status">Loading sheet data...</div>
+
+    <section id="stats" class="stats"></section>
+
+    <section class="controls">
+      <input id="searchBox" type="search" placeholder="Search country, participant or group">
+      <select id="groupSelect">
+        <option value="all">All groups</option>
+      </select>
+      <button id="refreshButton" type="button">Refresh data</button>
+    </section>
+
+    <nav class="tabs">
+      <button class="tab active" type="button" data-target="groupsView">Groups</button>
+      <button class="tab" type="button" data-target="knockoutView">Knockout bracket</button>
+      <button class="tab" type="button" data-target="prizesView">Prizes</button>
+    </nav>
+<section id="groupsView" class="card panel view active">
+      <h2>Groups</h2>
+      <div class="qualification-note">
+        <strong>Knockout qualification:</strong> the top two teams in each group qualify automatically for the knockout rounds. They are joined by the eight best third-placed teams across all groups. Teams are ranked by points first, then goal difference.</div>
+      <div id="groupsGrid" class="group-grid"></div>
+    </section>
+
+    <section id="knockoutView" class="card panel view">
+      <h2>Knockout bracket</h2>
+      <div id="knockoutTable"></div>
+    </section>
+
+    <section id="prizesView" class="card panel view">
+      <h2>Current prize positions</h2>
+      <div id="prizeTable"></div>
+    </section>
+  </main>
+
+  <script>
+    const SHEET_ID = "1mXNPRmCqN9-Ml1CZxEitWlcjFvjRZHWNEkIzzicNeAQ";
+    const COMPETITION_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?gid=1496784945&headers=1";
+    const KNOCKOUT_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?sheet=Knockout&headers=1";
+
+    let rows = [];
+    let knockoutRows = [];
+    let knockoutError = "";
+    let searchText = "";
+    let selectedGroup = "all";
+
+    const prizeAmounts = {
+      first: "&pound;100",
+      second: "&pound;40",
+      third: "&pound;20",
+      loser: "&pound;20",
+      group: "&pound;5"
+    };
+
+    function byId(id) {
+      return document.getElementById(id);
+    }
+
+    function clean(value) {
+      return String(value == null ? "" : value).trim();
+    }
+
+    function lower(value) {
+      return clean(value).toLowerCase();
+    }
+
+    function toScore(value) {
+      const parsed = Number(String(value == null ? "" : value).replace(/[^0-9.-]/g, ""));
+      return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    function escapeHtml(value) {
+      return String(value == null ? "" : value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    const countryCodes = {
+      "mexico": "mx",
+      "south africa": "za",
+      "korea": "kr",
+      "czechia": "cz",
+      "canada": "ca",
+      "bosnia": "ba",
+      "qatar": "qa",
+      "switzerland": "ch",
+      "brazil": "br",
+      "morocco": "ma",
+      "haiti": "ht",
+      "scotland": "gb-sct",
+      "usa": "us",
+      "paraguay": "py",
+      "australia": "au",
+      "türkiye": "tr",
+      "turkiye": "tr",
+      "turkey": "tr",
+      "germany": "de",
+      "curaçao": "cw",
+      "curacao": "cw",
+      "ivory coast": "ci",
+      "ecuador": "ec",
+      "netherlands": "nl",
+      "japan": "jp",
+      "sweden": "se",
+      "tunisia": "tn",
+      "belgium": "be",
+      "egypt": "eg",
+      "iran": "ir",
+      "new zealand": "nz",
+      "spain": "es",
+      "cape verde": "cv",
+      "saudi arabia": "sa",
+      "uruguay": "uy",
+      "france": "fr",
+      "senegal": "sn",
+      "iraq": "iq",
+      "norway": "no",
+      "argentina": "ar",
+      "algeria": "dz",
+      "austria": "at",
+      "jordan": "jo",
+      "portugal": "pt",
+      "dr congo": "cd",
+      "uzbekistan": "uz",
+      "colombia": "co",
+      "england": "gb-eng",
+      "croatia": "hr",
+      "ghana": "gh",
+      "panama": "pa"
+    };
+
+    function twemojiSlugForCode(code) {
+      if (code === "gb-eng") {
+        return "1f3f4-e0067-e0062-e0065-e006e-e0067-e007f";
+      }
+
+      if (code === "gb-sct") {
+        return "1f3f4-e0067-e0062-e0073-e0063-e0074-e007f";
+      }
+
+      const letters = code.toUpperCase().split("");
+      const base = 0x1f1e6;
+
+      return letters
+        .map(function(letter) {
+          return (base + letter.charCodeAt(0) - 65).toString(16);
+        })
+        .join("-");
+    }
+
+    function flagImageForCountry(country) {
+      const code = countryCodes[lower(country)];
+
+      if (!code) {
+        return "";
+      }
+
+      const slug = twemojiSlugForCode(code);
+      const url = "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/" + slug + ".svg";
+
+      return '<img class="flag-img" src="' + url + '" alt="">';
+    }
+
+    function countryWithFlag(country) {
+      return escapeHtml(country) + flagImageForCountry(country);
+    }
+
+    function loadGviz(url) {
+      return new Promise(function(resolve, reject) {
+        const callbackName = "handleSheetData_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+        const script = document.createElement("script");
+
+        window[callbackName] = function(response) {
+          delete window[callbackName];
+          script.remove();
+          resolve(response);
+        };
+
+        script.onerror = function() {
+          delete window[callbackName];
+          script.remove();
+          reject(new Error("The Google Sheet could not be loaded."));
+        };
+
+        script.src = url +
+          "&tqx=" + encodeURIComponent("out:json;responseHandler:" + callbackName) +
+          "&cache=" + Date.now();
+
+        document.body.appendChild(script);
+      });
+    }
+
+    async function loadData() {
+      try {
+        setStatus("Loading sheet data...", false);
+
+        const competitionResponse = await loadGviz(COMPETITION_URL);
+        rows = parseGvizResponse(competitionResponse);
+
+        knockoutError = "";
+        try {
+          const knockoutResponse = await loadGviz(KNOCKOUT_URL);
+          knockoutRows = parseKnockoutResponse(knockoutResponse);
+        } catch (error) {
+          knockoutRows = [];
+          knockoutError = error.message;
+        }
+
+        renderAll();
+        setStatus("Last updated: " + new Date().toLocaleTimeString(), false);
+      } catch (error) {
+        console.error(error);
+        setStatus("Error: " + error.message, true);
+      }
+    }
+
+    function parseGvizResponse(response) {
+      if (!response || response.status === "error") {
+        let message = "Google returned an error.";
+        if (response && response.errors && response.errors[0]) {
+          message = response.errors[0].detailed_message || response.errors[0].message || message;
+        }
+        throw new Error(message);
+      }
+
+      const table = response.table;
+
+      if (!table || !table.cols || !table.rows) {
+        throw new Error("Google returned an unexpected table format.");
+      }
+
+      const headers = table.cols.map(function(col) {
+        return lower(col.label || col.id);
+      });
+
+      const groupIndex = headers.indexOf("group");
+      const countryIndex = headers.indexOf("country");
+      const participantIndex = headers.indexOf("participant");
+      const scoreIndex = headers.indexOf("score");
+      const gdIndex = findHeaderIndex(headers, ["gd", "goal difference", "goal diff", "goal-difference"]);
+      const playedIndex = findHeaderIndex(headers, ["mp", "played", "matches played", "games played", "p"]);
+      const worldRankingIndex = findHeaderIndex(headers, ["world ranking", "ranking", "world rank", "rank"]);
+
+      if (groupIndex === -1 || countryIndex === -1 || participantIndex === -1 || scoreIndex === -1) {
+        throw new Error("The sheet must have these exact headers: Group, Country, Participant, Score");
+      }
+
+      return table.rows
+        .map(function(row, index) {
+          const cells = row.c || [];
+          return {
+            id: index,
+            group: getCell(cells[groupIndex]),
+            country: getCell(cells[countryIndex]),
+            participant: getCell(cells[participantIndex]),
+            score: toScore(getCell(cells[scoreIndex])),
+            gd: gdIndex === -1 ? 0 : toScore(getCell(cells[gdIndex])),
+            played: playedIndex === -1 ? null : toScore(getCell(cells[playedIndex])),
+            worldRanking: worldRankingIndex === -1 ? "" : getCell(cells[worldRankingIndex])
+          };
+        })
+        .filter(function(row) {
+          return row.group && row.country;
+        });
+    }
+
+    function parseKnockoutResponse(response) {
+      if (!response || response.status === "error") {
+        let message = "Google returned an error.";
+        if (response && response.errors && response.errors[0]) {
+          message = response.errors[0].detailed_message || response.errors[0].message || message;
+        }
+        throw new Error(message);
+      }
+
+      const table = response.table;
+
+      if (!table || !table.cols || !table.rows) {
+        throw new Error("Google returned an unexpected knockout table format.");
+      }
+
+      const headers = table.cols.map(function(col) {
+        return lower(col.label || col.id).replace(/\s+/g, " ");
+      });
+
+      const roundIndex = findHeaderIndex(headers, ["round", "stage"]);
+      const matchIndex = findHeaderIndex(headers, ["match", "match no", "match number"]);
+      const team1Index = findHeaderIndex(headers, ["team 1", "team1", "country 1", "country1", "home"]);
+      const team2Index = findHeaderIndex(headers, ["team 2", "team2", "country 2", "country2", "away"]);
+      const winnerIndex = findHeaderIndex(headers, ["winner", "winning team"]);
+
+      if (roundIndex === -1 || team1Index === -1 || team2Index === -1 || winnerIndex === -1) {
+        throw new Error("The Knockout tab must have these headers: Round, Match, Team 1, Team 2, Winner");
+      }
+
+      return table.rows
+        .map(function(row, index) {
+          const cells = row.c || [];
+          return {
+            id: index,
+            round: getCell(cells[roundIndex]),
+            match: matchIndex === -1 ? String(index + 1) : getCell(cells[matchIndex]),
+            team1: getCell(cells[team1Index]),
+            team2: getCell(cells[team2Index]),
+            winner: getCell(cells[winnerIndex])
+          };
+        })
+        .filter(function(row) {
+          return row.round || row.team1 || row.team2 || row.winner;
+        });
+    }
+
+    function findHeaderIndex(headers, options) {
+      for (let i = 0; i < options.length; i++) {
+        const found = headers.indexOf(options[i]);
+        if (found !== -1) return found;
+      }
+      return -1;
+    }
+
+    function normaliseRound(round) {
+      const value = lower(round).replace(/[-_]/g, " ").replace(/\s+/g, " ");
+
+      if (value.includes("32")) return "Round of 32";
+      if (value.includes("16")) return "Round of 16";
+      if (value.includes("quarter")) return "Quarter-final";
+      if (value.includes("semi")) return "Semi-final";
+      if (value.includes("third") || value.includes("3rd")) return "Third-place";
+      if (value === "final" || value.includes(" final")) return "Final";
+
+      return clean(round) || "Other";
+    }
+
+    function roundSortValue(round) {
+      const normalised = normaliseRound(round);
+      const order = ["Round of 32", "Round of 16", "Quarter-final", "Semi-final", "Final", "Third-place"];
+      const index = order.indexOf(normalised);
+      return index === -1 ? 99 : index;
+    }
+
+    function finalMatch() {
+      return knockoutRows.find(function(row) {
+        return normaliseRound(row.round) === "Final";
+      });
+    }
+
+    function thirdPlaceMatch() {
+      return knockoutRows.find(function(row) {
+        return normaliseRound(row.round) === "Third-place";
+      });
+    }
+
+    function entryForCountry(country) {
+      const wanted = lower(country);
+      const found = rows.find(function(row) {
+        return lower(row.country) === wanted;
+      });
+
+      if (found) return found;
+
+      return {
+        country: clean(country),
+        participant: "",
+        group: "",
+        score: "",
+        gd: 0,
+        played: null
+      };
+    }
+
+    function finalRunnerUpCountry(match) {
+      if (!match || !match.winner) return "";
+      const winner = lower(match.winner);
+
+      if (match.team1 && lower(match.team1) !== winner) return match.team1;
+      if (match.team2 && lower(match.team2) !== winner) return match.team2;
+
+      return "";
+    }
+
+    function getCell(cell) {
+      if (!cell) return "";
+      return clean(cell.f != null ? cell.f : cell.v);
+    }
+
+    function setStatus(message, isError) {
+      const status = byId("status");
+      status.textContent = message;
+      status.className = isError ? "status error" : "status";
+    }
+
+    function assignedRows() {
+      return rows.filter(function(row) {
+        return row.participant;
+      });
+    }
+
+    function visibleRows() {
+      const query = lower(searchText);
+
+      return rows.filter(function(row) {
+        const matchesSearch =
+          !query ||
+          lower(row.group).includes(query) ||
+          lower(row.country).includes(query) ||
+          lower(row.participant).includes(query);
+
+        const matchesGroup = selectedGroup === "all" || row.group === selectedGroup;
+
+        return matchesSearch && matchesGroup;
+      });
+    }
+
+    function compareHighToLow(a, b) {
+      return b.score - a.score || b.gd - a.gd || a.country.localeCompare(b.country);
+    }
+
+    function compareLowToHigh(a, b) {
+      return a.score - b.score || a.gd - b.gd || a.country.localeCompare(b.country);
+    }
+
+    function sameScoreAndGd(a, b) {
+      return a && b && a.score === b.score && a.gd === b.gd;
+    }
+
+    function sortHighToLow(list, includeUnassigned) {
+      return list
+        .slice()
+        .filter(function(row) {
+          return includeUnassigned || row.participant;
+        })
+        .sort(compareHighToLow);
+    }
+
+    function grouped(list) {
+      const output = {};
+
+      list.forEach(function(row) {
+        if (!output[row.group]) output[row.group] = [];
+        output[row.group].push(row);
+      });
+
+      return output;
+    }
+
+    function getPrizes() {
+      const assigned = assignedRows();
+      const sortedLowest = assigned.slice().sort(compareLowToHigh);
+      const loserBenchmark = sortedLowest[0];
+      const groupStageComplete = isEntireGroupStageComplete();
+
+      const groupWinners = [];
+
+      Object.entries(grouped(assigned)).forEach(function(entry) {
+        const groupName = entry[0];
+        const groupRows = entry[1];
+        const rankedGroupRows = sortHighToLow(groupRows, true);
+        const winnerBenchmark = rankedGroupRows[0];
+
+        if (!winnerBenchmark) {
+          return;
+        }
+
+        rankedGroupRows
+          .filter(function(row) {
+            return sameScoreAndGd(row, winnerBenchmark);
+          })
+          .forEach(function(row) {
+            const copy = Object.assign({}, row);
+            copy.prizeGroup = groupName;
+            groupWinners.push(copy);
+          });
+      });
+
+      const final = finalMatch();
+      const thirdPlace = thirdPlaceMatch();
+      const firstCountry = final && final.winner ? final.winner : "";
+      const secondCountry = finalRunnerUpCountry(final);
+      const thirdCountry = thirdPlace && thirdPlace.winner ? thirdPlace.winner : "";
+
+      return {
+        first: firstCountry ? [entryForCountry(firstCountry)] : [],
+        second: secondCountry ? [entryForCountry(secondCountry)] : [],
+        third: thirdCountry ? [entryForCountry(thirdCountry)] : [],
+        loser: loserBenchmark
+          ? assigned.filter(function(row) { return sameScoreAndGd(row, loserBenchmark); })
+          : [],
+        loserConfirmed: Boolean(groupStageComplete && loserBenchmark),
+        groupWinners: groupWinners
+      };
+    }
+
+    function sameEntry(a, b) {
+      return a.country === b.country && a.participant === b.participant;
+    }
+
+    function rankClass(index) {
+      if (index === 0) return "gold";
+      if (index === 1) return "silver";
+      if (index === 2) return "bronze";
+      return "";
+    }
+
+    function rowBadges(row) {
+      const prizes = getPrizes();
+      const badges = [];
+
+      if (prizes.first.some(function(entry) { return sameEntry(entry, row); })) {
+        badges.push('<span class="badge gold">1st &pound;100</span>');
+      }
+
+      if (prizes.second.some(function(entry) { return sameEntry(entry, row); })) {
+        badges.push('<span class="badge gold">2nd &pound;40</span>');
+      }
+
+      if (prizes.third.some(function(entry) { return sameEntry(entry, row); })) {
+        badges.push('<span class="badge gold">3rd &pound;20</span>');
+      }
+
+      if (prizes.loser.some(function(entry) { return sameEntry(entry, row); })) {
+        const loserLabel = prizes.loserConfirmed ? "Confirmed loser" : "Current loser";
+        badges.push('<span class="badge red">' + loserLabel + ' &pound;20</span>');
+      }
+
+      if (prizes.groupWinners.some(function(entry) { return sameEntry(entry, row); })) {
+        badges.push('<span class="badge green">Top group &pound;5</span>');
+      }
+
+      return badges.length
+        ? '<div class="badges">' + badges.join("") + "</div>"
+        : '<span class="badge">-</span>';
+    }
+
+    function renderAll() {
+      renderGroupDropdown();
+      renderStats();
+      renderGroups();
+      renderKnockout();
+      renderPrizes();
+    }
+
+    function renderGroupDropdown() {
+      const select = byId("groupSelect");
+      const current = select.value || "all";
+      const groupMap = {};
+      const groups = [];
+
+      rows.forEach(function(row) {
+        if (!groupMap[row.group]) {
+          groupMap[row.group] = true;
+          groups.push(row.group);
+        }
+      });
+
+      groups.sort(function(a, b) {
+        return a.localeCompare(b, undefined, { numeric: true });
+      });
+
+      select.innerHTML =
+        '<option value="all">All groups</option>' +
+        groups.map(function(group) {
+          return '<option value="' + escapeHtml(group) + '">' + escapeHtml(group) + "</option>";
+        }).join("");
+
+      select.value = groups.includes(current) ? current : "all";
+      selectedGroup = select.value;
+    }
+
+    function renderStats() {
+      const prizes = getPrizes();
+      const loser = prizes.loser[0];
+
+      const loserText = loser
+        ? countryWithFlag(loser.country) +
+          '<span class="loser-player">' + escapeHtml(loser.participant || "Unassigned") + '</span>' +
+          '<span class="loser-player">Pts: ' + escapeHtml(loser.score) + ' | GD: ' + escapeHtml(formatGd(loser.gd)) + '</span>'
+        : "-";
+
+      const loserStatusLabel = prizes.loserConfirmed ? "Confirmed loser" : "Current loser";
+
+      byId("stats").innerHTML =
+        '<div class="stat"><span>' + loserStatusLabel + '</span><strong>' +
+        loserText +
+        "</strong></div>";
+    }
+
+    function sortByStandingForLogic(list) {
+      return list
+        .slice()
+        .sort(function(a, b) {
+          return b.score - a.score || b.gd - a.gd;
+        });
+    }
+
+    function rowsTiedOnScoreAndGd(a, b) {
+      return a && b && a.score === b.score && a.gd === b.gd;
+    }
+
+    function clearRowsAboveCutoff(ranked, places) {
+      const output = [];
+      let i = 0;
+
+      while (i < ranked.length) {
+        let j = i + 1;
+
+        while (j < ranked.length && rowsTiedOnScoreAndGd(ranked[i], ranked[j])) {
+          j++;
+        }
+
+        const tiedBlockEndsAtOrBeforeCutoff = j <= places;
+        const tiedBlockCrossesCutoff = i < places && j > places;
+
+        if (tiedBlockEndsAtOrBeforeCutoff) {
+          for (let k = i; k < j; k++) {
+            output.push(ranked[k]);
+          }
+        } else if (tiedBlockCrossesCutoff) {
+          break;
+        } else {
+          break;
+        }
+
+        i = j;
+      }
+
+      return output;
+    }
+
+    function clearRowAtPosition(ranked, positionIndex) {
+      const row = ranked[positionIndex];
+
+      if (!row) {
+        return null;
+      }
+
+      const tiedRows = ranked.filter(function(otherRow) {
+        return rowsTiedOnScoreAndGd(row, otherRow);
+      });
+
+      return tiedRows.length === 1 ? row : null;
+    }
+
+    function currentQualifiers() {
+      const allGroups = grouped(rows);
+      const topTwoKeys = {};
+      const thirdPlaced = [];
+      const confirmedKeys = confirmedQualifierKeys();
+
+      Object.keys(allGroups).forEach(function(groupName) {
+        const groupRows = allGroups[groupName];
+
+        const groupHasStarted = groupRows.some(function(row) {
+          return row.score > 0 || row.gd !== 0 || Number(row.played || 0) > 0;
+        });
+
+        if (!groupHasStarted) {
+          return;
+        }
+
+        const ranked = sortByStandingForLogic(groupRows);
+
+        // Only mark automatic qualifiers when the top-two boundary is clear.
+        // If a tied block crosses 2nd/3rd place, nobody in that tied block is
+        // highlighted just because of alphabetical order.
+        clearRowsAboveCutoff(ranked, 2).forEach(function(row) {
+          topTwoKeys[rowKey(row)] = true;
+        });
+
+        // Only pass a team into the best-third calculation when third place
+        // itself is unique on points + GD. If 3rd is tied with 2nd or 4th,
+        // there is no clear third-placed team yet.
+        const clearThird = clearRowAtPosition(ranked, 2);
+
+        if (clearThird) {
+          thirdPlaced.push(clearThird);
+        }
+      });
+
+      const rankedThirdPlaced = sortByStandingForLogic(thirdPlaced);
+      const bestThirdKeys = {};
+
+      clearRowsAboveCutoff(rankedThirdPlaced, 8).forEach(function(row) {
+        bestThirdKeys[rowKey(row)] = true;
+      });
+
+      return {
+        topTwoKeys: topTwoKeys,
+        bestThirdKeys: bestThirdKeys,
+        confirmedKeys: confirmedKeys
+      };
+    }
+
+    const GROUP_STAGE_MATCHES = 3;
+    const BEST_THIRD_PLACE_QUALIFIERS = 8;
+
+    // Fixed group draw order. This prevents the qualification simulator from
+    // depending on whatever order Google Sheets returns rows in.
+    const GROUP_TEAM_ORDER = {
+      "group a": ["Mexico", "South Africa", "Korea", "Czechia"],
+      "group b": ["Canada", "Bosnia", "Qatar", "Switzerland"],
+      "group c": ["Brazil", "Morocco", "Haiti", "Scotland"],
+      "group d": ["USA", "Paraguay", "Australia", "Türkiye"],
+      "group e": ["Germany", "Curaçao", "Ivory Coast", "Ecuador"],
+      "group f": ["Netherlands", "Japan", "Sweden", "Tunisia"],
+      "group g": ["Belgium", "Egypt", "Iran", "New Zealand"],
+      "group h": ["Spain", "Cape Verde", "Saudi Arabia", "Uruguay"],
+      "group i": ["France", "Senegal", "Iraq", "Norway"],
+      "group j": ["Argentina", "Algeria", "Austria", "Jordan"],
+      "group k": ["Portugal", "DR Congo", "Uzbekistan", "Colombia"],
+      "group l": ["England", "Croatia", "Ghana", "Panama"]
+    };
+
+    function confirmedQualifierKeys() {
+      return Object.assign(
+        {},
+        confirmedFromKnockoutTab(),
+        confirmedFromGroupStandings()
+      );
+    }
+
+    function confirmedFromKnockoutTab() {
+      const rowKeysByCountry = {};
+      const confirmedKeys = {};
+
+      rows.forEach(function(row) {
+        rowKeysByCountry[countryLookupKey(row.country)] = rowKey(row);
+      });
+
+      knockoutRows.forEach(function(match) {
+        [match.team1, match.team2].forEach(function(team) {
+          const lookupKey = countryLookupKey(team);
+          const matchedRowKey = rowKeysByCountry[lookupKey];
+
+          if (matchedRowKey) {
+            confirmedKeys[matchedRowKey] = true;
+          }
+        });
+      });
+
+      return confirmedKeys;
+    }
+
+    function confirmedFromGroupStandings() {
+      const confirmedKeys = {};
+      const allGroups = grouped(rows);
+      const outcomesByGroup = {};
+      const maxThirdPointsByGroup = {};
+
+      Object.keys(allGroups).forEach(function(groupName) {
+        const groupRows = allGroups[groupName];
+        const outcomes = simulateGroupPointOutcomes(groupRows);
+
+        outcomesByGroup[groupName] = outcomes;
+        maxThirdPointsByGroup[groupName] = outcomes
+          ? maxThirdPointsFromOutcomes(outcomes)
+          : null;
+      });
+
+      Object.keys(allGroups).forEach(function(groupName) {
+        const groupRows = allGroups[groupName];
+        const outcomes = outcomesByGroup[groupName];
+
+        groupRows.forEach(function(row) {
+          if (isGuaranteedQualifiedFromStandings(row, groupName, groupRows, outcomes, maxThirdPointsByGroup)) {
+            confirmedKeys[rowKey(row)] = true;
+          }
+        });
+      });
+
+      return confirmedKeys;
+    }
+
+    function hasValidPlayedData(row) {
+      const played = Number(row.played);
+      return Number.isFinite(played) && played >= 0 && played <= GROUP_STAGE_MATCHES;
+    }
+
+    function hasUsableGroupPlayedData(groupRows) {
+      if (!groupRows || groupRows.length !== 4) {
+        return false;
+      }
+
+      if (!groupRows.every(hasValidPlayedData)) {
+        return false;
+      }
+
+      const totalPlayed = groupRows.reduce(function(total, row) {
+        return total + Number(row.played);
+      }, 0);
+
+      // Every completed fixture adds one played match to two teams.
+      return totalPlayed % 2 === 0;
+    }
+
+    function officialFixtureRowsForGroup(groupRows) {
+      // This uses the normal four-team group fixture pattern:
+      // 1 v 2, 3 v 4, 4 v 2, 1 v 3, 4 v 1, 2 v 3.
+      // The 1/2/3/4 positions now come from GROUP_TEAM_ORDER above, not from
+      // the live row order returned by Google Sheets.
+      if (!hasUsableGroupPlayedData(groupRows)) {
+        return null;
+      }
+
+      const orderedRows = orderedRowsForGroup(groupRows[0] ? groupRows[0].group : "", groupRows);
+
+      if (!orderedRows || orderedRows.length !== 4) {
+        return null;
+      }
+
+      return [
+        [orderedRows[0], orderedRows[1]],
+        [orderedRows[2], orderedRows[3]],
+        [orderedRows[3], orderedRows[1]],
+        [orderedRows[0], orderedRows[2]],
+        [orderedRows[3], orderedRows[0]],
+        [orderedRows[1], orderedRows[2]]
+      ].map(function(pair) {
+        return {
+          team1: pair[0],
+          team2: pair[1]
+        };
+      });
+    }
+
+    function groupLookupKey(groupName) {
+      return lower(groupName).replace(/\s+/g, " ");
+    }
+
+    function orderedRowsForGroup(groupName, groupRows) {
+      const officialOrder = GROUP_TEAM_ORDER[groupLookupKey(groupName)];
+
+      if (!officialOrder) {
+        return groupRows.slice();
+      }
+
+      const rowsByCountry = {};
+
+      groupRows.forEach(function(row) {
+        rowsByCountry[countryLookupKey(row.country)] = row;
+      });
+
+      const orderedRows = officialOrder
+        .map(function(country) {
+          return rowsByCountry[countryLookupKey(country)];
+        })
+        .filter(Boolean);
+
+      // If the sheet names do not match the fixed order, do not guess.
+      // Returning null makes the confirmed badge fall back to Knockout-tab
+      // confirmation rather than producing a false lock-in.
+      return orderedRows.length === groupRows.length ? orderedRows : null;
+    }
+
+    function remainingOfficialFixtures(groupRows, fixtureRows) {
+      const playedSlots = {};
+
+      groupRows.forEach(function(row) {
+        playedSlots[rowKey(row)] = Number(row.played);
+      });
+
+      return fixtureRows.filter(function(fixture) {
+        const team1Key = rowKey(fixture.team1);
+        const team2Key = rowKey(fixture.team2);
+
+        // Consume already-played fixtures in fixture order. This keeps the
+        // maths aligned with each team playing exactly three group games.
+        if (playedSlots[team1Key] > 0 && playedSlots[team2Key] > 0) {
+          playedSlots[team1Key] -= 1;
+          playedSlots[team2Key] -= 1;
+          return false;
+        }
+
+        return true;
+      });
+    }
+
+    function simulateGroupPointOutcomes(groupRows) {
+      const fixtureRows = officialFixtureRowsForGroup(groupRows);
+
+      if (!fixtureRows) {
+        return null;
+      }
+
+      const remainingFixtures = remainingOfficialFixtures(groupRows, fixtureRows);
+      const initialPoints = {};
+
+      groupRows.forEach(function(row) {
+        initialPoints[rowKey(row)] = Number(row.score);
+      });
+
+      const outcomes = [];
+
+      function simulate(index, points) {
+        if (index >= remainingFixtures.length) {
+          outcomes.push(Object.assign({}, points));
+          return;
+        }
+
+        const fixture = remainingFixtures[index];
+        const team1Key = rowKey(fixture.team1);
+        const team2Key = rowKey(fixture.team2);
+
+        let next = Object.assign({}, points);
+        next[team1Key] += 3;
+        simulate(index + 1, next);
+
+        next = Object.assign({}, points);
+        next[team1Key] += 1;
+        next[team2Key] += 1;
+        simulate(index + 1, next);
+
+        next = Object.assign({}, points);
+        next[team2Key] += 3;
+        simulate(index + 1, next);
+      }
+
+      simulate(0, initialPoints);
+      return outcomes;
+    }
+
+    function thirdPlacePointsFromOutcome(points) {
+      const sortedPoints = Object.values(points).sort(function(a, b) {
+        return b - a;
+      });
+
+      return sortedPoints[2] == null ? 0 : sortedPoints[2];
+    }
+
+    function maxThirdPointsFromOutcomes(outcomes) {
+      return Math.max.apply(null, outcomes.map(thirdPlacePointsFromOutcome));
+    }
+
+    function worstPointRankForRow(points, row) {
+      const targetPoints = points[rowKey(row)];
+      let rank = 0;
+
+      Object.keys(points).forEach(function(key) {
+        // Equal points are treated as dangerous because future GD/tie-breakers
+        // are not fully known here.
+        if (points[key] >= targetPoints) {
+          rank += 1;
+        }
+      });
+
+      return rank;
+    }
+
+    function isGuaranteedQualifiedFromStandings(row, groupName, groupRows, outcomes, maxThirdPointsByGroup) {
+      if (!outcomes || !outcomes.length) {
+        return false;
+      }
+
+      // If the group is complete, there are no future results left to model.
+      // At that point, current points + GD can safely decide the top-two places.
+      // This fixes cases such as Canada and Bosnia both finishing on 4 points,
+      // where Canada should be confirmed because its GD is better.
+      if (isGroupComplete(groupRows)) {
+        if (finalTopTwoRows(groupRows).some(function(qualifiedRow) {
+          return rowKey(qualifiedRow) === rowKey(row);
+        })) {
+          return true;
+        }
+
+        // Once the whole group stage is complete, the third-placed teams can
+        // also be locked using the final points + GD table. If the 8th/9th
+        // best-third cutoff is tied on points + GD, the script stays cautious.
+        if (isEntireGroupStageComplete()) {
+          return finalBestThirdRows().some(function(qualifiedRow) {
+            return rowKey(qualifiedRow) === rowKey(row);
+          });
+        }
+
+        // If this group is complete but other groups are still live, a team in
+        // third can only be confirmed through the best-third route if too few
+        // other groups can still produce a third-placed team with at least the
+        // same points. Equal points are treated cautiously while other groups
+        // can still change GD.
+        const thirdRow = finalThirdRow(groupRows);
+        if (!thirdRow || rowKey(thirdRow) !== rowKey(row)) {
+          return false;
+        }
+
+        return isThirdPlacedRowGuaranteedByPoints(row, groupName, maxThirdPointsByGroup);
+      }
+
+      return outcomes.every(function(points) {
+        const worstRank = worstPointRankForRow(points, row);
+
+        // In every possible remaining outcome, this team is still top two on
+        // points alone. Equal points remain dangerous while the group is live,
+        // because future GD swings can still change the order.
+        if (worstRank <= 2) {
+          return true;
+        }
+
+        // If it could finish fourth after ties/tie-breaks, it is not locked in.
+        if (worstRank > 3) {
+          return false;
+        }
+
+        // Best-third route. This is intentionally conservative: equal points
+        // in another group are treated as not locked because GD could still decide it.
+        const candidatePoints = points[rowKey(row)];
+        return isThirdPlacedPointsTotalGuaranteed(candidatePoints, groupName, maxThirdPointsByGroup);
+      });
+    }
+
+    function isThirdPlacedRowGuaranteedByPoints(row, groupName, maxThirdPointsByGroup) {
+      return isThirdPlacedPointsTotalGuaranteed(Number(row.score), groupName, maxThirdPointsByGroup);
+    }
+
+    function isThirdPlacedPointsTotalGuaranteed(candidatePoints, groupName, maxThirdPointsByGroup) {
+      let otherGroupsThatCouldBeatOrTie = 0;
+
+      Object.entries(maxThirdPointsByGroup).forEach(function(entry) {
+        const otherGroup = entry[0];
+        const possibleThirdPoints = entry[1];
+
+        if (otherGroup === groupName) {
+          return;
+        }
+
+        if (possibleThirdPoints == null || possibleThirdPoints >= candidatePoints) {
+          otherGroupsThatCouldBeatOrTie += 1;
+        }
+      });
+
+      return otherGroupsThatCouldBeatOrTie <= BEST_THIRD_PLACE_QUALIFIERS - 1;
+    }
+
+    function isEntireGroupStageComplete() {
+      const allGroups = grouped(rows);
+      const groupNames = Object.keys(allGroups);
+
+      if (!groupNames.length) {
+        return false;
+      }
+
+      return groupNames.every(function(groupName) {
+        return isGroupComplete(allGroups[groupName]);
+      });
+    }
+
+    function isGroupComplete(groupRows) {
+      return groupRows &&
+        groupRows.length === 4 &&
+        groupRows.every(function(row) {
+          return hasValidPlayedData(row) && Number(row.played) === GROUP_STAGE_MATCHES;
+        });
+    }
+
+    function compareCurrentStanding(a, b) {
+      return b.score - a.score || b.gd - a.gd;
+    }
+
+    function rowsTiedOnCurrentStanding(a, b) {
+      return a && b && a.score === b.score && a.gd === b.gd;
+    }
+
+    function finalTopTwoRows(groupRows) {
+      const ranked = groupRows.slice().sort(compareCurrentStanding);
+      const output = [];
+      let i = 0;
+
+      while (i < ranked.length) {
+        let j = i + 1;
+
+        while (j < ranked.length && rowsTiedOnCurrentStanding(ranked[i], ranked[j])) {
+          j++;
+        }
+
+        const tiedBlockEndsAtOrBeforeTopTwo = j <= 2;
+        const tiedBlockCrossesTopTwoCutoff = i < 2 && j > 2;
+
+        if (tiedBlockEndsAtOrBeforeTopTwo) {
+          for (let k = i; k < j; k++) {
+            output.push(ranked[k]);
+          }
+        } else if (tiedBlockCrossesTopTwoCutoff) {
+          break;
+        } else {
+          break;
+        }
+
+        i = j;
+      }
+
+      return output;
+    }
+
+    function finalThirdRow(groupRows) {
+      const ranked = groupRows.slice().sort(compareCurrentStanding);
+      const thirdRow = ranked[2];
+
+      if (!thirdRow) {
+        return null;
+      }
+
+      // Do not claim a locked third place if the points + GD tie crosses
+      // either the 2nd/3rd boundary or the 3rd/4th boundary. There may be
+      // further FIFA tie-breakers, but they are not in the sheet.
+      const tiedRows = ranked.filter(function(row) {
+        return rowsTiedOnCurrentStanding(row, thirdRow);
+      });
+
+      return tiedRows.length === 1 ? thirdRow : null;
+    }
+
+    function finalBestThirdRows() {
+      if (!isEntireGroupStageComplete()) {
+        return [];
+      }
+
+      const thirdRows = [];
+      const allGroups = grouped(rows);
+
+      Object.keys(allGroups).forEach(function(groupName) {
+        const groupRows = allGroups[groupName];
+        const thirdRow = finalThirdRow(groupRows);
+
+        if (thirdRow) {
+          thirdRows.push(thirdRow);
+        }
+      });
+
+      const rankedThirdRows = thirdRows.slice().sort(compareCurrentStanding);
+      return clearRowsAboveCutoff(rankedThirdRows, BEST_THIRD_PLACE_QUALIFIERS);
+    }
+
+    function countryLookupKey(country) {
+      const value = lower(country)
+        .replace(/&/g, "and")
+        .replace(/[.’']/g, "")
+        .replace(/\./g, "")
+        .replace(/\s+/g, " ");
+
+      const aliases = {
+        "united states": "usa",
+        "us": "usa",
+        "u s a": "usa",
+        "south korea": "korea",
+        "korea republic": "korea",
+        "republic of korea": "korea",
+        "bosnia and herzegovina": "bosnia",
+        "czech republic": "czechia",
+        "türkiye": "turkey",
+        "turkiye": "turkey",
+        "curaçao": "curacao",
+        "côte divoire": "ivory coast",
+        "côte d ivoire": "ivory coast",
+        "cote divoire": "ivory coast",
+        "cote d ivoire": "ivory coast",
+        "ivory coast cote divoire": "ivory coast",
+        "democratic republic of congo": "dr congo",
+        "d r congo": "dr congo",
+        "drc": "dr congo",
+        "congo dr": "dr congo",
+        "congo democratic republic": "dr congo",
+        "ir iran": "iran"
+      };
+
+      return aliases[value] || value;
+    }
+
+    function rowKey(row) {
+      return row.group + "|" + row.country;
+    }
+
+    function worldRankingBadge(row) {
+      if (!row.worldRanking) {
+        return "";
+      }
+
+      return '<span class="world-ranking-badge">WR ' + escapeHtml(row.worldRanking) + '</span>';
+    }
+
+    function formatGd(gd) {
+      const value = Number(gd || 0);
+      return value > 0 ? "+" + value : String(value);
+    }
+
+    function qualificationBadge(row, qualifiers) {
+      const key = rowKey(row);
+
+      // Confirmed qualification is based on the Knockout tab OR standings maths.
+      // It overrides the projected/current qualifying badges.
+      if (qualifiers.confirmedKeys[key]) {
+        return '<span class="qualify-badge confirmed-badge">✓ Confirmed Q</span>';
+      }
+
+      if (qualifiers.topTwoKeys[key]) {
+        return '<span class="qualify-badge">Projected Q</span>';
+      }
+
+      if (qualifiers.bestThirdKeys[key]) {
+        return '<span class="qualify-badge third-badge">Best 3rd Q</span>';
+      }
+
+      return "";
+    }
+
+    function qualificationRowClass(row, qualifiers) {
+      const key = rowKey(row);
+
+      // Confirmed qualification is based on the Knockout tab OR standings maths.
+      // It overrides the projected/current qualifying row colour.
+      if (qualifiers.confirmedKeys[key]) {
+        return "confirmed-row";
+      }
+
+      if (qualifiers.topTwoKeys[key]) {
+        return "qualify-row";
+      }
+
+      if (qualifiers.bestThirdKeys[key]) {
+        return "third-place-row";
+      }
+
+      return "";
+    }
+
+    function renderGroups() {
+      const groups = grouped(visibleRows());
+      const qualifiers = currentQualifiers();
+      const groupNames = Object.keys(groups).sort(function(a, b) {
+        return a.localeCompare(b, undefined, { numeric: true });
+      });
+
+      if (!groupNames.length) {
+        byId("groupsGrid").innerHTML =
+          '<div class="empty">No groups match this search/filter.</div>';
+        return;
+      }
+
+      byId("groupsGrid").innerHTML = groupNames.map(function(groupName) {
+        const list = sortHighToLow(groups[groupName], true);
+
+        return '<article class="group-card">' +
+          '<h3><span>' + escapeHtml(groupName) + '</span></h3>' +
+          '<table>' +
+            '<colgroup>' +
+              '<col class="rank-col">' +
+              '<col class="country-col">' +
+              '<col class="player-col">' +
+              '<col class="points-col">' +
+              '<col class="gd-col">' +
+            '</colgroup>' +
+            '<thead>' +
+              '<tr>' +
+                '<th>#</th>' +
+                '<th>Country</th>' +
+                '<th>Player</th>' +
+                '<th>Pts</th>' +
+                '<th>GD</th>' +
+              '</tr>' +
+            '</thead>' +
+            '<tbody>' +
+              list.map(function(row, index) {
+                return '<tr class="' + qualificationRowClass(row, qualifiers) + '">' +
+                  '<td><span class="rank ' + (index === 0 && row.participant ? "gold" : "") + '">' + (index + 1) + '</span></td>' +
+                  '<td class="country"><span class="country-name">' + countryWithFlag(row.country) + '</span><div class="country-badges">' + worldRankingBadge(row) + qualificationBadge(row, qualifiers) + '</div></td>' +
+                  '<td>' +
+                    (row.participant
+                      ? '<span class="participant">' + escapeHtml(row.participant) + '</span>'
+                      : '<span class="muted">Unassigned</span>') +
+                  '</td>' +
+                  '<td class="score">' + escapeHtml(row.score) + '</td>' +
+                  '<td class="score gd">' + escapeHtml(formatGd(row.gd)) + '</td>' +
+                '</tr>';
+              }).join("") +
+            '</tbody>' +
+          '</table>' +
+        '</article>';
+      }).join("");
+    }
+
+    function renderKnockout() {
+      const target = byId("knockoutTable");
+
+      if (knockoutError) {
+        target.innerHTML =
+          '<div class="empty">Create a sheet tab called <strong>Knockout</strong> with columns: <strong>Round</strong>, <strong>Match</strong>, <strong>Team 1</strong>, <strong>Team 2</strong>, <strong>Winner</strong>. The page will then draw the bracket here.</div>';
+        return;
+      }
+
+      if (!knockoutRows.length) {
+        target.innerHTML =
+          '<div class="empty">The Knockout tab is empty. Add the Round and Match rows first, then fill Team 1, Team 2 and Winner as the tournament progresses.</div>';
+        return;
+      }
+
+      const round32 = getRoundMatches("Round of 32", 16);
+      const round16 = getRoundMatches("Round of 16", 8);
+      const quarters = getRoundMatches("Quarter-final", 4);
+      const semis = getRoundMatches("Semi-final", 2);
+      const finalRows = getRoundMatches("Final", 1);
+      const thirdRows = getRoundMatches("Third-place", 1);
+
+      const html =
+        '<div class="bracket-scroll">' +
+          '<div id="bracketStage" class="bracket-stage">' +
+            '<svg id="bracketLines" class="bracket-lines" aria-hidden="true"></svg>' +
+            '<div class="bracket-grid">' +
+              renderBracketColumn("Round of 32", round32.slice(0, 8), "left", "") +
+              renderBracketColumn("Round of 16", round16.slice(0, 4), "left", "compact") +
+              renderBracketColumn("Quarter-finals", quarters.slice(0, 2), "left", "tight") +
+              renderBracketColumn("Semi-finals", semis.slice(0, 1), "left", "semi") +
+              renderCentreColumn(finalRows[0], thirdRows[0]) +
+              renderBracketColumn("Semi-finals", semis.slice(1, 2), "right", "semi") +
+              renderBracketColumn("Quarter-finals", quarters.slice(2, 4), "right", "tight") +
+              renderBracketColumn("Round of 16", round16.slice(4, 8), "right", "compact") +
+              renderBracketColumn("Round of 32", round32.slice(8, 16), "right", "") +
+            '</div>' +
+          '</div>' +
+        '</div>';
+
+      target.innerHTML = html;
+      requestAnimationFrame(drawKnockoutLines);
+    }
+
+    function getRoundMatches(roundName, expectedCount) {
+      const matches = knockoutRows
+        .filter(function(row) {
+          return normaliseRound(row.round) === roundName;
+        })
+        .sort(function(a, b) {
+          return Number(a.match || 0) - Number(b.match || 0);
+        });
+
+      const byMatch = {};
+
+      matches.forEach(function(row, index) {
+        const number = Number(row.match);
+        const key = Number.isFinite(number) && number > 0 ? String(number) : String(index + 1);
+        byMatch[key] = row;
+      });
+
+      const output = [];
+
+      for (let i = 1; i <= expectedCount; i++) {
+        output.push(byMatch[String(i)] || {
+          round: roundName,
+          match: String(i),
+          team1: "",
+          team2: "",
+          winner: ""
+        });
+      }
+
+      return output;
+    }
+
+    function bracketId(round, match) {
+      const normalised = normaliseRound(round);
+      let prefix = "other";
+
+      if (normalised === "Round of 32") prefix = "r32";
+      if (normalised === "Round of 16") prefix = "r16";
+      if (normalised === "Quarter-final") prefix = "qf";
+      if (normalised === "Semi-final") prefix = "sf";
+      if (normalised === "Final") prefix = "final";
+      if (normalised === "Third-place") prefix = "third";
+
+      return prefix + "-" + String(match || "1").replace(/[^0-9a-zA-Z_-]/g, "");
+    }
+
+    function renderBracketColumn(title, matches, side, sizeClass) {
+      return '<section class="round-column ' + side + ' ' + sizeClass + '">' +
+        '<h3 class="round-title">' + escapeHtml(title) + '</h3>' +
+        '<div class="round-matches">' +
+          matches.map(function(match) {
+            return '<div class="match-slot">' + renderMatchCard(match, "") + '</div>';
+          }).join("") +
+        '</div>' +
+      '</section>';
+    }
+
+    function renderCentreColumn(finalMatchRow, thirdPlaceRow) {
+      return '<section class="round-column center">' +
+        '<div class="centre-finals-stack">' +
+          '<div>' +
+            '<h3 class="center-title">Final</h3>' +
+            '<div class="match-slot">' + renderMatchCard(finalMatchRow, "final-card") + '</div>' +
+          '</div>' +
+          '<div>' +
+            '<h3 class="center-title">Third-place</h3>' +
+            '<div class="match-slot">' + renderMatchCard(thirdPlaceRow, "third-card") + '</div>' +
+          '</div>' +
+        '</div>' +
+      '</section>';
+    }
+
+    function renderMatchCard(match, extraClass) {
+      return '<article class="match-card ' + (extraClass || "") + '" data-bracket-id="' + escapeHtml(bracketId(match.round, match.match)) + '">' +
+        '<div class="match-label"><span>Match ' + escapeHtml(match.match || '-') + '</span><span>' + escapeHtml(normaliseRound(match.round)) + '</span></div>' +
+        renderTeamLine(match.team1, match.winner) +
+        renderTeamLine(match.team2, match.winner) +
+      '</article>';
+    }
+
+    function drawKnockoutLines() {
+      const stage = byId("bracketStage");
+      const svg = byId("bracketLines");
+
+      if (!stage || !svg || byId("knockoutView").classList.contains("active") === false) {
+        return;
+      }
+
+      const stageRect = stage.getBoundingClientRect();
+      svg.setAttribute("viewBox", "0 0 " + stageRect.width + " " + stageRect.height);
+      svg.setAttribute("width", stageRect.width);
+      svg.setAttribute("height", stageRect.height);
+      svg.innerHTML = "";
+
+      const connections = knockoutConnections();
+
+      connections.forEach(function(connection) {
+        const from = findBracketCard(connection.from);
+        const to = findBracketCard(connection.to);
+
+        if (!from || !to) return;
+
+        const fromRect = from.getBoundingClientRect();
+        const toRect = to.getBoundingClientRect();
+        const side = connection.side;
+
+        const startX = side === "left"
+          ? fromRect.right - stageRect.left
+          : fromRect.left - stageRect.left;
+        const startY = fromRect.top + fromRect.height / 2 - stageRect.top;
+        const endX = side === "left"
+          ? toRect.left - stageRect.left
+          : toRect.right - stageRect.left;
+        const endY = toRect.top + toRect.height / 2 - stageRect.top;
+        const middleX = side === "left"
+          ? startX + Math.max(18, (endX - startX) / 2)
+          : startX - Math.max(18, (startX - endX) / 2);
+
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", "M " + startX + " " + startY + " H " + middleX + " V " + endY + " H " + endX);
+        if (connection.dashed) path.setAttribute("class", "dashed");
+        svg.appendChild(path);
+      });
+    }
+
+    function findBracketCard(id) {
+      return document.querySelector('[data-bracket-id="' + id + '"]');
+    }
+
+    function knockoutConnections() {
+      const connections = [];
+
+      function add(from, to, side, dashed) {
+        connections.push({ from: from, to: to, side: side, dashed: !!dashed });
+      }
+
+      for (let i = 1; i <= 16; i += 2) {
+        const target = "r16-" + Math.ceil(i / 2);
+        const side = i <= 7 ? "left" : "right";
+        add("r32-" + i, target, side, false);
+        add("r32-" + (i + 1), target, side, false);
+      }
+
+      add("r16-1", "qf-1", "left", false);
+      add("r16-2", "qf-1", "left", false);
+      add("r16-3", "qf-2", "left", false);
+      add("r16-4", "qf-2", "left", false);
+      add("qf-1", "sf-1", "left", false);
+      add("qf-2", "sf-1", "left", false);
+      add("sf-1", "final-1", "left", false);
+      add("sf-1", "third-1", "left", true);
+
+      add("r16-5", "qf-3", "right", false);
+      add("r16-6", "qf-3", "right", false);
+      add("r16-7", "qf-4", "right", false);
+      add("r16-8", "qf-4", "right", false);
+      add("qf-3", "sf-2", "right", false);
+      add("qf-4", "sf-2", "right", false);
+      add("sf-2", "final-1", "right", false);
+      add("sf-2", "third-1", "right", true);
+
+      return connections;
+    }
+
+    function renderTeamLine(team, winner) {
+      const isWinner = team && winner && lower(team) === lower(winner);
+      const entry = team ? entryForCountry(team) : null;
+      const participant = entry && entry.participant ? escapeHtml(entry.participant) : "";
+      const countryText = team ? countryWithFlag(team) : '<span class="muted">TBC</span>';
+      const playerText = team
+        ? (participant ? participant : '<span class="muted">No player yet</span>')
+        : '<span class="muted">Awaiting fixture</span>';
+
+      return '<div class="team-line ' + (isWinner ? 'winner' : '') + '">' +
+        '<span class="team-country">' + countryText + '</span>' +
+        '<span class="team-player">' + playerText + '</span>' +
+      '</div>';
+    }
+
+    function prizeEntryHtml(entries) {
+      if (!entries || !entries.length) {
+        return '<span class="muted">-</span>';
+      }
+
+      return '<div class="badges">' +
+        entries.map(function(row) {
+          return '<span class="badge ' + (row.prizeGroup ? "green" : "gold") + '">' +
+            escapeHtml(row.participant) +
+            " - " +
+            countryWithFlag(row.country) +
+            (row.prizeGroup ? " (" + escapeHtml(row.prizeGroup) + ")" : "") +
+            " - Pts: " +
+            escapeHtml(row.score) +
+            " | GD: " +
+            escapeHtml(formatGd(row.gd)) +
+          '</span>';
+        }).join("") +
+      '</div>';
+    }
+
+    function renderPrizes() {
+      const prizes = getPrizes();
+
+      const prizeRows = [
+        ["1st Place", prizeAmounts.first, prizes.first],
+        ["2nd Place", prizeAmounts.second, prizes.second],
+        ["3rd Place", prizeAmounts.third, prizes.third],
+        ["Loser", prizeAmounts.loser, prizes.loser],
+        ["Top of the group", prizeAmounts.group, prizes.groupWinners]
+      ];
+
+      byId("prizeTable").innerHTML =
+        '<table>' +
+          '<thead>' +
+            '<tr>' +
+              '<th>Prize</th>' +
+              '<th>Amount</th>' +
+              '<th>Current winner(s)</th>' +
+            '</tr>' +
+          '</thead>' +
+          '<tbody>' +
+            prizeRows.map(function(row) {
+              return '<tr>' +
+                '<td><strong>' + row[0] + '</strong></td>' +
+                '<td class="score">' + row[1] + '</td>' +
+                '<td>' + prizeEntryHtml(row[2]) + '</td>' +
+              '</tr>';
+            }).join("") +
+          '</tbody>' +
+        '</table>';
+    }
+
+    function redrawKnockoutLinesSoon() {
+      setTimeout(drawKnockoutLines, 50);
+      setTimeout(drawKnockoutLines, 250);
+      setTimeout(drawKnockoutLines, 600);
+    }
+
+    function bindEvents() {
+      byId("refreshButton").addEventListener("click", loadData);
+
+      byId("searchBox").addEventListener("input", function(event) {
+        searchText = event.target.value;
+        renderAll();
+      });
+
+      byId("groupSelect").addEventListener("change", function(event) {
+        selectedGroup = event.target.value;
+        renderAll();
+      });
+
+      document.querySelectorAll(".tab").forEach(function(button) {
+        button.addEventListener("click", function() {
+          document.querySelectorAll(".tab").forEach(function(tab) {
+            tab.classList.remove("active");
+          });
+
+          document.querySelectorAll(".view").forEach(function(view) {
+            view.classList.remove("active");
+          });
+
+          button.classList.add("active");
+          byId(button.dataset.target).classList.add("active");
+
+          if (button.dataset.target === "knockoutView") {
+            requestAnimationFrame(drawKnockoutLines);
+          }
+        });
+      });
+
+      window.addEventListener("resize", function() {
+        requestAnimationFrame(drawKnockoutLines);
+      });
+    }
+
+    bindEvents();
+    loadData();
+  </script>
+</body>
+</html>
