@@ -1836,6 +1836,7 @@
       const topTwoKeys = {};
       const thirdPlaced = [];
       const confirmedKeys = confirmedQualifierKeys();
+      const confirmedBestThirdKeys = confirmedBestThirdQualifierKeys();
 
       Object.keys(allGroups).forEach(function(groupName) {
         const groupRows = allGroups[groupName];
@@ -1877,7 +1878,8 @@
       return {
         topTwoKeys: topTwoKeys,
         bestThirdKeys: bestThirdKeys,
-        confirmedKeys: confirmedKeys
+        confirmedKeys: confirmedKeys,
+        confirmedBestThirdKeys: confirmedBestThirdKeys
       };
     }
 
@@ -1907,6 +1909,109 @@
         confirmedFromKnockoutTab(),
         confirmedFromGroupStandings()
       );
+    }
+
+    function confirmedBestThirdQualifierKeys() {
+      const confirmedBestThirdKeys = {};
+      const allGroups = grouped(rows);
+      const groupNames = Object.keys(allGroups);
+
+      if (!groupNames.length) {
+        return confirmedBestThirdKeys;
+      }
+
+      // Once every group has finished, use the final third-place table with
+      // points + GD, the same way the visible standings are ranked.
+      if (isEntireGroupStageComplete()) {
+        finalBestThirdRows().forEach(function(row) {
+          confirmedBestThirdKeys[rowKey(row)] = true;
+        });
+
+        return confirmedBestThirdKeys;
+      }
+
+      const outcomesByGroup = {};
+      const maxThirdPointsByGroup = {};
+
+      groupNames.forEach(function(groupName) {
+        const groupRows = allGroups[groupName];
+        const outcomes = simulateGroupPointOutcomes(groupRows);
+
+        outcomesByGroup[groupName] = outcomes;
+        maxThirdPointsByGroup[groupName] = outcomes
+          ? maxThirdPointsFromOutcomes(outcomes)
+          : null;
+      });
+
+      groupNames.forEach(function(groupName) {
+        const groupRows = allGroups[groupName];
+        const ranked = sortByStandingForLogic(groupRows);
+        const currentThird = clearRowAtPosition(ranked, 2);
+
+        // Do not lock a best-third badge if 3rd place itself is ambiguous on
+        // points + GD. This avoids showing a lock caused only by row order.
+        if (!currentThird) {
+          return;
+        }
+
+        if (isGroupComplete(groupRows)) {
+          const finalThird = finalThirdRow(groupRows);
+
+          if (
+            finalThird &&
+            rowKey(finalThird) === rowKey(currentThird) &&
+            isThirdPlacedRowGuaranteedByPoints(finalThird, groupName, maxThirdPointsByGroup)
+          ) {
+            confirmedBestThirdKeys[rowKey(finalThird)] = true;
+          }
+
+          return;
+        }
+
+        if (
+          isCurrentThirdGuaranteedToQualify(rowKey(currentThird), groupName, groupRows, outcomesByGroup[groupName], maxThirdPointsByGroup)
+        ) {
+          confirmedBestThirdKeys[rowKey(currentThird)] = true;
+        }
+      });
+
+      return confirmedBestThirdKeys;
+    }
+
+    function isCurrentThirdGuaranteedToQualify(rowKeyToCheck, groupName, groupRows, outcomes, maxThirdPointsByGroup) {
+      if (!outcomes || !outcomes.length) {
+        return false;
+      }
+
+      const row = groupRows.find(function(candidateRow) {
+        return rowKey(candidateRow) === rowKeyToCheck;
+      });
+
+      if (!row) {
+        return false;
+      }
+
+      return outcomes.every(function(points) {
+        const worstRank = worstPointRankForRow(points, row);
+
+        // If this current third-placed team ends up top two in a scenario, it
+        // is obviously safe in that scenario.
+        if (worstRank <= 2) {
+          return true;
+        }
+
+        // If it could end up fourth once ties/tie-breakers are considered, it
+        // is not locked yet.
+        if (worstRank > 3) {
+          return false;
+        }
+
+        // Otherwise it is third on points in this scenario. It is only locked
+        // if too few other groups can still produce a third-placed team with
+        // the same or more points.
+        const candidatePoints = points[rowKey(row)];
+        return isThirdPlacedPointsTotalGuaranteed(candidatePoints, groupName, maxThirdPointsByGroup);
+      });
     }
 
     function confirmedFromKnockoutTab() {
@@ -2375,6 +2480,10 @@
 
       // Confirmed qualification is based on the Knockout tab OR standings maths.
       // It overrides the projected/current qualifying badges.
+      if (qualifiers.confirmedBestThirdKeys && qualifiers.confirmedBestThirdKeys[key]) {
+        return '<span class="qualify-badge confirmed-badge">✓ Locked 3rd Q</span>';
+      }
+
       if (qualifiers.confirmedKeys[key]) {
         return '<span class="qualify-badge confirmed-badge">✓ Confirmed Q</span>';
       }
