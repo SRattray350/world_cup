@@ -1813,13 +1813,32 @@
       };
     }
 
+    const GROUP_STAGE_MATCHES = 3;
+    const BEST_THIRD_PLACE_QUALIFIERS = 8;
+
+    // Fixed group draw order. This prevents the qualification simulator from
+    // depending on whatever order Google Sheets returns rows in.
+    const GROUP_TEAM_ORDER = {
+      "group a": ["Mexico", "South Africa", "Korea", "Czechia"],
+      "group b": ["Canada", "Bosnia", "Qatar", "Switzerland"],
+      "group c": ["Brazil", "Morocco", "Haiti", "Scotland"],
+      "group d": ["USA", "Paraguay", "Australia", "Türkiye"],
+      "group e": ["Germany", "Curaçao", "Ivory Coast", "Ecuador"],
+      "group f": ["Netherlands", "Japan", "Sweden", "Tunisia"],
+      "group g": ["Belgium", "Egypt", "Iran", "New Zealand"],
+      "group h": ["Spain", "Cape Verde", "Saudi Arabia", "Uruguay"],
+      "group i": ["France", "Senegal", "Iraq", "Norway"],
+      "group j": ["Argentina", "Algeria", "Austria", "Jordan"],
+      "group k": ["Portugal", "DR Congo", "Uzbekistan", "Colombia"],
+      "group l": ["England", "Croatia", "Ghana", "Panama"]
+    };
+
     function confirmedQualifierKeys() {
-      const confirmedKeys = {};
-
-      Object.assign(confirmedKeys, confirmedFromKnockoutTab());
-      Object.assign(confirmedKeys, confirmedFromConservativeStandings());
-
-      return confirmedKeys;
+      return Object.assign(
+        {},
+        confirmedFromKnockoutTab(),
+        confirmedFromGroupStandings()
+      );
     }
 
     function confirmedFromKnockoutTab() {
@@ -1844,25 +1863,28 @@
       return confirmedKeys;
     }
 
-    function confirmedFromConservativeStandings() {
+    function confirmedFromGroupStandings() {
       const confirmedKeys = {};
       const allGroups = grouped(rows);
+      const outcomesByGroup = {};
+      const maxThirdPointsByGroup = {};
 
       Object.keys(allGroups).forEach(function(groupName) {
         const groupRows = allGroups[groupName];
+        const outcomes = simulateGroupPointOutcomes(groupRows);
 
-        // MP is required for standings-based confirmation. If it is missing,
-        // fall back to the Knockout tab only and do not guess.
-        const hasPlayedData = groupRows.every(function(row) {
-          return hasValidPlayedData(row);
-        });
+        outcomesByGroup[groupName] = outcomes;
+        maxThirdPointsByGroup[groupName] = outcomes
+          ? maxThirdPointsFromOutcomes(outcomes)
+          : null;
+      });
 
-        if (!hasPlayedData) {
-          return;
-        }
+      Object.keys(allGroups).forEach(function(groupName) {
+        const groupRows = allGroups[groupName];
+        const outcomes = outcomesByGroup[groupName];
 
         groupRows.forEach(function(row) {
-          if (isGuaranteedTopTwoByPoints(row, groupRows) || isSixPointThirdPlaceSafe(row)) {
+          if (isGuaranteedQualifiedFromStandings(row, groupName, groupRows, outcomes, maxThirdPointsByGroup)) {
             confirmedKeys[rowKey(row)] = true;
           }
         });
@@ -1873,44 +1895,276 @@
 
     function hasValidPlayedData(row) {
       const played = Number(row.played);
-      return Number.isFinite(played) && played >= 0 && played <= 3;
+      return Number.isFinite(played) && played >= 0 && played <= GROUP_STAGE_MATCHES;
     }
 
-    function maxPossiblePoints(row) {
-      const played = Number(row.played);
-
-      if (!Number.isFinite(played)) {
-        return row.score;
+    function hasUsableGroupPlayedData(groupRows) {
+      if (!groupRows || groupRows.length !== 4) {
+        return false;
       }
 
-      const remainingMatches = Math.max(0, 3 - played);
-      return row.score + remainingMatches * 3;
+      if (!groupRows.every(hasValidPlayedData)) {
+        return false;
+      }
+
+      const totalPlayed = groupRows.reduce(function(total, row) {
+        return total + Number(row.played);
+      }, 0);
+
+      // Every completed fixture adds one played match to two teams.
+      return totalPlayed % 2 === 0;
     }
 
-    function isGuaranteedTopTwoByPoints(row, groupRows) {
-      const currentPoints = Number(row.score);
+    function officialFixtureRowsForGroup(groupRows) {
+      // This uses the normal four-team group fixture pattern:
+      // 1 v 2, 3 v 4, 4 v 2, 1 v 3, 4 v 1, 2 v 3.
+      // The 1/2/3/4 positions now come from GROUP_TEAM_ORDER above, not from
+      // the live row order returned by Google Sheets.
+      if (!hasUsableGroupPlayedData(groupRows)) {
+        return null;
+      }
 
-      // Conservative rule: if two other teams can still catch or pass this
-      // team on points, do not mark it confirmed, because tie-breakers could
-      // still matter.
-      const rivalsWhoCanCatchOrPass = groupRows.filter(function(otherRow) {
-        if (rowKey(otherRow) === rowKey(row)) {
+      const orderedRows = orderedRowsForGroup(groupRows[0] ? groupRows[0].group : "", groupRows);
+
+      if (!orderedRows || orderedRows.length !== 4) {
+        return null;
+      }
+
+      return [
+        [orderedRows[0], orderedRows[1]],
+        [orderedRows[2], orderedRows[3]],
+        [orderedRows[3], orderedRows[1]],
+        [orderedRows[0], orderedRows[2]],
+        [orderedRows[3], orderedRows[0]],
+        [orderedRows[1], orderedRows[2]]
+      ].map(function(pair) {
+        return {
+          team1: pair[0],
+          team2: pair[1]
+        };
+      });
+    }
+
+    function groupLookupKey(groupName) {
+      return lower(groupName).replace(/\s+/g, " ");
+    }
+
+    function orderedRowsForGroup(groupName, groupRows) {
+      const officialOrder = GROUP_TEAM_ORDER[groupLookupKey(groupName)];
+
+      if (!officialOrder) {
+        return groupRows.slice();
+      }
+
+      const rowsByCountry = {};
+
+      groupRows.forEach(function(row) {
+        rowsByCountry[countryLookupKey(row.country)] = row;
+      });
+
+      const orderedRows = officialOrder
+        .map(function(country) {
+          return rowsByCountry[countryLookupKey(country)];
+        })
+        .filter(Boolean);
+
+      // If the sheet names do not match the fixed order, do not guess.
+      // Returning null makes the confirmed badge fall back to Knockout-tab
+      // confirmation rather than producing a false lock-in.
+      return orderedRows.length === groupRows.length ? orderedRows : null;
+    }
+
+    function remainingOfficialFixtures(groupRows, fixtureRows) {
+      const playedSlots = {};
+
+      groupRows.forEach(function(row) {
+        playedSlots[rowKey(row)] = Number(row.played);
+      });
+
+      return fixtureRows.filter(function(fixture) {
+        const team1Key = rowKey(fixture.team1);
+        const team2Key = rowKey(fixture.team2);
+
+        // Consume already-played fixtures in fixture order. This keeps the
+        // maths aligned with each team playing exactly three group games.
+        if (playedSlots[team1Key] > 0 && playedSlots[team2Key] > 0) {
+          playedSlots[team1Key] -= 1;
+          playedSlots[team2Key] -= 1;
           return false;
         }
 
-        return maxPossiblePoints(otherRow) >= currentPoints;
+        return true;
       });
-
-      return rivalsWhoCanCatchOrPass.length <= 1;
     }
 
-    function isSixPointThirdPlaceSafe(row) {
-      // 2026 format: eight of the twelve third-placed teams qualify.
-      // A team already on 6 points after at least two matches is safe for the
-      // practical Germany-style case where FIFA has confirmed qualification
-      // before the exact knockout slot is assigned. This deliberately does NOT
-      // confirm 3- or 4-point teams through the best-third route.
-      return Number(row.score) >= 6 && Number(row.played) >= 2;
+    function simulateGroupPointOutcomes(groupRows) {
+      const fixtureRows = officialFixtureRowsForGroup(groupRows);
+
+      if (!fixtureRows) {
+        return null;
+      }
+
+      const remainingFixtures = remainingOfficialFixtures(groupRows, fixtureRows);
+      const initialPoints = {};
+
+      groupRows.forEach(function(row) {
+        initialPoints[rowKey(row)] = Number(row.score);
+      });
+
+      const outcomes = [];
+
+      function simulate(index, points) {
+        if (index >= remainingFixtures.length) {
+          outcomes.push(Object.assign({}, points));
+          return;
+        }
+
+        const fixture = remainingFixtures[index];
+        const team1Key = rowKey(fixture.team1);
+        const team2Key = rowKey(fixture.team2);
+
+        let next = Object.assign({}, points);
+        next[team1Key] += 3;
+        simulate(index + 1, next);
+
+        next = Object.assign({}, points);
+        next[team1Key] += 1;
+        next[team2Key] += 1;
+        simulate(index + 1, next);
+
+        next = Object.assign({}, points);
+        next[team2Key] += 3;
+        simulate(index + 1, next);
+      }
+
+      simulate(0, initialPoints);
+      return outcomes;
+    }
+
+    function thirdPlacePointsFromOutcome(points) {
+      const sortedPoints = Object.values(points).sort(function(a, b) {
+        return b - a;
+      });
+
+      return sortedPoints[2] == null ? 0 : sortedPoints[2];
+    }
+
+    function maxThirdPointsFromOutcomes(outcomes) {
+      return Math.max.apply(null, outcomes.map(thirdPlacePointsFromOutcome));
+    }
+
+    function worstPointRankForRow(points, row) {
+      const targetPoints = points[rowKey(row)];
+      let rank = 0;
+
+      Object.keys(points).forEach(function(key) {
+        // Equal points are treated as dangerous because future GD/tie-breakers
+        // are not fully known here.
+        if (points[key] >= targetPoints) {
+          rank += 1;
+        }
+      });
+
+      return rank;
+    }
+
+    function isGuaranteedQualifiedFromStandings(row, groupName, groupRows, outcomes, maxThirdPointsByGroup) {
+      if (!outcomes || !outcomes.length) {
+        return false;
+      }
+
+      // If the group is complete, there are no future results left to model.
+      // At that point, current points + GD can safely decide the top-two places.
+      // This fixes cases such as Canada and Bosnia both finishing on 4 points,
+      // where Canada should be confirmed because its GD is better.
+      if (isGroupComplete(groupRows)) {
+        return finalTopTwoRows(groupRows).some(function(qualifiedRow) {
+          return rowKey(qualifiedRow) === rowKey(row);
+        });
+      }
+
+      return outcomes.every(function(points) {
+        const worstRank = worstPointRankForRow(points, row);
+
+        // In every possible remaining outcome, this team is still top two on
+        // points alone. Equal points remain dangerous while the group is live,
+        // because future GD swings can still change the order.
+        if (worstRank <= 2) {
+          return true;
+        }
+
+        // If it could finish fourth after ties/tie-breaks, it is not locked in.
+        if (worstRank > 3) {
+          return false;
+        }
+
+        // Best-third route. This is intentionally conservative: equal points
+        // in another group are treated as not locked because GD could still decide it.
+        const candidatePoints = points[rowKey(row)];
+        let otherGroupsThatCouldBeatOrTie = 0;
+
+        Object.entries(maxThirdPointsByGroup).forEach(function(entry) {
+          const otherGroup = entry[0];
+          const possibleThirdPoints = entry[1];
+
+          if (otherGroup === groupName) {
+            return;
+          }
+
+          if (possibleThirdPoints == null || possibleThirdPoints >= candidatePoints) {
+            otherGroupsThatCouldBeatOrTie += 1;
+          }
+        });
+
+        return otherGroupsThatCouldBeatOrTie <= BEST_THIRD_PLACE_QUALIFIERS - 1;
+      });
+    }
+
+    function isGroupComplete(groupRows) {
+      return groupRows &&
+        groupRows.length === 4 &&
+        groupRows.every(function(row) {
+          return hasValidPlayedData(row) && Number(row.played) === GROUP_STAGE_MATCHES;
+        });
+    }
+
+    function compareCurrentStanding(a, b) {
+      return b.score - a.score || b.gd - a.gd;
+    }
+
+    function rowsTiedOnCurrentStanding(a, b) {
+      return a && b && a.score === b.score && a.gd === b.gd;
+    }
+
+    function finalTopTwoRows(groupRows) {
+      const ranked = groupRows.slice().sort(compareCurrentStanding);
+      const output = [];
+      let i = 0;
+
+      while (i < ranked.length) {
+        let j = i + 1;
+
+        while (j < ranked.length && rowsTiedOnCurrentStanding(ranked[i], ranked[j])) {
+          j++;
+        }
+
+        const tiedBlockEndsAtOrBeforeTopTwo = j <= 2;
+        const tiedBlockCrossesTopTwoCutoff = i < 2 && j > 2;
+
+        if (tiedBlockEndsAtOrBeforeTopTwo) {
+          for (let k = i; k < j; k++) {
+            output.push(ranked[k]);
+          }
+        } else if (tiedBlockCrossesTopTwoCutoff) {
+          break;
+        } else {
+          break;
+        }
+
+        i = j;
+      }
+
+      return output;
     }
 
     function countryLookupKey(country) {
