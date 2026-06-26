@@ -2302,7 +2302,70 @@
     }
 
     function isThirdPlacedRowGuaranteedByPoints(row, groupName, maxThirdPointsByGroup) {
-      return isThirdPlacedPointsTotalGuaranteed(Number(row.score), groupName, maxThirdPointsByGroup);
+      // For a completed group third-place team, use the actual final standing
+      // where possible. This matters for cases like Ecuador: several completed
+      // groups may also have 4-point third-place teams, but if their GD is
+      // already worse they cannot overtake Ecuador.
+      return isThirdPlacedRowGuaranteedByStanding(row, groupName, maxThirdPointsByGroup);
+    }
+
+    function isThirdPlacedRowGuaranteedByStanding(candidateRow, groupName, maxThirdPointsByGroup) {
+      let otherGroupsThatCouldBeatOrTie = 0;
+      const allGroups = grouped(rows);
+
+      Object.entries(maxThirdPointsByGroup).forEach(function(entry) {
+        const otherGroup = entry[0];
+        const possibleThirdPoints = entry[1];
+        const otherGroupRows = allGroups[otherGroup];
+
+        if (otherGroup === groupName) {
+          return;
+        }
+
+        if (!otherGroupRows || possibleThirdPoints == null) {
+          otherGroupsThatCouldBeatOrTie += 1;
+          return;
+        }
+
+        if (isGroupComplete(otherGroupRows)) {
+          const otherFinalThird = finalThirdRow(otherGroupRows);
+
+          // If the final third-place row cannot be identified because the
+          // 2nd/3rd or 3rd/4th boundary is tied on points + GD, stay cautious.
+          if (!otherFinalThird) {
+            otherGroupsThatCouldBeatOrTie += 1;
+            return;
+          }
+
+          if (thirdPlacedRowCanBeatOrTieCandidate(otherFinalThird, candidateRow)) {
+            otherGroupsThatCouldBeatOrTie += 1;
+          }
+
+          return;
+        }
+
+        // For live groups, future GD is unknown, so equal possible points are
+        // still dangerous. This keeps the badge conservative until those groups finish.
+        if (possibleThirdPoints >= Number(candidateRow.score)) {
+          otherGroupsThatCouldBeatOrTie += 1;
+        }
+      });
+
+      return otherGroupsThatCouldBeatOrTie <= BEST_THIRD_PLACE_QUALIFIERS - 1;
+    }
+
+    function thirdPlacedRowCanBeatOrTieCandidate(otherThirdRow, candidateRow) {
+      if (Number(otherThirdRow.score) > Number(candidateRow.score)) {
+        return true;
+      }
+
+      if (Number(otherThirdRow.score) < Number(candidateRow.score)) {
+        return false;
+      }
+
+      // Equal GD is treated as dangerous because the sheet does not include
+      // deeper FIFA tie-breakers such as goals scored, head-to-head, fair play, etc.
+      return Number(otherThirdRow.gd) >= Number(candidateRow.gd);
     }
 
     function isThirdPlacedPointsTotalGuaranteed(candidatePoints, groupName, maxThirdPointsByGroup) {
@@ -2512,7 +2575,7 @@
 
       // Confirmed qualification is based on the Knockout tab OR standings maths.
       // It overrides the projected/current qualifying row colour.
-      if (qualifiers.confirmedKeys[key]) {
+      if (qualifiers.confirmedKeys[key] || (qualifiers.confirmedBestThirdKeys && qualifiers.confirmedBestThirdKeys[key])) {
         return "confirmed-row";
       }
 
