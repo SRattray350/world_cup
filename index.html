@@ -1169,6 +1169,7 @@
     const SHEET_ID = "1mXNPRmCqN9-Ml1CZxEitWlcjFvjRZHWNEkIzzicNeAQ";
     const COMPETITION_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?gid=1496784945&headers=1";
     const KNOCKOUT_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?sheet=Knockout&headers=1";
+    const KNOCKOUT_CSV_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:csv&sheet=Knockout&headers=1";
 
     let rows = [];
     let knockoutRows = [];
@@ -1189,7 +1190,10 @@
     }
 
     function clean(value) {
-      return String(value == null ? "" : value).trim();
+      return String(value == null ? "" : value)
+        .replace(/\u00a0/g, " ")
+        .replace(/[\u200B-\u200D\uFEFF]/g, "")
+        .trim();
     }
 
     function lower(value) {
@@ -1325,6 +1329,17 @@
       });
     }
 
+    async function loadText(url) {
+      const separator = url.includes("?") ? "&" : "?";
+      const response = await fetch(url + separator + "cache=" + Date.now(), { cache: "no-store" });
+
+      if (!response.ok) {
+        throw new Error("The Google Sheet CSV could not be loaded.");
+      }
+
+      return response.text();
+    }
+
     async function loadData() {
       try {
         setStatus("Loading sheet data...", false);
@@ -1334,11 +1349,19 @@
 
         knockoutError = "";
         try {
-          const knockoutResponse = await loadGviz(KNOCKOUT_URL);
-          knockoutRows = parseKnockoutResponse(knockoutResponse);
-        } catch (error) {
-          knockoutRows = [];
-          knockoutError = error.message;
+          const knockoutCsv = await loadText(KNOCKOUT_CSV_URL);
+          knockoutRows = parseKnockoutCsv(knockoutCsv);
+        } catch (csvError) {
+          // Fallback to GViz JSONP if CSV loading is blocked. CSV is preferred
+          // because it preserves UK-style text dates like 29/06/26, which GViz
+          // can otherwise treat as invalid US dates and return as blank cells.
+          try {
+            const knockoutResponse = await loadGviz(KNOCKOUT_URL);
+            knockoutRows = parseKnockoutResponse(knockoutResponse);
+          } catch (gvizError) {
+            knockoutRows = [];
+            knockoutError = csvError.message || gvizError.message;
+          }
         }
 
         renderAll();
@@ -1399,6 +1422,119 @@
         });
     }
 
+    function parseCsvLine(line) {
+      const cells = [];
+      let current = "";
+      let inQuotes = false;
+
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        const nextChar = line[i + 1];
+
+        if (char === '"') {
+          if (inQuotes && nextChar === '"') {
+            current += '"';
+            i += 1;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (char === "," && !inQuotes) {
+          cells.push(current);
+          current = "";
+        } else {
+          current += char;
+        }
+      }
+
+      cells.push(current);
+      return cells;
+    }
+
+    function parseCsv(text) {
+      const rows = [];
+      let line = "";
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const nextChar = text[i + 1];
+
+        if (char === '"') {
+          if (inQuotes && nextChar === '"') {
+            line += char + nextChar;
+            i += 1;
+          } else {
+            inQuotes = !inQuotes;
+            line += char;
+          }
+        } else if ((char === "\n" || char === "\r") && !inQuotes) {
+          if (char === "\r" && nextChar === "\n") {
+            i += 1;
+          }
+
+          if (line.length) {
+            rows.push(parseCsvLine(line));
+          }
+
+          line = "";
+        } else {
+          line += char;
+        }
+      }
+
+      if (line.length) {
+        rows.push(parseCsvLine(line));
+      }
+
+      return rows;
+    }
+
+    function parseKnockoutCsv(text) {
+      const tableRows = parseCsv(text);
+
+      if (!tableRows.length) {
+        throw new Error("The Knockout tab CSV was empty.");
+      }
+
+      const headers = tableRows[0].map(function(header) {
+        return lower(header).replace(/\s+/g, " ");
+      });
+
+      const roundIndex = findHeaderIndex(headers, ["round", "stage"]);
+      const matchIndex = findHeaderIndex(headers, ["match", "match no", "match number"]);
+      const team1Index = findHeaderIndex(headers, ["team 1", "team1", "country 1", "country1", "home"]);
+      const team2Index = findHeaderIndex(headers, ["team 2", "team2", "country 2", "country2", "away"]);
+      const winnerIndex = findHeaderIndex(headers, ["winner", "winning team"]);
+      const dateIndex = findHeaderIndex(headers, ["date", "match date", "kickoff date", "fixture date"]);
+      const timeIndex = findHeaderIndex(headers, ["time", "match time", "kickoff time", "fixture time"]);
+
+      if (roundIndex === -1 || team1Index === -1 || team2Index === -1 || winnerIndex === -1) {
+        throw new Error("The Knockout tab must have these headers: Round, Match, Team 1, Team 2, Winner, Date, Time");
+      }
+
+      return tableRows
+        .slice(1)
+        .map(function(cells, index) {
+          return {
+            id: index,
+            round: getCsvCell(cells[roundIndex]),
+            match: matchIndex === -1 ? String(index + 1) : getCsvCell(cells[matchIndex]),
+            team1: getCsvCell(cells[team1Index]),
+            team2: getCsvCell(cells[team2Index]),
+            winner: getCsvCell(cells[winnerIndex]),
+            date: dateIndex === -1 ? "" : formatKnockoutDateInput(getCsvCell(cells[dateIndex])),
+            time: timeIndex === -1 ? "" : parseKnockoutTimeValue(getCsvCell(cells[timeIndex]))
+          };
+        })
+        .filter(function(row) {
+          return row.round || row.team1 || row.team2 || row.winner || row.date || row.time;
+        });
+    }
+
+    function getCsvCell(value) {
+      return clean(value);
+    }
+
     function parseKnockoutResponse(response) {
       if (!response || response.status === "error") {
         let message = "Google returned an error.";
@@ -1423,9 +1559,11 @@
       const team1Index = findHeaderIndex(headers, ["team 1", "team1", "country 1", "country1", "home"]);
       const team2Index = findHeaderIndex(headers, ["team 2", "team2", "country 2", "country2", "away"]);
       const winnerIndex = findHeaderIndex(headers, ["winner", "winning team"]);
+      const dateIndex = findHeaderIndex(headers, ["date", "match date", "kickoff date", "fixture date"]);
+      const timeIndex = findHeaderIndex(headers, ["time", "match time", "kickoff time", "fixture time"]);
 
       if (roundIndex === -1 || team1Index === -1 || team2Index === -1 || winnerIndex === -1) {
-        throw new Error("The Knockout tab must have these headers: Round, Match, Team 1, Team 2, Winner");
+        throw new Error("The Knockout tab must have these headers: Round, Match, Team 1, Team 2, Winner. Optional Date and Time columns will be shown on the bracket.");
       }
 
       return table.rows
@@ -1437,7 +1575,9 @@
             match: matchIndex === -1 ? String(index + 1) : getCell(cells[matchIndex]),
             team1: getCell(cells[team1Index]),
             team2: getCell(cells[team2Index]),
-            winner: getCell(cells[winnerIndex])
+            winner: getCell(cells[winnerIndex]),
+            date: dateIndex === -1 ? "" : formatKnockoutDateCell(cells[dateIndex]),
+            time: timeIndex === -1 ? "" : formatKnockoutTimeCell(cells[timeIndex])
           };
         })
         .filter(function(row) {
@@ -2651,13 +2791,13 @@
 
       if (knockoutError) {
         target.innerHTML =
-          '<div class="empty">Create a sheet tab called <strong>Knockout</strong> with columns: <strong>Round</strong>, <strong>Match</strong>, <strong>Team 1</strong>, <strong>Team 2</strong>, <strong>Winner</strong>. The page will then draw the bracket here.</div>';
+          '<div class="empty">Create a sheet tab called <strong>Knockout</strong> with columns: <strong>Round</strong>, <strong>Match</strong>, <strong>Team 1</strong>, <strong>Team 2</strong>, <strong>Winner</strong>, <strong>Date</strong> and <strong>Time</strong>. The page will then draw the bracket here.</div>';
         return;
       }
 
       if (!knockoutRows.length) {
         target.innerHTML =
-          '<div class="empty">The Knockout tab is empty. Add the Round and Match rows first, then fill Team 1, Team 2 and Winner as the tournament progresses.</div>';
+          '<div class="empty">The Knockout tab is empty. Add the Round, Match, Date and Time rows first, then fill Team 1, Team 2 and Winner as the tournament progresses.</div>';
         return;
       }
 
@@ -2715,7 +2855,9 @@
           match: String(i),
           team1: "",
           team2: "",
-          winner: ""
+          winner: "",
+          date: "",
+          time: ""
         });
       }
 
@@ -2762,9 +2904,344 @@
       '</section>';
     }
 
+    const knockoutMonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    function cellDisplayValue(cell) {
+      if (!cell) return "";
+      if (cell.f != null) return cell.f;
+      if (cell.v != null) return cell.v;
+      return "";
+    }
+
+    function isRealDateObject(value) {
+      return Object.prototype.toString.call(value) === "[object Date]" && !Number.isNaN(value.getTime());
+    }
+
+    function formatDateWithoutYear(day, monthIndex) {
+      const parsedDay = Number(day);
+      const parsedMonth = Number(monthIndex);
+
+      if (!Number.isFinite(parsedDay) || !Number.isFinite(parsedMonth)) {
+        return "";
+      }
+
+      if (parsedDay < 1 || parsedDay > 31 || parsedMonth < 0 || parsedMonth > 11) {
+        return "";
+      }
+
+      return String(parsedDay) + " " + knockoutMonthNames[parsedMonth];
+    }
+
+    function monthIndexFromName(name) {
+      const text = lower(name).slice(0, 3);
+      const lookup = {
+        jan: 0,
+        feb: 1,
+        mar: 2,
+        apr: 3,
+        may: 4,
+        jun: 5,
+        jul: 6,
+        aug: 7,
+        sep: 8,
+        oct: 9,
+        nov: 10,
+        dec: 11
+      };
+
+      return lookup[text];
+    }
+
+    function stripYearFromDateText(value) {
+      let text = clean(value);
+
+      if (!text) {
+        return "";
+      }
+
+      text = text
+        .replace(/^(\d{1,2}[\/.-]\d{1,2})[\/.-]\d{2,4}(\b.*)?$/, "$1$2")
+        .replace(/\b20\d{2}\b/g, "")
+        .replace(/\b\d{2}\b(?=\s*$)/g, "")
+        .replace(/\s{2,}/g, " ")
+        .replace(/[,\s]+$/g, "")
+        .trim();
+
+      return text;
+    }
+
+    function formatKnockoutDateInput(value) {
+      const text = clean(value);
+
+      if (!text) {
+        return "";
+      }
+
+      // If the sheet cell has been set to Plain text and entered as "29 Jun",
+      // use that directly. This avoids Google Sheets / browser date-locale
+      // confusion entirely.
+      let match = text.match(/^\s*(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]{3,9})\s*(?:\d{2,4})?\s*$/i);
+      if (match) {
+        const monthIndex = monthIndexFromName(match[2]);
+        if (monthIndex !== undefined) {
+          return formatDateWithoutYear(match[1], monthIndex);
+        }
+      }
+
+      // Also accept "Jun 29" if it is ever entered that way.
+      match = text.match(/^\s*([A-Za-z]{3,9})\s+(\d{1,2})(?:st|nd|rd|th)?\s*(?:\d{2,4})?\s*$/i);
+      if (match) {
+        const monthIndex = monthIndexFromName(match[1]);
+        if (monthIndex !== undefined) {
+          return formatDateWithoutYear(match[2], monthIndex);
+        }
+      }
+
+      const parsed = parseKnockoutDateValue(text);
+      if (parsed) {
+        return parsed;
+      }
+
+      // Last-resort fallback: show whatever text is present, but remove a year
+      // if one is included. This means the bracket never drops a visible date
+      // just because Google Sheets has stored a cell oddly.
+      return stripYearFromDateText(text);
+    }
+
+    function parseKnockoutDateValue(value) {
+      if (value == null || value === "") {
+        return "";
+      }
+
+      if (isRealDateObject(value)) {
+        return formatDateWithoutYear(value.getDate(), value.getMonth());
+      }
+
+      if (typeof value === "number" && Number.isFinite(value) && value > 1) {
+        // Google Sheets date serials are counted from 1899-12-30.
+        const date = new Date(Date.UTC(1899, 11, 30) + Math.round(value) * 24 * 60 * 60 * 1000);
+        return formatDateWithoutYear(date.getUTCDate(), date.getUTCMonth());
+      }
+
+      const text = clean(value);
+
+      if (!text) {
+        return "";
+      }
+
+      // Some Google Sheets GViz date cells arrive as Date(2026,5,29),
+      // where the month is zero-based: 5 = June, 6 = July, etc.
+      let match = text.match(/Date\(\s*(\d{4})\s*,\s*(\d{1,2})\s*,\s*(\d{1,2})/);
+      if (match) {
+        return formatDateWithoutYear(match[3], match[2]);
+      }
+
+      // Some date cells arrive as ISO-style text, e.g. 2026-06-29.
+      // This must be checked before the general dd/mm/yyyy parser, otherwise
+      // the first two numbers, 2026 and 06, are mistaken for day/month.
+      match = text.match(/\b(\d{4})[\/.-](\d{1,2})[\/.-](\d{1,2})\b/);
+      if (match) {
+        return formatDateWithoutYear(match[3], Number(match[2]) - 1);
+      }
+
+      // Google Sheets serial dates can sometimes come through as strings.
+      if (/^\d+(?:\.\d+)?$/.test(text)) {
+        const serial = Number(text);
+        if (Number.isFinite(serial) && serial > 1) {
+          const date = new Date(Date.UTC(1899, 11, 30) + Math.round(serial) * 24 * 60 * 60 * 1000);
+          return formatDateWithoutYear(date.getUTCDate(), date.getUTCMonth());
+        }
+      }
+
+      // UK-style dates used in the sheet, e.g. 29/06/26 or 29/06/2026.
+      // It also accepts the US order only when that is the only valid reading.
+      match = text.match(/\b(\d{1,2})[\/.-](\d{1,2})(?:[\/.-](\d{2,4}))?\b/);
+      if (match) {
+        const first = Number(match[1]);
+        const second = Number(match[2]);
+        let day = first;
+        let month = second;
+
+        if (first <= 12 && second > 12) {
+          day = second;
+          month = first;
+        }
+
+        return formatDateWithoutYear(day, month - 1);
+      }
+
+      match = text.match(/\b(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]{3,9})\b/i);
+      if (match) {
+        const monthIndex = monthIndexFromName(match[2]);
+        if (monthIndex !== undefined) {
+          return formatDateWithoutYear(match[1], monthIndex);
+        }
+      }
+
+      match = text.match(/\b([A-Za-z]{3,9})\s+(\d{1,2})(?:st|nd|rd|th)?\b/i);
+      if (match) {
+        const monthIndex = monthIndexFromName(match[1]);
+        if (monthIndex !== undefined) {
+          return formatDateWithoutYear(match[2], monthIndex);
+        }
+      }
+
+      const parsed = Date.parse(text);
+      if (Number.isFinite(parsed) && /[A-Za-z]/.test(text)) {
+        const date = new Date(parsed);
+        return formatDateWithoutYear(date.getDate(), date.getMonth());
+      }
+
+      return "";
+    }
+
+    function formatKnockoutDateCell(cell) {
+      if (!cell) {
+        return "";
+      }
+
+      const formatted = parseKnockoutDateValue(cell.f);
+      if (formatted) {
+        return formatted;
+      }
+
+      const raw = parseKnockoutDateValue(cell.v);
+      if (raw) {
+        return raw;
+      }
+
+      return stripYearFromDateText(cellDisplayValue(cell));
+    }
+
+    function formatTimeParts(hour24, minute) {
+      let hour = Number(hour24);
+      let minutes = Number(minute || 0);
+
+      if (!Number.isFinite(hour) || !Number.isFinite(minutes)) {
+        return "";
+      }
+
+      hour = Math.floor(hour);
+      minutes = Math.round(minutes);
+
+      if (minutes >= 60) {
+        hour += Math.floor(minutes / 60);
+        minutes = minutes % 60;
+      }
+
+      hour = ((hour % 24) + 24) % 24;
+
+      const suffix = hour >= 12 ? "PM" : "AM";
+      const hour12 = hour % 12 || 12;
+
+      return String(hour12) + ":" + String(minutes).padStart(2, "0") + " " + suffix;
+    }
+
+    function parseKnockoutTimeValue(value) {
+      if (value == null || value === "") {
+        return "";
+      }
+
+      if (isRealDateObject(value)) {
+        return formatTimeParts(value.getHours(), value.getMinutes());
+      }
+
+      if (Array.isArray(value) && value.length >= 2) {
+        return formatTimeParts(value[0], value[1]);
+      }
+
+      if (typeof value === "number" && Number.isFinite(value)) {
+        const fraction = ((value % 1) + 1) % 1;
+
+        if (value >= 0 && value < 1 || fraction > 0) {
+          const totalMinutes = Math.round(fraction * 24 * 60);
+          return formatTimeParts(Math.floor(totalMinutes / 60), totalMinutes % 60);
+        }
+      }
+
+      const text = clean(value);
+
+      if (!text) {
+        return "";
+      }
+
+      const dateMatch = text.match(/Date\(([^)]*)\)/);
+      if (dateMatch) {
+        const parts = dateMatch[1]
+          .split(",")
+          .map(function(part) {
+            return Number(clean(part));
+          });
+
+        if (parts.length >= 5) {
+          return formatTimeParts(parts[3], parts[4]);
+        }
+      }
+
+      const match = text.match(/\b(\d{1,2})(?:[:.](\d{2}))?(?:[:.](\d{2}))?\s*([AP]\.?M\.?)?\b/i);
+      if (match) {
+        let hour = Number(match[1]);
+        const minute = match[2] == null ? 0 : Number(match[2]);
+        const suffix = match[4] ? match[4].replace(/\./g, "").toUpperCase() : "";
+
+        if (Number.isFinite(hour) && Number.isFinite(minute) && hour >= 0 && hour <= 24 && minute >= 0 && minute < 60) {
+          if (suffix === "AM" && hour === 12) {
+            hour = 0;
+          } else if (suffix === "PM" && hour < 12) {
+            hour += 12;
+          }
+
+          // Without AM/PM, only treat it as a time when a separator was present,
+          // so values like plain match numbers are not accidentally reformatted.
+          if (suffix || match[2] != null) {
+            return formatTimeParts(hour, minute);
+          }
+        }
+      }
+
+      return "";
+    }
+
+    function formatKnockoutTimeCell(cell) {
+      if (!cell) {
+        return "";
+      }
+
+      const formatted = parseKnockoutTimeValue(cell.f);
+      if (formatted) {
+        return formatted;
+      }
+
+      const raw = parseKnockoutTimeValue(cell.v);
+      if (raw) {
+        return raw;
+      }
+
+      return clean(cellDisplayValue(cell));
+    }
+
+    function knockoutScheduleLabel(match) {
+      const date = clean(match && match.date);
+      const time = clean(match && match.time);
+
+      if (date && time) {
+        return date + " · " + time;
+      }
+
+      if (date) {
+        return date;
+      }
+
+      if (time) {
+        return time;
+      }
+
+      return "Date/time TBC";
+    }
+
     function renderMatchCard(match, extraClass) {
       return '<article class="match-card ' + (extraClass || "") + '" data-bracket-id="' + escapeHtml(bracketId(match.round, match.match)) + '">' +
-        '<div class="match-label"><span>Match ' + escapeHtml(match.match || '-') + '</span><span>' + escapeHtml(normaliseRound(match.round)) + '</span></div>' +
+        '<div class="match-label"><span>' + escapeHtml(knockoutScheduleLabel(match)) + '</span><span>' + escapeHtml(normaliseRound(match.round)) + '</span></div>' +
         renderTeamLine(match.team1, match.winner) +
         renderTeamLine(match.team2, match.winner) +
       '</article>';
